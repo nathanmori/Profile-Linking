@@ -196,9 +196,9 @@ x_test = range(train, train + len(y_test))
 x_all = range(train + len(y_test))
 
 plt.plot(x_train, y_train, label='train_data', marker='o')
-plt.plot(x_train, lr.predict(X_train), label='train_pred')
+#plt.plot(x_train, lr.predict(X_train), label='train_pred')
 plt.plot(x_test, y_test, label='test_data', marker='o')
-plt.plot(x_test, y_pred, label='test_pred')
+#plt.plot(x_test, y_pred, label='test_pred')
 
 plt.plot(x_all, X[:, 0], label='alcohol')
 plt.plot(x_all, X[:, 1], label='vegetables')
