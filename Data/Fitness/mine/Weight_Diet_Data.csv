@@ -1,0 +1,498 @@
+,date,morning,night,food0,food1,food2,food3,food4,food5,food6,food7,food8,food9,alcohol,vegetables,fruits,fats,starches
+0,2015-10-04 00:00:00,,217.0,,,,,,,,,,,,,,,
+1,2015-10-05 00:00:00,215.0,,,,,,,,,,,,,,,,
+2,2015-12-28 00:00:00,,221.0,OB Muffin,,,Masala,Mandarin,Apple,,stir fry/crispy chicken/brown rice,,,0.0,1.0,2.0,2.0,3.0
+3,2015-12-29 00:00:00,,220.0,OB Muffin,,,Salad,Mandarin,Mandarin,,Hot Dog/Popcorn,,,1.0,1.0,1.0,1.5,2.0
+4,2015-12-30 00:00:00,216.0,218.0,Breakfast Burrito,,Mandarin,Salad,Mandarin,Mandarin,,Sounders Burger/Fries,,,1.0,1.0,1.0,2.0,0.5
+5,2015-12-31 00:00:00,213.0,217.0,Ham & Cheddar Croissant,,Mandarin,Salad,Mandarin,Mandarin,,Teriyaki Chicken/Green Bean Chicken,,,5.0,3.0,1.0,2.0,1.0
+6,2016-01-01 00:00:00,,,,,,,,,,,,,5.0,,,,
+7,2016-01-02 00:00:00,,,,,,,,,,,,,5.0,,,,
+8,2016-01-03 00:00:00,,219.0,Bagel/Baconx100,,,Chicken Strips/Fries/Potato Salad,,,,Chicken Corn Chowder,,,0.0,,,,
+9,2016-01-04 00:00:00,215.0,,,,,,,,,,,,,,,,
+10,2016-01-05 00:00:00,,,,,,,,,,,,,,,,,
+11,2016-01-06 00:00:00,215.0,216.0,Turkey & Swiss Croissant,,,Veggie Wraps,,,,Stir Fry,,,0.0,3.0,0.0,2.0,1.0
+12,2016-01-07 00:00:00,215.0,215.0,Ham & Cheddar Croissant,,,Stir Fry/Veggies,,,,Pork Teriyaki,Cookie,Cookie,0.0,2.0,0.0,3.0,1.5
+13,2016-01-08 00:00:00,213.0,,Pork Teriyaki LO/,,,,,,,,,,,,,,
+14,2016-01-09 00:00:00,,216.0,Safeway Breakfast Burrito,,Apple,Two Safeway Salads,,,,Pretentious Burger and Fluffs,Chips and Salsa,,2.0,1.0,1.0,2.0,2.0
+15,2016-01-10 00:00:00,215.0,218.0,,Venti Iced Vanilla Latte,,Taco Croissant/Pulled Pork/Sweet Potatoes,,,,Old Spaghetti Factory Chicken Parmesan,Apple,,3.0,0.5,1.0,2.0,2.5
+16,2016-01-11 00:00:00,217.0,220.0,French Bread,,,Wild Ginger Seven Flavor Beef (Brown Rice),Twix,Kit Kat,Apple,Gyro Plate,Kit Kat,,1.0,0.5,1.0,1.5,3.0
+17,2016-01-12 00:00:00,218.0,218.0,Ham & Cheddar Croissant,,,Grilled Chicken/Rice/Side Salad,,,,Pasta/Lasagna/Broccoli,Ice Cream,,0.0,1.0,0.0,1.5,3.0
+18,2016-01-13 00:00:00,216.0,218.0,OB Muffin,,,MF Salad/Chicken/Salmon,,,,Spaghetti Meatballs/Salad,,,2.0,4.0,0.0,1.0,2.0
+19,2016-01-14 00:00:00,215.0,218.0,Ham & Cheddar Croissant,,,Spaghetti Meatballs,,,,,,,1.0,1.0,0.0,1.0,3.0
+20,2016-01-15 00:00:00,215.0,220.0,Stir Fry LO,,,Stir Fry LO,,,Donut,Bacon Asparagus,,,4.0,3.0,,1.0,2.0
+21,2016-01-16 00:00:00,219.0,,"""Heartattack"" Bacon Hash Brown Eggs",,,Bacon Asparagus LO/Apple,,,,Rice A Roni,Popcorn,,0.0,0.5,1.0,2.0,3.0
+22,2016-01-17 00:00:00,,218.0,Bagel/Apple,,Chips/Hummus,Roast/Rice/Onions,5 Mandarins,,,Pork/Pico de Gallo Tacos,Peanut Butter/Vanilla Ice Cream,,1.0,1.0,4.0,1.0,2.0
+23,2016-01-18 00:00:00,216.0,,Bagel,,,Pork/Pico Tacos/Orange,,,,Sugar Peas/Pear/Pizza,,,2.0,1.0,3.0,2.0,1.0
+24,2016-01-19 00:00:00,215.0,217.0,OB Muffin,,,Bacon Cheeseburger,Orange,,,Burrito/Rice,cookie,Curly Fries,1.0,1.0,1.0,1.5,4.0
+25,2016-01-20 00:00:00,215.0,219.0,Ham & Cheddar Croissant,,,Wreck on Multi,,,,Mongolian Chicken,,,0.0,1.0,0.0,2.0,3.0
+26,2016-01-21 00:00:00,,216.0,OB Muffin,,,Broccoli Salad/Rice/Potato Curry,,,,Chipotle Chicken Bowl,Pear/Orange,,1.0,1.0,3.0,1.0,2.0
+27,2016-01-22 00:00:00,216.0,217.0,Almond Scone,,,Broccoli Salad/Green Beans/Rice/Potato Curry,,,,Pizza,Cookies,Orange,0.0,2.0,1.0,1.5,3.5
+28,2016-01-23 00:00:00,215.0,218.0,Bagel,Orange,,Pastrami Sandwich/Carrots,Pear,Carrots,Mango,Nachos,,,2.0,2.0,2.0,1.0,2.5
+29,2016-01-24 00:00:00,215.0,219.0,Donut/Donut/Mandarin,,,Chipotle Chicken Strip Lettuce Wraps,Orange,,,Half Pastrami Sandwich/Carrots/Ramen,Half Oreo Shake,,0.0,1.0,1.5,2.0,3.0
+30,2016-01-25 00:00:00,,217.0,Ham & Cheddar Croissant,,,Pizza/Salad,Pear,,,Sesame Chicken/Chow Mein,Chocolate Candy,,2.0,1.0,1.0,2.0,3.0
+31,2016-01-26 00:00:00,217.0,218.0,OB Muffin,,,Chicken Salad Wrap,,,,Pasta/Veggies/Salad/Roll,Pizza,,0.0,2.0,0.0,1.0,3.0
+32,2016-01-27 00:00:00,,217.0,OB Muffin,,,Broccoli Salad/Green Beans/Rice/Potato Curry,,,,Kielbasa/Pepper/Onion Sandwich,Pear,,1.0,3.0,1.0,1.5,3.0
+33,2016-01-28 00:00:00,216.0,216.0,Turkey & Swiss Croissant,,,Pastrami Sandwich/Carrots,,,Half Pastrami Sandwich,Open Face Kielbasa/Pepper/Onion Sandwich,,,1.0,2.0,0.0,1.5,2.5
+34,2016-01-29 00:00:00,214.0,216.0,OB Muffin,,,Chicken Tostada Salad,Cookie,,,Pizza/Mac & Cheese/Caesar Salad,,,4.0,3.0,0.0,2.0,2.5
+35,2016-01-30 00:00:00,215.0,216.0,"""Heartattack"" Bacon Hash Brown Eggs Kielbasa Onion Pepper",,,,,,,Chicken Fried Chicken,,,2.5,1.0,1.5,2.0,2.0
+36,2016-01-31 00:00:00,216.0,219.0,Pizza,Orange,,Kielbasa/Pepper/Onion Sandwich,,,,Red Curry,,,1.0,1.5,1.0,2.0,2.0
+37,2016-02-01 00:00:00,216.0,217.0,Bagel/Fruit,,,Spicy Chicken Vegetables Teriyaki,,,Half OB Muffin,Broccoli/Chicken Corn Chowder,Orange,Candy,0.0,3.0,2.0,2.0,2.5
+38,2016-02-02 00:00:00,,215.0,Pizza/Half OB Muffin,,,Three Italians Sandwich,,,,Baked Potato,Chocolate Cake,,1.0,1.0,0.0,1.0,3.0
+39,2016-02-03 00:00:00,215.0,218.0,,,,Stir Fry/Rice,,Orange,,Pad Thai,,,1.0,1.5,1.0,2.0,2.0
+40,2016-02-04 00:00:00,213.0,216.0,Ham & Cheddar Croissant,,,Sandwich/Salad,,,,Mochiko Chicken/Brown Rice/Lettuce,,,1.0,2.0,0.0,1.0,2.0
+41,2016-02-05 00:00:00,215.0,215.0,Turkey & Swiss Croissant,Orange,,LO Mochiko Chicken/Carrots,,,,Martino's Big Italian,,,2.5,1.0,1.0,2.0,2.0
+42,2016-02-06 00:00:00,,217.0,Egg/Pork Sausage/Pear,,,Half Sandwich,,,,Pasta,,,1.0,0.5,1.0,1.0,1.0
+43,2016-02-07 00:00:00,,216.0,Donuts,,,Pizza,,,,Bacon Stuffed Peppers/Cookies,,,1.0,,,,
+44,2016-02-08 00:00:00,215.0,217.0,,,,Chicken Tikka Masala,,,LO Chicken Tikka Masala,Veggie Chicken/Pear,,,0.0,1.0,1.0,1.5,1.5
+45,2016-02-09 00:00:00,214.0,216.0,Ham & Cheddar Croissant/Pear,,,Small BBQ Chicken Salad,,,,Sweet & Sour Chicken/Brown Rice/Lettuce,Nectarine,,2.0,1.5,2.0,2.0,2.0
+46,2016-02-10 00:00:00,214.0,216.0,Bagel,,,Pizza/Lettuce,,Orange,,Carne Asada Burrito,,,2.0,1.0,1.0,1.5,2.5
+47,2016-02-11 00:00:00,215.0,217.0,Bagel,,Brownie/Cookie/Dipped Strawberry,LO Sweet & Sour Chicken/Brown Rice/Spring Mix,,,,Chicken/Rice A Roni,Nectarine,,0.0,1.0,1.25,1.5,3.5
+48,2016-02-12 00:00:00,216.0,216.0,Ham & Cheddar Croissant/Orange,,,LO Chicken/Rice a roni/Spring Mix,,,,Sliders/Flatbread,,,2.0,1.0,1.0,1.5,3.0
+49,2016-02-13 00:00:00,215.0,216.0,,,,Mu Shu Pork Wrap,,Pretzels,,Burger/Fries,,,4.0,0.75,0.0,2.0,1.5
+50,2016-02-14 00:00:00,,217.0,,,,LO Chicken/Rice a roni/Spring Mix,,Nectarine,,Steak/Bacon Wrapped Asparagus/Potatoes/Pretzel Bun,,Strawberry Shortcake,2.0,2.0,2.0,2.0,3.0
+51,2016-02-15 00:00:00,215.0,217.0,Bagel,,,Broccoli Salad/Green Beans/Rice/Potato Curry,,,Pear,Pad Kee Mao,Pear,,0.0,2.0,2.0,1.5,2.5
+52,2016-02-16 00:00:00,216.0,216.0,OB Muffin,,,LO Steak/LO Potatoes/Pear,,,,Burrito,,LO Pad Kee Mao,1.0,0.5,1.0,1.0,2.5
+53,2016-02-17 00:00:00,,215.0,OB Muffin,,,Broccoli/Green Beans/Chicken Caesar Salad,,,,Pizza,,,1.0,3.0,0.0,1.0,2.0
+54,2016-02-18 00:00:00,214.0,214.0,OB Muffin,,,Broccoli/Green Beans/Caesar Salad/Salmon,,,,Chick-Fil-A Nuggets/Fries,,,0.0,2.5,0.0,1.0,2.0
+55,2016-02-19 00:00:00,,215.0,Pizza,,,Pizza,,,,Basil Fried Rice w/ Chicken,,,4.0,1.0,0.0,2.0,2.0
+56,2016-02-20 00:00:00,213.0,215.0,,,,Turkey Sandwich,,,,Soup/Salad/Bread,,,0.0,1.5,0.5,0.5,1.5
+57,2016-02-21 00:00:00,214.0,215.0,Donut,,,Veggies/Roasted Chicken,,,,Mongolian Beef/Rice,,,1.0,2.0,0.0,1.5,1.5
+58,2016-02-22 00:00:00,213.0,215.0,OB Muffin,,,Veggies/Roasted Chicken,,,,Cedar's,,Prunes,1.0,2.0,2.0,1.0,2.0
+59,2016-02-23 00:00:00,212.0,214.0,Bagel/Orange,,,Pizza/Salad,,,,Burger/Chips,,Prunes,1.0,1.0,2.0,1.0,3.0
+60,2016-02-24 00:00:00,213.0,214.0,Bagel/Apple,,,Veggies/Roasted Chicken,,,,Southwest Chicken Salad,,Prunes,0.0,3.0,3.0,0.5,1.0
+61,2016-02-25 00:00:00,212.0,213.0,Spinach Croissant,,,Veggies/Roasted Chicken/Orange,,,,Pizza,,Prunes,1.0,1.5,3.0,1.25,1.5
+62,2016-02-26 00:00:00,211.0,213.0,Bagel,,,Veggies/Roasted Chicken/Apple,,,,Pizza/Carrots,,"Bite of hot dog, curly fries",3.0,2.5,1.0,1.0,2.5
+63,2016-02-27 00:00:00,212.0,213.0,Bagel,,,Pizza/Orange/Apple,,Cookie,Prunes,Broccoli/Red Bell Pepper,,,0.0,3.0,3.0,1.5,2.5
+64,2016-02-28 00:00:00,211.0,213.0,Bagel/Mandarins/Donut,,,Chicken Sausage/Salad,Chips/Salsa,Carrot,,Sauteed Pork/Onions/Salad/Apple,,Prunes,0.0,4.0,3.0,1.0,2.5
+65,2016-02-29 00:00:00,211.0,212.0,Apple/Orange,,,Broccoli Salad/Green Beans/Potato Curry/Brown Rice,,,,Spring Mix/Chicken Tender,,Prunes,0.0,3.0,3.0,1.0,0.5
+66,2016-03-01 00:00:00,211.0,212.0,Prunes/Apple/Orange,,,Veggies/Ranch/Chicken Strip,,,,Pizza,,Tacos/(Churro),3.0,2.0,3.0,2.0,2.0
+67,2016-03-02 00:00:00,210.0,211.0,Mini Quiche/Apple,,,Veggies/Ranch,,,,Half Chicken Teriyaki,,Bite Pretzel,3.0,2.5,1.0,1.5,0.5
+68,2016-03-03 00:00:00,209.0,210.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,,,,Half Chicken Teriyaki,Spring Mix,Prunes,0.0,3.0,3.0,1.0,0.5
+69,2016-03-04 00:00:00,209.0,211.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,,,,Steak Salad,,Chips/Salsa/Prunes,1.0,3.0,3.0,0.5,0.5
+70,2016-03-05 00:00:00,208.0,209.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,,,,Half Burrito,,Chips/Salsa/Prunes,5.0,2.0,2.0,1.5,1.0
+71,2016-03-06 00:00:00,209.0,212.0,Donut/Omelet/Pancakes,,,Spring Mix/Apple,,,,Chicken/Rice/Peanut Sauce,Qtr Burrito,Chips/Salsa,0.0,1.0,2.0,1.0,2.5
+72,2016-03-07 00:00:00,208.0,210.0,Bagel/Fruit,,,Veggies/Ranch/Roasted Chicken,,,Veggies/Ranch/Roasted Chicken,Qtr Burrito/Salad/Orange,,Chips/Salsa,1.0,3.0,2.5,1.0,2.0
+73,2016-03-08 00:00:00,208.0,208.0,Apple/Orange,,,Chicken Corn Chowder,Spring Mix,,,Pasta/Lasagna/Bread,,,1.0,1.0,2.0,1.5,2.0
+74,2016-03-09 00:00:00,207.0,,Chorizo Egg Sandwich,,,Butter Chicken/Saffron Rice,,,,Lasagna/Salad/Roll,,,0.5,1.0,0.0,1.5,3.0
+75,2016-03-10 00:00:00,,,Bagel/Hash Browns/Smoothie,,,Thai Lunchbox,,Olivia's Leftovers,,Burger/Mac & Cheese,,,3.0,1.0,1.0,2.5,4.0
+76,2016-03-11 00:00:00,,,French Toast/Bacon/Smoothie,,,Half Rueben/Salad,,,,Half Rueben,Pizza,,3.0,1.0,1.0,2.0,3.0
+77,2016-03-12 00:00:00,,,Omelette/Bagel/Bacon,,,Berry Frozen Yogurt/Free Samples,,Half Roast Beef Sandwich,,Prime Rib/Bread/Salad/Veggies,Fruit/Cool Whip,,2.0,2.0,2.0,2.5,2.5
+78,2016-03-13 00:00:00,,212.0,Bread/Sausage,,,Scramble/Potatoes/Biscuit,,Chicken McWrap,,Chicken Salad,,,1.0,2.5,0.5,2.0,2.5
+79,2016-03-14 00:00:00,209.0,210.0,OB Muffin,,,Broccoli Salad/Green Beans/Potato Curry/Brown Rice,,,,Chicken Corn Chowder,Spring Mix,Prunes,1.0,3.0,1.0,2.0,2.0
+80,2016-03-15 00:00:00,208.0,208.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,,,,Pizza/Spinach/Cookies,,,1.0,3.0,2.0,1.5,1.5
+81,2016-03-16 00:00:00,205.0,207.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,,,,Chipotle Chicken Corn Chowder/Spring Mix,,,0.0,4.0,2.0,1.5,0.5
+82,2016-03-17 00:00:00,206.0,206.0,Apple/Orange,,,Southwest Chicken Salad,,Veggie/Popcorn/Candy Snacks,,Pizza,,,3.5,2.0,2.0,1.5,1.5
+83,2016-03-18 00:00:00,205.0,207.0,Apple/Nectarine,,,Veggies/Ranch/Roasted Chicken,,,,Pizza/Spring Mix,,,2.0,3.5,2.0,1.5,1.0
+84,2016-03-19 00:00:00,205.0,208.0,Veggies/Ranch/Roasted Chicken,,,Egg/Peppers/Spring Mix/Orange,,,,Lamb Deluxe/Fries,,,5.0,4.5,1.0,2.0,1.5
+85,2016-03-20 00:00:00,206.0,208.0,Donuts,,Chips/Salsa/Carrots,Steak/Potatoes/Salad/Orange,,,,Chicken & Sausage Gumbo/Multi-Grain Bagel,Apple,Orange,0.0,2.0,2.5,1.5,2.0
+86,2016-03-21 00:00:00,207.0,208.0,Apple/Orange,,,Sandwich/Salad,,,Carrots/Ranch,Chips/Salsa/Half Burrito,,,1.0,2.0,2.5,2.0,1.5
+87,2016-03-22 00:00:00,206.0,205.0,Apple/Orange,,,Half Burrito/Carrots/Ranch,,,,Pizza,,,3.5,1.0,2.0,2.0,2.0
+88,2016-03-23 00:00:00,204.0,207.0,Pizza/Apple,,,Chipotle Chicken Corn Chowder,,Wrap,Carrots/Ranch,Chicken,,,0.0,1.5,1.0,2.0,1.5
+89,2016-03-24 00:00:00,205.0,205.0,Apple/Orange/Half Egg,,,Veggies/Ranch/Roasted Chicken,,,,Red Curry,,,0.0,2.0,2.0,1.5,1.0
+90,2016-03-25 00:00:00,204.0,204.0,Ham & Cheddar Croissant,,,Apple/Roasted Chicken,,,,Steak/Rice/Asparagus,,Pizza,5.0,1.0,1.0,2.0,2.5
+91,2016-03-26 00:00:00,204.0,205.0,Pork Sausage/Pepper Omelette/Orange,,,Apple,,,Pizza,Pizza,,Chicken,1.0,0.5,2.0,2.0,1.5
+92,2016-03-27 00:00:00,202.0,207.0,Bagel/Donut Hole/Strawberry/Grapes,,Chips/Cheese & Crackers,Pork/Rice/Salad/Bacon/Sweet Potatoes,,,,Half Cuban Sandwich/Cole Slaw,,,2.0,2.0,0.5,2.5,3.5
+93,2016-03-28 00:00:00,204.0,206.0,Pork Sausage/Orange,,,Half Cuban Sandwich,,,,Naan,Nachos,Peanut Butter,2.0,0.0,1.0,3.5,2.5
+94,2016-03-29 00:00:00,203.0,206.0,Whole Wheat Bagel,,,Broccoli/Green Beans/Spicy Teriyaki Chicken/Brown Rice,,,,Pasta/Lasagna/Salad/Asparagus,Cake/Chocolates,,0.0,3.5,0.0,2.0,2.5
+95,2016-03-30 00:00:00,203.0,204.0,Ham & Cheddar Croissant,,,Broccoli/Green Beans/Spicy Teriyaki Chicken/Brown Rice,,,,Roasted Chicken/Arugula/Carrots,Peanut Butter/Graham Crackers,,0.0,3.5,0.0,1.5,1.5
+96,2016-03-31 00:00:00,202.0,205.0,Apple/Orange,Pork Sausage,,Carrots/Ranch/Chicken,,Chipotle Chicken Corn Chowder,,Arugula/Chicken,Peanut Butter/Graham Crackers,,1.0,3.0,2.0,2.5,1.0
+97,2016-04-01 00:00:00,202.0,207.0,Apple/Orange,,,Spicy Chicken Vegetables Teriyaki,,,,Pizza,Pizza,,3.0,1.0,2.0,2.5,2.5
+98,2016-04-02 00:00:00,204.0,205.0,Apple,Orange,,Carrots/Chicken,,,,Bread/Chicken Parm/Key Lime Meringue,,,4.0,1.5,2.0,1.5,2.0
+99,2016-04-03 00:00:00,202.0,205.0,LO Chicken Parm,Donut,,Spanish Fly Biscuit,,,,Cole Slaw/Rice/Chicken/Spring Roll/Chow Mein,,Chips/Salsa,1.0,1.5,1.0,2.0,4.0
+100,2016-04-04 00:00:00,203.0,205.0,Bagel/Fruit,,,Veggies/Ranch/Roasted Chicken,,,Chips/Salsa,Salmon Arugula Salad,,Peanut Butter/Graham Crackers,1.0,4.0,2.0,2.0,2.5
+101,2016-04-05 00:00:00,204.0,203.0,Apple/Orange/Whole Wheat English Muffin,,,Veggies/Ranch/Roasted Chicken,,,,Pizza/Spinach,,,1.0,3.5,2.0,1.5,2.0
+102,2016-04-06 00:00:00,203.0,202.0,Apple/Orange/Whole Wheat English Muffin,,,Veggies/Ranch/Roasted Chicken,,Half English Muffin,,Chipotle Chicken Corn Chowder,Spring Mix,Chips,0.0,3.5,2.0,1.0,2.0
+103,2016-04-07 00:00:00,200.0,203.0,Apple/Orange/Whole Wheat English Muffin,,,Veggies/Ranch/Roasted Chicken,Half English Muffin,,,Chipotle Chicken Corn Chowder,Sloppy Joe,Chips/Salsa,0.0,2.5,2.0,1.5,3.5
+104,2016-04-08 00:00:00,201.0,202.0,Apple/Orange/Whole Wheat English Muffin (1.5),,,Chipotle Chicken Wrap/Veggies/Hummus,,,,Veggies/Hummus,Chips Salsa,,0.0,5.0,2.5,1.5,3.0
+105,2016-04-09 00:00:00,201.0,204.0,Red Pepper/Onion/Egg/Orange,,,Half Italian Turkey Wrap,,,Apple,Chips Salsa/Carne Asada Burrito,,Red Pepper/Onion,2.0,2.0,2.0,1.5,2.0
+106,2016-04-10 00:00:00,201.0,201.0,Apple,Donut Holes,,Chipotle Chicken Corn Chowder,,Veggies,Orange,Luau Chicken Salad,,,1.0,4.5,2.0,1.5,1.5
+107,2016-04-11 00:00:00,200.0,202.0,Whole Wheat Bagel,,,Salmon/Veggies/Rice,,,Pub Grub,Red Curry,,,3.0,1.5,0.0,1.5,3.0
+108,2016-04-12 00:00:00,200.0,201.0,Whole Wheat Bagel,,,Half Italian Turkey Wrap/Veggies/Ranch,,,,Sukiyaki/Spinach Salad,Bite of brownie/ice cream,,0.0,4.5,0.0,1.5,3.0
+109,2016-04-13 00:00:00,200.0,202.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,Bagel,,,Arugula Spinach Salad/Chips Salsa,,Chips Salsa,1.0,4.5,3.0,1.0,3.0
+110,2016-04-14 00:00:00,199.0,200.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,Bagel,,,Arugula Spinach Salad/Chips Salsa,,,0.0,4.5,2.0,1.0,2.0
+111,2016-04-15 00:00:00,199.0,200.0,Apple/Orange,,,Veggies/Hummus/Roasted Chicken,,Veggies/Hummus,,Un Bien Caribbean Roast Sandwich,,Half Apple,2.0,4.0,2.5,1.0,1.0
+112,2016-04-16 00:00:00,198.0,202.0,Apple/Orange,,,Gyro Salad,,,Carrots,Southwest Chicken Salad,,,2.0,4.0,2.0,2.0,2.0
+113,2016-04-17 00:00:00,198.0,200.0,Donut Holes,,,Lettuce/Green Pepper/Broccoli/Chicken,,Carrots/Chips Salsa,,Apple/Orange,,Egg/Whole Wheat English Muffin,0.0,3.5,2.5,2.5,3.0
+114,2016-04-18 00:00:00,198.0,201.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,Whole Wheat English Muffin,,,Apple Pecan Chicken Salad,Chips Salsa,Graham Cracker Peanut Butter,0.0,4.5,2.5,1.5,2.25
+115,2016-04-19 00:00:00,198.0,200.0,Apple/Orange,,,Arugula Spinach Salad/Carrots/Roasted Chicken,,1.5 Whole Wheat English Muffin,Carrots,Burger/Chips/Bite of Hot Dog,,,2.0,4.5,2.0,2.5,2.5
+116,2016-04-20 00:00:00,198.0,198.0,Apple/Orange,,Half Whole Wheat English Muffin,Arugula Spinach Salad/Chipotle Chicken Corn Chowder,,Whole Wheat English Muffin,Nuts,Pork Ramen,,,2.0,2.0,2.0,2.5,2.5
+117,2016-04-21 00:00:00,197.0,197.0,Apple/3 Cheese Quiche,,,JJ Vito Italian Sandwich,,,,Carrots/Peas/Steak,,,1.0,3.5,1.0,1.5,1.0
+118,2016-04-22 00:00:00,197.0,197.0,Apple/Orange/Whole Wheat English Muffin,,,Spinach Salad/Chicken,Chipotle Chicken Corn Chowder,,,Spinach Orange Salad/Chips Salsa,,,3.0,2.0,2.5,2.0,2.0
+119,2016-04-23 00:00:00,195.0,197.0,Apple/Eggs/Onion,,Chips?,Veggies/Ranch,Nuts,,,Lettuce/Chicken Pineapple Salsa,Veggies/Ranch/Chips Salsa,Graham Cracker Peanut Butter,0.0,3.0,2.0,1.75,1.25
+120,2016-04-24 00:00:00,195.0,196.0,Donuts,,,Steak Salad,Pork,,Popcorn,Arugula Spinach Orange Salad/Chips Salsa,,,1.0,2.5,1.0,3.0,3.0
+121,2016-04-25 00:00:00,195.0,196.0,Apple/Orange,,,Veggies/Ranch/Chipotle Chicken Corn Chowder,,,,Arugula Spinach Apple Salad/Chips Salsa,Graham Cracker Peanut Butter,,1.0,3.5,3.0,1.25,1.625
+122,2016-04-26 00:00:00,195.0,196.0,Apple/Orange,,,Broccoli/Green Beans/Salad/Spicy Teriyaki Chicken,,,,Salad/Chicken/Veggies/Potatoes,,Graham Cracker Peanut Butter,1.0,3.5,2.0,2.0,1.0
+123,2016-04-27 00:00:00,195.0,196.0,Apple/Orange,,,Broccoli/Green Beans/Spicy Teriyaki Chicken,,,,Arugula Spinach Salad/Pork,Graham Cracker Peanut Butter/Chips Salsa,,0.0,3.0,2.5,2.0,1.0
+124,2016-04-28 00:00:00,195.0,195.0,Apple/Orange,,,Veggies/Ranch/Pork,,,,Apple Chicken Spring Mix Salad,,Chips Salsa,1.0,3.5,3.0,1.5,1.0
+125,2016-04-29 00:00:00,194.0,196.0,Apple/Orange,,,Veggies/Ranch/Half Chipotle Chicken Salad Wrap,,,,Half Chipotle Chicken Salad Wrap,Carrots,Chips Salsa/Graham Cracker Peanut Butter,0.0,4.5,2.5,1.875,2.375
+126,2016-04-30 00:00:00,195.0,197.0,Apple/Orange,,,Roast Beef Cheddar Sandwich/Apple/Carrots,,,,Pork Bell Pepper Chips Salad,,Peppers/Chips Salsa,1.0,3.5,3.25,1.5,2.0
+127,2016-05-01 00:00:00,193.0,198.0,Apple/Orange,Half Donut,,Peppers/Chips Salsa,,Veggies/Ranch,,Grilled Beef/Chicken/Peppers/Onions,Canteloupe,Orange/Peanut Butter,4.0,4.0,4.0,2.75,0.5
+128,2016-05-02 00:00:00,194.0,194.0,Apple/Orange,,,Veggies/Hummus/Pork Bell Pepper,,,,Carne Asada Tacos,,,3.0,3.5,2.0,2.0,1.0
+129,2016-05-03 00:00:00,193.0,194.0,Apple/Orange,,,Veggies/Hummus/Pork Bell Pepper,,,,Brisket Sandwich/Nachos/Salad/Bacon/Chips Salsa,,,3.0,3.0,3.0,2.0,2.0
+130,2016-05-04 00:00:00,193.0,193.0,Apple/Orange,,,Veggies/Hummus/Pork Bell Pepper,,,,Arugula Raspberry Blue Chees Nut Salad/Chips Salsa/Peanut Butter,Peppers,,0.0,4.0,2.5,1.5,1.0
+131,2016-05-05 00:00:00,192.0,192.0,Apple/Orange,,,Veggies/Hummus/Chipotle Chicken Corn Chowder,,,,Arugula Spinach Salad/Peppers/Chicken/BBQ Sauce,,Peanut Butter,1.0,4.0,2.0,2.0,0.5
+132,2016-05-06 00:00:00,191.0,192.0,Apple/Orange,,,Veggies/Hummus/Roasted Chicken BBQ Sauce,,,,Steak Salad Walnuts Blue Cheese,,,4.0,3.5,2.0,1.25,0.25
+133,2016-05-07 00:00:00,191.0,192.0,Apple/Turkey,,Orange,Arugula Spinach Salad/Peppers,,,Chips Salsa,Sunset Salad,,,3.0,3.0,2.0,1.5,1.0
+134,2016-05-08 00:00:00,190.0,193.0,,,Donut Bite/Potato Chips Guacamole/Fruit Smoothie,Pork/Rice/Salad,,Green Beans,Cake/Frosting/Strawberries,Chips/Salsa/Turkey,,,0.0,3.0,2.0,2.5,3.5
+135,2016-05-09 00:00:00,192.0,193.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Arugula Spinach Salad/Chips Salsa,,Peanut Butter,1.0,3.5,2.5,1.5,1.0
+136,2016-05-10 00:00:00,191.0,193.0,Apple/Oatmeal/Brown Sugar/Nuts/Craisins,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Lettuce/Pasta Meat Sauce,,Spinach Arugula Salad/Turkey/Chips Salsa,1.0,4.5,1.0,2.0,2.5
+137,2016-05-11 00:00:00,191.0,189.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Spring Mix Apple Cheese Burger Patty,Chips Salsa,,3.5,3.5,2.25,1.5,1.0
+138,2016-05-12 00:00:00,189.0,190.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Skirt Steak Salad/Battered Onions,,,2.0,3.5,2.0,1.5,0.25
+139,2016-05-13 00:00:00,190.0,191.0,Apple/Orange,,,Broccoli/Green Beans/Red Peppers/Roasted Chicken BBQ Sauce,,,,Sausage Bun Onion Banana Pepper Sauerkraut,,,2.0,2.5,2.0,1.5,1.0
+140,2016-05-14 00:00:00,189.0,189.0,Turkey/Chips Salsa,,,Southwest Chicken Salad,,,,Turkey/Carrots,,,2.5,2.0,0.5,0.5,1.0
+141,2016-05-15 00:00:00,188.0,190.0,Donut Hole,,,Spinach Arugula Salad/Apple,,,,Carrots/Chips Salsa/Corned Beef,,Chips Salsa/Corned Beef,2.0,3.0,1.75,1.0,1.75
+142,2016-05-16 00:00:00,189.0,191.0,Apple/Orange,,,,,,,Spinach Arugula Salad/Orange/Corned Beef,,Chips Salsa,0.0,4.0,3.0,1.5,1.25
+143,2016-05-17 00:00:00,188.0,190.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Potato Cheese Sour Cream Olives Ground Beef/Broccolini/Chips,,Corned Beef/Chips,2.0,3.0,2.0,2.0,2.0
+144,2016-05-18 00:00:00,188.0,189.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Spinach Arugula Salad/Orange/Chips Salsa,,,0.0,3.5,3.5,1.0,1.0
+145,2016-05-19 00:00:00,187.0,189.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Spinach Arugula Salad/Chips Salsa,,,2.0,3.5,2.25,1.0,1.0
+146,2016-05-20 00:00:00,187.0,190.0,Apple/Orange,,,Broccoli/Green Beans Red Peppers/Salad/Spicy Teriyaki Chicken,,,,Lamb Deluxe/Fries/Dragon Sauce,,,6.0,2.5,2.0,2.5,1.5
+147,2016-05-21 00:00:00,187.0,189.0,Apple/Orange/Roast Beef,,,Carrots Hummus/Chips Salsa,,,,Pasta Tomato Sauce,Spinach Arugula Salad/Carrots Hummus,Peanut Butter,0.0,3.0,2.0,1.5,2.0
+148,2016-05-22 00:00:00,187.0,188.0,Apple/Orange,,,Popcorn/Pork/Brown Rice/Salad/Bite of dessert,,,Carrots/Hummus,Spinach Arugula Orange Salad/Pasta Tomato Sauce,,Peanut Butter,0.0,3.0,3.5,2.0,2.5
+149,2016-05-23 00:00:00,187.0,188.0,Fruit/Eggs,,,Potbelly Sandwich,,,,Spinach Arugula Apple Salad/Broccoli,Chips Salsa,,1.0,2.0,2.0,2.0,2.0
+150,2016-05-24 00:00:00,186.0,190.0,Apple/Orange/Roast Beef,,,Pasta Tomato Sauce/Broccoli Hummus,,,,Spinach Salad/Cherry Tomatoes/Strawberries/Blueberries/Half Waffle,,Chips Salsa,0.0,2.0,3.5,1.0,2.5
+151,2016-05-25 00:00:00,187.0,186.0,Apple/Orange,,,Pasta Tomato Sauce/Broccoli Hummus,,,,Spring Mix/Drumstick,,Drumstick,0.0,2.0,2.25,1.0,0.25
+152,2016-05-26 00:00:00,185.0,186.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken,,,,Pho,,,1.0,2.5,2.0,1.0,1.0
+153,2016-05-27 00:00:00,185.0,188.0,Apple/Banana/Yogurt,,,Veggies/Ranch/Roasted Chicken/Salad,,,,Veggies/Ranch/Crackers Cheese/Berries/Olives,,Polish Sausage/Cream Cheese/Jalapenos,4.0,4.0,2.0,2.5,1.25
+154,2016-05-28 00:00:00,186.0,,Whole Wheat English Muffin Egg Cheddar Sandwich,,Carrots,Steak Tacos,Beef Jerky,,Crackers Olive Dip/Carrots/Deep Fried Artichoke Creamy Dip,Fish/Corn/Salad,,,4.5,2.25,0.0,3.0,3.0
+155,2016-05-29 00:00:00,,,Carrots/Pancakes/Eggs/Sausage/Orange/Strawberries/Blueberries,,Mocha,Chips Guacamole,,,,Veggies/Ranch/Lettuce Burger,,,5.0,3.0,1.5,3.0,2.0
+156,2016-05-30 00:00:00,,188.0,Chips Salsa,,Mocha,Chips Salsa/Peppers,,,,Spinach Arugula Apple Salad,Chips Salsa,,0.0,2.0,2.0,1.0,2.5
+157,2016-05-31 00:00:00,187.0,187.0,Ham & Cheese Croissant,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Pasta/Lasagna/Spinach Salad,,,0.0,3.0,0.0,2.0,2.0
+158,2016-06-01 00:00:00,185.0,186.0,Apple/Orange,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Spinach Arugula Salad/Chicken Peanut Sauce,Chipotle Chicken Corn Chowder,Peanut Butter,0.0,3.5,2.0,2.5,0.5
+159,2016-06-02 00:00:00,184.0,184.0,Ham & Cheese Croissant,,,Veggies/Ranch/Roasted Chicken BBQ Sauce,,,,Pizza,,Pizza,2.0,4.0,0.0,2.5,2.0
+160,2016-06-03 00:00:00,184.0,186.0,Pizza/Apple,,,Schwarma Salad,,,,Spinach Arugula Apple Salad/Pizza,Wedge Salad,Peanut Butter,2.0,3.0,2.0,4.0,1.0
+161,2016-06-04 00:00:00,183.0,183.0,Apple/Orange,,,Carrots/Chips Salsa/Chipotle Chicken/Arugula Salad,,,,Chips Salsa,,Peanut Butter,0.0,1.5,2.0,1.5,1.0
+162,2016-06-05 00:00:00,183.0,184.0,Apple/Orange,,Chewy Bar/Chewy Bar/Chewy Bar/Chewy Bar,Hot Dog/Half Hot Dog/Carrots/Potato Chips,,,,Steak Salad,,,5.5,2.0,2.0,2.5,3.0
+163,2016-06-06 00:00:00,184.0,186.0,Apple,,,Chipotle Chicken Corn Chowder,,,,Spinach Arugula Salad/Chipotle Chicken/Carrots,,Peanut Butter,1.0,2.0,2.0,2.0,1.5
+164,2016-06-07 00:00:00,185.0,186.0,Apple,Orange/Slice of Ham,,Chipotle Chicken,,,,Carrots/Pork Noodle,,Peanut Butter,2.0,1.0,2.0,2.25,1.0
+165,2016-06-08 00:00:00,184.0,184.0,Apple/Orange,,,Chipotle Chicken Wrap/Veggies/Ranch,,,,Crispy Chicken Sushi/Half Roasted Pork Bahn Mi/Egg Roll,,,3.0,2.5,2.0,2.0,2.0
+166,2016-06-09 00:00:00,182.0,184.0,Apple/Orange,,,Chipotle Chicken Wrap/Veggies/Ranch,,,,Carne Asada Salad/Chips Pico,,,3.0,3.5,2.0,2.0,1.5
+167,2016-06-10 00:00:00,183.0,183.0,Apple,,,Veggies/Ranch/Carne Asada,,,,Carrots/Tomatoes/Carne Asada/Chips Salsa,,Chips Salsa,2.5,4.0,2.5,1.5,2.0
+168,2016-06-11 00:00:00,182.0,185.0,Orange,,,Arugula/Mandarins/Chips Salsa,,,,Salad/Steak/Brown Rice/Pork,,Mandarins/Peanut Butter,0.0,3.0,3.0,2.0,2.0
+169,2016-06-12 00:00:00,182.0,184.0,Apple/Mandarins,,,Veggie Chicken Stir Fry,Fruit Smoothie,,,Arugula/Butter Chicken,,Plum/Chips Salsa,1.0,2.0,4.0,3.0,1.5
+170,2016-06-13 00:00:00,182.0,184.0,Apple/Mandarins,,,Veggies/Ranch/Butter Chicken,,,,Arugula/Chunky Chicken Rice,Plum/Chips Salsa,Peanut Butter,1.0,3.5,2.5,2.0,1.5
+171,2016-06-14 00:00:00,182.0,185.0,Apple/Mandarins,,,Veggies/Ranch/Butter Chicken,,,Orange,Veggies/Ranch/Mini Ham Sandwich/Bread Spinach Dip,Chicken/Veggies,Peach/Peach/Carrots/Peanut Butter,3.0,4.0,4.0,2.75,1.0
+172,2016-06-15 00:00:00,182.0,182.0,Apple/Peach,,,Tatstrami Sandwich,,,,Spinach Arugula/Carrots/Pizza,Mandarin/Mandarin/Pizza,,1.0,2.25,2.5,2.5,2.5
+173,2016-06-16 00:00:00,181.0,182.0,Apple/Mandarins,,,Veggies/Ranch/Corned Beef,Fruit,,,Pulled Pork Sandwich/Peanut Butter Cookies,,Mandarins/Chips Salsa,0.0,2.5,3.5,2.0,2.5
+174,2016-06-17 00:00:00,182.0,,Apple/Mandarins/Fruit,,,Veggies/Ranch/Corned Beef/Mandarins,,,Veggies/Hummus,Spring Mix/Chicken/Roast Beef/Asparagus,,,6.0,4.5,3.0,3.0,0.0
+175,2016-06-18 00:00:00,,,Chips Salsa/Apple/Mandarins/Carrots,,,Pizza/Meatballs/Caesar Salad/Veggies/Ranch/Cake/Grapes,,Gummy Bears/Chocolate/Meatballs/Chips,,Mandarins,,Popcorn,2.0,2.0,3.0,2.0,4.0
+176,2016-06-19 00:00:00,182.0,185.0,Corned Beef,Orange/Donut Hole,,Triscuits/Artichoke Dip/Steak/Salad/Brown Rice/Apple Crisp/Ice Cream/Salad/Steak/Lemon Pudding Pie/Ice Cream,,,,Chips Salsa/Mandarin,,,3.0,2.0,2.0,4.0,3.0
+177,2016-06-20 00:00:00,183.0,184.0,Apple/Mandarins/Grapes,,,Veggies/Ranch/Turkey,,Veggies/Ranch/Turkey/Nature Valley Bars,,Salad/Steak,Plum,Mandarins/Chips Salsa/Peanut Butter/Mandarins,2.0,5.5,4.5,2.0,1.5
+178,2016-06-21 00:00:00,181.0,183.0,Apple/Mandarins,,,Salad/Turkey,,Granola Bar,,Carrots/Fish Taco/Chips Salsa,Carrots,Plum/Chips Salsa,1.0,3.0,3.0,1.75,2.0
+179,2016-06-22 00:00:00,181.0,182.0,Mandarins,Apple,,Carrots/Turkey/Plum/Mandarins,,Salmon Wrap Filling,,BBQ Chicken Salads,,Chips/Salsa,0.0,2.5,3.5,2.0,1.5
+180,2016-06-23 00:00:00,181.0,182.0,Apple/Mandarins,,Fruit,Veggies/Ranch/Roasted Chicken,,Spinach Strawberry Pistachio Salad,Mandarins,Pizza/Peanut Butter Cookie,,Chips Salsa,1.0,3.0,3.0,2.0,2.0
+181,2016-06-24 00:00:00,181.0,182.0,Plum/Apple/Orange,,,Veggies/Ranch/Roasted Chicken,Apple,,,Chips Salsa Guacamole/Chorizo Bacon Potato Burritos,Milkshake,,2.0,2.5,3.5,2.5,1.5
+182,2016-06-25 00:00:00,180.0,184.0,Apple,Cookie,,Veggies/Whole Wheat English Muffin/Cookie,,Veggies/Peach,,Thai Beef/White Rice,,LO Thai Beef/White Rice/Peach,1.0,5.0,2.0,2.0,2.5
+183,2016-06-26 00:00:00,181.0,183.0,Apple/Whole Wheat English Muffin,,Peach,Spinach Arugula/Mushroom Chicken,Nectarine,,,Chips Salsa,,Chips Salsa/Peach/Peanut Butter,1.0,1.0,3.5,1.0,3.0
+184,2016-06-27 00:00:00,180.0,183.0,Apple,,,Veggies/Ranch/Roasted Chicken,,,,Apple Pecan Chicken Salad,Chips Salsa,Nectarine/Chips Salsa/Apple,1.0,3.5,3.5,1.5,1.5
+185,2016-06-28 00:00:00,181.0,182.0,Apple,Orange,,Veggies/Ranch/Roasted Chicken,,,,Spinach Arugula/Mushroom Chicken/Nectarine/Chips Salsa,,,3.5,3.5,3.0,1.5,1.0
+186,2016-06-29 00:00:00,181.0,182.0,Apple/Orange,Granola/Fruit,,Half Porchetta Sandwich,,,,Steak Salad,,Nectarine/Chips Salsa/Corned Beef,2.0,1.0,3.0,1.5,3.0
+187,2016-06-30 00:00:00,180.0,183.0,Apple,Oatmean/Orange,,Veggies/Ranch/Mushroom Chicken,,,,Southwest Chicken Salad,Nectarine/Chips Salsa/Corned Beef,Chips Salsa,1.0,3.5,3.25,2.0,2.5
+188,2016-07-01 00:00:00,180.0,,Apple/Peach,Eggs/Bacon,,Veggies/Ranch/Mushroom Chicken/Corned Beef,,,,Crackers/Meat/Cheese/Peppers/Olives,Chips Salsa,,,,,,
+189,2016-07-02 00:00:00,,,,,,,,,,,,,,,,,
+190,2016-07-03 00:00:00,,,,,,,,,,,,,,,,,
+191,2016-07-04 00:00:00,,,,,,,,,,,,,,,,,
+192,2016-07-05 00:00:00,,,,,,,,,,,,,,,,,
+193,2016-07-06 00:00:00,,,,,,,,,,,,,,,,,
+194,2016-07-07 00:00:00,,,,,,,,,,,,,,,,,
+195,2016-07-08 00:00:00,,,,,,,,,,,,,,,,,
+196,2016-07-09 00:00:00,,,,,,,,,,,,,,,,,
+197,2016-07-10 00:00:00,,,,,,,,,,,,,,,,,
+198,2016-07-11 00:00:00,,,,,,,,,,,,,,,,,
+199,2016-07-12 00:00:00,,,,,,,,,,,,,,,,,
+200,2016-07-13 00:00:00,,,,,,,,,,,,,,,,,
+201,2016-07-14 00:00:00,,,,,,,,,,,,,,,,,
+202,2016-07-15 00:00:00,,,,,,,,,,,,,,,,,
+203,2016-07-16 00:00:00,,,,,,,,,,,,,,,,,
+204,2016-07-17 00:00:00,,,,,,,,,,,,,,,,,
+205,2016-07-18 00:00:00,,,,,,,,,,,,,,,,,
+206,2016-07-19 00:00:00,,,,,,,,,,,,,,,,,
+207,2016-07-20 00:00:00,,,,,,,,,,,,,,,,,
+208,2016-07-21 00:00:00,,,,,,,,,,,,,,,,,
+209,2016-07-22 00:00:00,,,,,,,,,,,,,,,,,
+210,2016-07-23 00:00:00,,,,,,,,,,,,,,,,,
+211,2016-07-24 00:00:00,,,,,,,,,,,,,,,,,
+212,2016-07-25 00:00:00,,,,,,,,,,,,,,,,,
+213,2016-07-26 00:00:00,,,,,,,,,,,,,,,,,
+214,2016-07-27 00:00:00,,,,,,,,,,,,,,,,,
+215,2016-07-28 00:00:00,,,,,,,,,,,,,,,,,
+216,2016-07-29 00:00:00,,,,,,,,,,,,,,,,,
+217,2016-07-30 00:00:00,,,,,,,,,,,,,,,,,
+218,2016-07-31 00:00:00,,,,,,,,,,,,,,,,,
+219,2016-08-01 00:00:00,,,,,,,,,,,,,,,,,
+220,2016-08-02 00:00:00,,,,,,,,,,,,,,,,,
+221,2016-08-03 00:00:00,,,,,,,,,,,,,,,,,
+222,2016-08-04 00:00:00,,,,,,,,,,,,,,,,,
+223,2016-08-05 00:00:00,,,,,,,,,,,,,,,,,
+224,2016-08-06 00:00:00,,,,,,,,,,,,,,,,,
+225,2016-08-07 00:00:00,,,,,,,,,,,,,,,,,
+226,2016-08-08 00:00:00,,,,,,,,,,,,,,,,,
+227,2016-08-09 00:00:00,,,,,,,,,,,,,,,,,
+228,2016-08-10 00:00:00,,,,,,,,,,,,,,,,,
+229,2016-08-11 00:00:00,,,,,,,,,,,,,,,,,
+230,2016-08-12 00:00:00,,,,,,,,,,,,,,,,,
+231,2016-08-13 00:00:00,,,,,,,,,,,,,,,,,
+232,2016-08-14 00:00:00,,,,,,,,,,,,,,,,,
+233,2016-08-15 00:00:00,,,,,,,,,,,,,,,,,
+234,2016-08-16 00:00:00,,,,,,,,,,,,,,,,,
+235,2016-08-17 00:00:00,,,,,,,,,,,,,,,,,
+236,2016-08-18 00:00:00,,,,,,,,,,,,,,,,,
+237,2016-08-19 00:00:00,,,,,,,,,,,,,,,,,
+238,2016-08-20 00:00:00,,,,,,,,,,,,,,,,,
+239,2016-08-21 00:00:00,,,,,,,,,,,,,,,,,
+240,2016-08-22 00:00:00,,,,,,,,,,,,,,,,,
+241,2016-08-23 00:00:00,,,,,,,,,,,,,,,,,
+242,2016-08-24 00:00:00,,,,,,,,,,,,,,,,,
+243,2016-08-25 00:00:00,,,,,,,,,,,,,,,,,
+244,2016-08-26 00:00:00,,,,,,,,,,,,,,,,,
+245,2016-08-27 00:00:00,,,,,,,,,,,,,,,,,
+246,2016-08-28 00:00:00,,,,,,,,,,,,,,,,,
+247,2016-08-29 00:00:00,,,,,,,,,,,,,,,,,
+248,2016-08-30 00:00:00,,,,,,,,,,,,,,,,,
+249,2016-08-31 00:00:00,,,,,,,,,,,,,,,,,
+250,2016-09-01 00:00:00,,,,,,,,,,,,,,,,,
+251,2016-09-02 00:00:00,,,,,,,,,,,,,,,,,
+252,2016-09-03 00:00:00,,,,,,,,,,,,,,,,,
+253,2016-09-04 00:00:00,,,,,,,,,,,,,,,,,
+254,2016-09-05 00:00:00,,,,,,,,,,,,,,,,,
+255,2016-09-06 00:00:00,,,,,,,,,,,,,,,,,
+256,2016-09-07 00:00:00,,,,,,,,,,,,,,,,,
+257,2016-09-08 00:00:00,,,,,,,,,,,,,,,,,
+258,2016-09-09 00:00:00,,,,,,,,,,,,,,,,,
+259,2016-09-10 00:00:00,,,,,,,,,,,,,,,,,
+260,2016-09-11 00:00:00,,,,,,,,,,,,,,,,,
+261,2016-09-12 00:00:00,,,,,,,,,,,,,,,,,
+262,2016-09-13 00:00:00,,,,,,,,,,,,,,,,,
+263,2016-09-14 00:00:00,,,,,,,,,,,,,,,,,
+264,2016-09-15 00:00:00,,,,,,,,,,,,,,,,,
+265,2016-09-16 00:00:00,,,,,,,,,,,,,,,,,
+266,2016-09-17 00:00:00,,,,,,,,,,,,,,,,,
+267,2016-09-18 00:00:00,,,,,,,,,,,,,,,,,
+268,2016-09-19 00:00:00,,,,,,,,,,,,,,,,,
+269,2016-09-20 00:00:00,,,,,,,,,,,,,,,,,
+270,2016-09-21 00:00:00,,,,,,,,,,,,,,,,,
+271,2016-09-22 00:00:00,,,,,,,,,,,,,,,,,
+272,2016-09-23 00:00:00,,,,,,,,,,,,,,,,,
+273,2016-09-24 00:00:00,,,,,,,,,,,,,,,,,
+274,2016-09-25 00:00:00,,,,,,,,,,,,,,,,,
+275,2016-09-26 00:00:00,,,,,,,,,,,,,,,,,
+276,2016-09-27 00:00:00,,,,,,,,,,,,,,,,,
+277,2016-09-28 00:00:00,,,,,,,,,,,,,,,,,
+278,2016-09-29 00:00:00,,,,,,,,,,,,,,,,,
+279,2016-09-30 00:00:00,,,,,,,,,,,,,,,,,
+280,2016-10-01 00:00:00,,,,,,,,,,,,,,,,,
+281,2016-10-02 00:00:00,,,,,,,,,,,,,,,,,
+282,2016-10-03 00:00:00,,,,,,,,,,,,,,,,,
+283,2016-10-04 00:00:00,,,,,,,,,,,,,,,,,
+284,2016-10-05 00:00:00,,,,,,,,,,,,,,,,,
+285,2016-10-06 00:00:00,,,,,,,,,,,,,,,,,
+286,2016-10-07 00:00:00,,,,,,,,,,,,,,,,,
+287,2016-10-08 00:00:00,,,,,,,,,,,,,,,,,
+288,2016-10-09 00:00:00,,,,,,,,,,,,,,,,,
+289,2016-10-10 00:00:00,,,,,,,,,,,,,,,,,
+290,2016-10-11 00:00:00,,,,,,,,,,,,,,,,,
+291,2016-10-12 00:00:00,,,,,,,,,,,,,,,,,
+292,2016-10-13 00:00:00,,,,,,,,,,,,,,,,,
+293,2016-10-14 00:00:00,,,,,,,,,,,,,,,,,
+294,2016-10-15 00:00:00,,,,,,,,,,,,,,,,,
+295,2016-10-16 00:00:00,,,,,,,,,,,,,,,,,
+296,2016-10-17 00:00:00,,,,,,,,,,,,,,,,,
+297,2016-10-18 00:00:00,,,,,,,,,,,,,,,,,
+298,2016-10-19 00:00:00,,,,,,,,,,,,,,,,,
+299,2016-10-20 00:00:00,,,,,,,,,,,,,,,,,
+300,2016-10-21 00:00:00,,,,,,,,,,,,,,,,,
+301,2016-10-22 00:00:00,,,,,,,,,,,,,,,,,
+302,2016-10-23 00:00:00,,,,,,,,,,,,,,,,,
+303,2016-10-24 00:00:00,,,,,,,,,,,,,,,,,
+304,2016-10-25 00:00:00,,,,,,,,,,,,,,,,,
+305,2016-10-26 00:00:00,,,,,,,,,,,,,,,,,
+306,2016-10-27 00:00:00,,,,,,,,,,,,,,,,,
+307,2016-10-28 00:00:00,,,,,,,,,,,,,,,,,
+308,2016-10-29 00:00:00,,,,,,,,,,,,,,,,,
+309,2016-10-30 00:00:00,,,,,,,,,,,,,,,,,
+310,2016-10-31 00:00:00,,,,,,,,,,,,,,,,,
+311,2016-11-01 00:00:00,,,,,,,,,,,,,,,,,
+312,2016-11-02 00:00:00,,,,,,,,,,,,,,,,,
+313,2016-11-03 00:00:00,,,,,,,,,,,,,,,,,
+314,2016-11-04 00:00:00,,,,,,,,,,,,,,,,,
+315,2016-11-05 00:00:00,,,,,,,,,,,,,,,,,
+316,2016-11-06 00:00:00,,,,,,,,,,,,,,,,,
+317,2016-11-07 00:00:00,,,,,,,,,,,,,,,,,
+318,2016-11-08 00:00:00,,,,,,,,,,,,,,,,,
+319,2016-11-09 00:00:00,,,,,,,,,,,,,,,,,
+320,2016-11-10 00:00:00,,,,,,,,,,,,,,,,,
+321,2016-11-11 00:00:00,,,,,,,,,,,,,,,,,
+322,2016-11-12 00:00:00,,,,,,,,,,,,,,,,,
+323,2016-11-13 00:00:00,,,,,,,,,,,,,,,,,
+324,2016-11-14 00:00:00,,,,,,,,,,,,,,,,,
+325,2016-11-15 00:00:00,,,,,,,,,,,,,,,,,
+326,2016-11-16 00:00:00,,,,,,,,,,,,,,,,,
+327,2016-11-17 00:00:00,,,,,,,,,,,,,,,,,
+328,2016-11-18 00:00:00,,,,,,,,,,,,,,,,,
+329,2016-11-19 00:00:00,,,,,,,,,,,,,,,,,
+330,2016-11-20 00:00:00,,,,,,,,,,,,,,,,,
+331,2016-11-21 00:00:00,,,,,,,,,,,,,,,,,
+332,2016-11-22 00:00:00,,,,,,,,,,,,,,,,,
+333,2016-11-23 00:00:00,,,,,,,,,,,,,,,,,
+334,2016-11-24 00:00:00,,,,,,,,,,,,,,,,,
+335,2016-11-25 00:00:00,,,,,,,,,,,,,,,,,
+336,2016-11-26 00:00:00,,,,,,,,,,,,,,,,,
+337,2016-11-27 00:00:00,,,,,,,,,,,,,,,,,
+338,2016-11-28 00:00:00,,,,,,,,,,,,,,,,,
+339,2016-11-29 00:00:00,,,,,,,,,,,,,,,,,
+340,2016-11-30 00:00:00,,,,,,,,,,,,,,,,,
+341,2016-12-01 00:00:00,,,,,,,,,,,,,,,,,
+342,2016-12-02 00:00:00,,,,,,,,,,,,,,,,,
+343,2016-12-03 00:00:00,,,,,,,,,,,,,,,,,
+344,2016-12-04 00:00:00,,,,,,,,,,,,,,,,,
+345,2016-12-05 00:00:00,,,,,,,,,,,,,,,,,
+346,2016-12-06 00:00:00,,,,,,,,,,,,,,,,,
+347,2016-12-07 00:00:00,,,,,,,,,,,,,,,,,
+348,2016-12-08 00:00:00,,,,,,,,,,,,,,,,,
+349,2016-12-09 00:00:00,,,,,,,,,,,,,,,,,
+350,2016-12-10 00:00:00,,,,,,,,,,,,,,,,,
+351,2016-12-11 00:00:00,,,,,,,,,,,,,,,,,
+352,2016-12-12 00:00:00,,,,,,,,,,,,,,,,,
+353,2016-12-13 00:00:00,,,,,,,,,,,,,,,,,
+354,2016-12-14 00:00:00,,,,,,,,,,,,,,,,,
+355,2016-12-15 00:00:00,,,,,,,,,,,,,,,,,
+356,2016-12-16 00:00:00,,,,,,,,,,,,,,,,,
+357,2016-12-17 00:00:00,,,,,,,,,,,,,,,,,
+358,2016-12-18 00:00:00,,,,,,,,,,,,,,,,,
+359,2016-12-19 00:00:00,,,,,,,,,,,,,,,,,
+360,2016-12-20 00:00:00,,,,,,,,,,,,,,,,,
+361,2016-12-21 00:00:00,,,,,,,,,,,,,,,,,
+362,2016-12-22 00:00:00,,,,,,,,,,,,,,,,,
+363,2016-12-23 00:00:00,,,,,,,,,,,,,,,,,
+364,2016-12-24 00:00:00,,,,,,,,,,,,,,,,,
+365,2016-12-25 00:00:00,,,,,,,,,,,,,,,,,
+366,2016-12-26 00:00:00,,,,,,,,,,,,,,,,,
+367,2016-12-27 00:00:00,,,,,,,,,,,,,,,,,
+368,2016-12-28 00:00:00,,,,,,,,,,,,,,,,,
+369,2016-12-29 00:00:00,,,,,,,,,,,,,,,,,
+370,2016-12-30 00:00:00,,,,,,,,,,,,,,,,,
+371,2016-12-31 00:00:00,,,,,,,,,,,,,,,,,
+372,2017-01-01 00:00:00,,,,,,,,,,,,,,,,,
+373,2017-01-02 00:00:00,,,,,,,,,,,,,,,,,
+374,2017-01-03 00:00:00,,,,,,,,,,,,,,,,,
+375,2017-01-04 00:00:00,,,,,,,,,,,,,,,,,
+376,2017-01-05 00:00:00,,,,,,,,,,,,,,,,,
+377,2017-01-06 00:00:00,,,,,,,,,,,,,,,,,
+378,2017-01-07 00:00:00,,,,,,,,,,,,,,,,,
+379,2017-01-08 00:00:00,,,,,,,,,,,,,,,,,
+380,2017-01-09 00:00:00,,,,,,,,,,,,,,,,,
+381,2017-01-10 00:00:00,,,,,,,,,,,,,,,,,
+382,2017-01-11 00:00:00,,,,,,,,,,,,,,,,,
+383,2017-01-12 00:00:00,,,,,,,,,,,,,,,,,
+384,2017-01-13 00:00:00,,,,,,,,,,,,,,,,,
+385,2017-01-14 00:00:00,,,,,,,,,,,,,,,,,
+386,2017-01-15 00:00:00,,,,,,,,,,,,,,,,,
+387,2017-01-16 00:00:00,,,,,,,,,,,,,,,,,
+388,2017-01-17 00:00:00,,,,,,,,,,,,,,,,,
+389,2017-01-18 00:00:00,,,,,,,,,,,,,,,,,
+390,2017-01-19 00:00:00,,,,,,,,,,,,,,,,,
+391,2017-01-20 00:00:00,,,,,,,,,,,,,,,,,
+392,2017-01-21 00:00:00,,,,,,,,,,,,,,,,,
+393,2017-01-22 00:00:00,,,,,,,,,,,,,,,,,
+394,2017-01-23 00:00:00,,,,,,,,,,,,,,,,,
+395,2017-01-24 00:00:00,,,,,,,,,,,,,,,,,
+396,2017-01-25 00:00:00,,,,,,,,,,,,,,,,,
+397,2017-01-26 00:00:00,,,,,,,,,,,,,,,,,
+398,2017-01-27 00:00:00,,,,,,,,,,,,,,,,,
+399,2017-01-28 00:00:00,,,,,,,,,,,,,,,,,
+400,2017-01-29 00:00:00,,,,,,,,,,,,,,,,,
+401,2017-01-30 00:00:00,,,,,,,,,,,,,,,,,
+402,2017-01-31 00:00:00,,,,,,,,,,,,,,,,,
+403,2017-02-01 00:00:00,,,,,,,,,,,,,,,,,
+404,2017-02-02 00:00:00,,,,,,,,,,,,,,,,,
+405,2017-02-03 00:00:00,,,,,,,,,,,,,,,,,
+406,2017-02-04 00:00:00,,,,,,,,,,,,,,,,,
+407,2017-02-05 00:00:00,,,,,,,,,,,,,,,,,
+408,2017-02-06 00:00:00,,,,,,,,,,,,,,,,,
+409,2017-02-07 00:00:00,,,,,,,,,,,,,,,,,
+410,2017-02-08 00:00:00,,,,,,,,,,,,,,,,,
+411,2017-02-09 00:00:00,,,,,,,,,,,,,,,,,
+412,2017-02-10 00:00:00,,,,,,,,,,,,,,,,,
+413,2017-02-11 00:00:00,,,,,,,,,,,,,,,,,
+414,2017-02-12 00:00:00,,,,,,,,,,,,,,,,,
+415,2017-02-13 00:00:00,,,,,,,,,,,,,,,,,
+416,2017-02-14 00:00:00,,,,,,,,,,,,,,,,,
+417,2017-02-15 00:00:00,,,,,,,,,,,,,,,,,
+418,2017-02-16 00:00:00,,,,,,,,,,,,,,,,,
+419,2017-02-17 00:00:00,,,,,,,,,,,,,,,,,
+420,2017-02-18 00:00:00,,,,,,,,,,,,,,,,,
+421,2017-02-19 00:00:00,,,,,,,,,,,,,,,,,
+422,2017-02-20 00:00:00,,,,,,,,,,,,,,,,,
+423,2017-02-21 00:00:00,,,,,,,,,,,,,,,,,
+424,2017-02-22 00:00:00,,,,,,,,,,,,,,,,,
+425,2017-02-23 00:00:00,,,,,,,,,,,,,,,,,
+426,2017-02-24 00:00:00,,,,,,,,,,,,,,,,,
+427,2017-02-25 00:00:00,,,,,,,,,,,,,,,,,
+428,2017-02-26 00:00:00,,,,,,,,,,,,,,,,,
+429,2017-02-27 00:00:00,,,,,,,,,,,,,,,,,
+430,2017-02-28 00:00:00,,,,,,,,,,,,,,,,,
+431,2017-03-01 00:00:00,,,,,,,,,,,,,,,,,
+432,2017-03-02 00:00:00,,,,,,,,,,,,,,,,,
+433,2017-03-03 00:00:00,,,,,,,,,,,,,,,,,
+434,2017-03-04 00:00:00,,,,,,,,,,,,,,,,,
+435,2017-03-05 00:00:00,,,,,,,,,,,,,,,,,
+436,2017-03-06 00:00:00,,,,,,,,,,,,,,,,,
+437,2017-03-07 00:00:00,,,,,,,,,,,,,,,,,
+438,2017-03-08 00:00:00,,,,,,,,,,,,,,,,,
+439,2017-03-09 00:00:00,,,,,,,,,,,,,,,,,
+440,2017-03-10 00:00:00,,,,,,,,,,,,,,,,,
+441,2017-03-11 00:00:00,,,,,,,,,,,,,,,,,
+442,2017-03-12 00:00:00,,,,,,,,,,,,,,,,,
+443,2017-03-13 00:00:00,,,,,,,,,,,,,,,,,
+444,2017-03-14 00:00:00,,,,,,,,,,,,,,,,,
+445,2017-03-15 00:00:00,,,,,,,,,,,,,,,,,
+446,2017-03-16 00:00:00,,,,,,,,,,,,,,,,,
+447,2017-03-17 00:00:00,,,,,,,,,,,,,,,,,
+448,2017-03-18 00:00:00,,,,,,,,,,,,,,,,,
+449,2017-03-19 00:00:00,,,,,,,,,,,,,,,,,
+450,2017-03-20 00:00:00,,,,,,,,,,,,,,,,,
+451,2017-03-21 00:00:00,,,,,,,,,,,,,,,,,
+452,2017-03-22 00:00:00,,,,,,,,,,,,,,,,,
+453,2017-03-23 00:00:00,,,,,,,,,,,,,,,,,
+454,2017-03-24 00:00:00,,,,,,,,,,,,,,,,,
+455,2017-03-25 00:00:00,,,,,,,,,,,,,,,,,
+456,2017-03-26 00:00:00,,,,,,,,,,,,,,,,,
+457,2017-03-27 00:00:00,,,,,,,,,,,,,,,,,
+458,2017-03-28 00:00:00,,,,,,,,,,,,,,,,,
+459,2017-03-29 00:00:00,,,,,,,,,,,,,,,,,
+460,2017-03-30 00:00:00,,,,,,,,,,,,,,,,,
+461,2017-03-31 00:00:00,,,,,,,,,,,,,,,,,
+462,2017-04-01 00:00:00,,,,,,,,,,,,,,,,,
+463,2017-04-02 00:00:00,,,,,,,,,,,,,,,,,
+464,2017-04-03 00:00:00,,,,,,,,,,,,,,,,,
+465,2017-04-04 00:00:00,,,,,,,,,,,,,,,,,
+466,2017-04-05 00:00:00,,,,,,,,,,,,,,,,,
+467,2017-04-06 00:00:00,,,,,,,,,,,,,,,,,
+468,2017-04-07 00:00:00,,,,,,,,,,,,,,,,,
+469,2017-04-08 00:00:00,,,,,,,,,,,,,,,,,
+470,2017-04-09 00:00:00,,,,,,,,,,,,,,,,,
+471,2017-04-10 00:00:00,,,,,,,,,,,,,,,,,
+472,2017-04-11 00:00:00,,,,,,,,,,,,,,,,,
+473,2017-04-12 00:00:00,,,,,,,,,,,,,,,,,
+474,2017-04-13 00:00:00,,,,,,,,,,,,,,,,,
+475,2017-04-14 00:00:00,,,,,,,,,,,,,,,,,
+476,2017-04-15 00:00:00,,,,,,,,,,,,,,,,,
+477,2017-04-16 00:00:00,,,,,,,,,,,,,,,,,
+478,2017-04-17 00:00:00,,,,,,,,,,,,,,,,,
+479,2017-04-18 00:00:00,,,,,,,,,,,,,,,,,
+480,2017-04-19 00:00:00,,,,,,,,,,,,,,,,,
+481,2017-04-20 00:00:00,,,,,,,,,,,,,,,,,
+482,2017-04-21 00:00:00,,,,,,,,,,,,,,,,,
+483,2017-04-22 00:00:00,,,,,,,,,,,,,,,,,
+484,2017-04-23 00:00:00,,,,,,,,,,,,,,,,,
+485,2017-04-24 00:00:00,,,,,,,,,,,,,,,,,
+486,2017-04-25 00:00:00,,,,,,,,,,,,,,,,,
+487,2017-04-26 00:00:00,,,,,,,,,,,,,,,,,
+488,2017-04-27 00:00:00,,,,,,,,,,,,,,,,,
+489,2017-04-28 00:00:00,,,,,,,,,,,,,,,,,
+490,2017-04-29 00:00:00,,,,,,,,,,,,,,,,,
+491,2017-04-30 00:00:00,,,,,,,,,,,,,,,,,
+492,2017-05-01 00:00:00,,,,,,,,,,,,,,,,,
+493,2017-05-02 00:00:00,,,,,,,,,,,,,,,,,
+494,2017-05-03 00:00:00,,,,,,,,,,,,,,,,,
+495,2017-05-04 00:00:00,,,,,,,,,,,,,,,,,
+496,2017-05-05 00:00:00,,,,,,,,,,,,,,,,,
