@@ -31,7 +31,7 @@ df_colnums.drop([0, 1], inplace=True)
 df_colnums.reset_index(drop=True, inplace=True)
 df_colnums.alcohol = df_colnums.alcohol.apply(lambda x: 5 if x == 'multiple' else x)
 
-df_colnums.to_csv('Weight_Diet_Data.csv')
+df_colnums[df_colnums['date'] < pd.to_datetime(dt.today())].to_csv('Weight_Diet_Data.csv')
 
 today = pd.to_datetime(dt.today())
 df_input = df_colnums[df_colnums['date'] < today]
@@ -40,8 +40,6 @@ df_text = pd.DataFrame(df_input['date']).copy()
 df_diet = pd.DataFrame(df_input['date']).copy()
 df_text[df_input.columns[3:13]] = df_input[df_input.columns[3:13]].copy()
 df_diet[df_input.columns[13:]] = df_input[df_input.columns[13:]].copy()
-
-pdb.set_trace()
 
 def avg_7day(ser):
     avg_7day = np.zeros(ser.shape)
