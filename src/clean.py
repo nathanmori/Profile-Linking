@@ -13,6 +13,7 @@ params = {
   'port': os.environ['TALENTFUL_PG_PORT']}
 conn = psycopg2.connect(**params)
 c = conn.cursor()
+
 queries = [
     '''
         select
