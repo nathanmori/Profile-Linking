@@ -13,7 +13,6 @@ params = {
   'port': os.environ['TALENTFUL_PG_PORT']}
 conn = psycopg2.connect(**params)
 c = conn.cursor()
-
 queries = [
     '''
         select
@@ -38,11 +37,36 @@ queries = [
             meetup_users
         limit
             10
+    ''',
+    '''
+        select
+            count(*)
+            , count(id)
+            , count(deserialized_text_document_vector)
+        from
+            github_users
+    ''',
+    '''
+        select
+            count(*)
+            , count(id)
+            , count(deserialized_text_document_vector)
+        from
+            meetup_users
+    ''',
+    '''
+    select
+        id
+    from
+        github_users
+    ''',
+    '''
+    select
+        id
+    from
+        meetup_users
     '''
     ]
-#select count(*), count(id), count(deserialized_text_document_vector) from github_users;
-#select count(*), count(id), count(deserialized_text_document_vector) from meetup_users;
-
 dfs = []
 for query in queries:
     c.execute(query)
@@ -50,16 +74,11 @@ for query in queries:
     cols = [desc[0] for desc in c.description]
     df = pd.DataFrame(data, columns=cols)
     dfs.append(df)
-df = dfs[0]
-
-c.execute('select id from github_users')
-github_ids = c.fetchall()
-c.execute('select id from meetup_users')
-meetup_ids = c.fetchall()
 
 conn.commit()
 conn.close()
 
+df, df_gh_head, df_mu_head, df_gh_counts, df_mu_counts, github_users, meetup_users = dfs
 
 # NOTE: id is a unique and meaningless identifier
 df.drop(['id'], axis=1, inplace=True)
@@ -75,13 +94,6 @@ NEED TO DISCUSS
 ### NOTE: EDA ###
 cols = ['face_pics_processed', 'face_pics_matched']
 split_col = 'profile_pics_matched'
-for col in cols:
-    print '\n', col
-    print 'all:', sum(df[col].value_counts()), 'out of', df.shape[0]
-    print 'matches:', sum(df[df[split_col] == True][col].value_counts()), \
-            'out of', df[split_col].value_counts()[True]
-    print 'not matches:', sum(df[df[split_col] == False][col].value_counts()), \
-            'out of', df[split_col].value_counts()[False]
 # NOTE: face_pics exists for 971 out of 44534 (18 / 1111 matches, 953 / 43423 not matches)
 # NOTE: face_pics_processed === face_pics_matched === False when exists
 df.drop(['face_pics_processed', 'face_pics_matched'], axis=1, inplace=True)
@@ -94,11 +106,6 @@ df.drop(['github_meetup_combined'], axis=1, inplace=True)
 
 
 matches = df[df['profile_pics_matched']]
-
-print '# unique githubs in matches:', len(matches.github.value_counts())
-print '# unique meetups in matches:', len(matches.meetup.value_counts())
-print '# total githubs in matches:', sum(matches.github.value_counts())
-print '# total meetups in matches:', sum(matches.meetup.value_counts())
 
 """
 NEED TO ADDRESS DUPLICATE github, meetup IN matches
@@ -116,21 +123,6 @@ ASSUMPTION: No user has multiple profiles on the same site.
 github_taken = matches.github.unique()
 meetup_taken = matches.meetup.unique()
 
-print '# github taken by matches:', sum(df.github.apply(lambda x: x in github_taken))
-print '# meetup taken by matches:', sum(df.meetup.apply(lambda x: x in meetup_taken))
-
-print '# github or meetup taken by matches', sum(df.apply(lambda x:
-                                            x['github'] in github_taken or
-                                            x['meetup'] in meetup_taken
-                                            , axis=1))
-
-print '# github or meetup taken by matches but not a match',\
-        sum(df.apply(lambda x: (    x['github'] in github_taken
-                                    or
-                                    x['meetup'] in meetup_taken)
-                               and
-                               x['profile_pics_matched'] == False
-                                            , axis=1))
 
 not_matches = df[df.apply(lambda x: (x['github'] in github_taken
                                         or
@@ -138,8 +130,3 @@ not_matches = df[df.apply(lambda x: (x['github'] in github_taken
                                     and
                                     x['profile_pics_matched'] == False,
                             axis=1)]
-
-print '# unique githubs in not_matches:', len(not_matches.github.value_counts())
-print '# unique meetups in not_matches:', len(not_matches.meetup.value_counts())
-print '# total githubs in not_matches:', sum(not_matches.github.value_counts())
-print '# total meetups in not_matches:', sum(not_matches.meetup.value_counts())
