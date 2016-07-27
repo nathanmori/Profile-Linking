@@ -3,3 +3,4 @@ data
 project-proposals
 src/.ipynb_checkpoints
 forNathan.pem
+*.pyc
