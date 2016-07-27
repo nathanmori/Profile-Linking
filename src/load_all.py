@@ -4,6 +4,7 @@ import pdb
 from copy import deepcopy
 import os
 import pandas as pd
+from time import time
 
 def query_to_df(query):
     c.execute(query)
@@ -19,6 +20,9 @@ params = {
   'port': os.environ['TALENTFUL_PG_PORT']}
 conn = psycopg2.connect(**params)
 c = conn.cursor()
+
+print '\nconnection open'
+start_time = time()
 
 print '\nloading similars...'
 df_similars = query_to_df('''
@@ -98,3 +102,6 @@ not_matches = df_similars[df_similars.apply(lambda x: (x['github'] in github_tak
                                     and
                                     x['profile_pics_matched'] == False,
                             axis=1)]
+
+print '\nmatches and not_matches ready'
+print 'time taken = %d seconds' % (time() - start_time)
