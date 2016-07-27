@@ -11,6 +11,7 @@ sudo apt-get install postgres-xc
 sudo apt-get install libpq-dev python-dev
 sudo pip install psycopg2
 sudo pip install pandas
+sudo apt-get ipython-notebook
 
 #this might negate the need for some of the above lines
 wget http://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh
