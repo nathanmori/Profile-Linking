@@ -15,7 +15,7 @@ def ix_nulls(df):
 
 
 def clean(df):
-
+    pass
 
 if __name__ == '__main__':
     df = load_data()
