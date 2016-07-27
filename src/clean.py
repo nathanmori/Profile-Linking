@@ -12,11 +12,30 @@ def check_nulls(df):
         print df[col].isnull().value_counts()
 
 def ix_nulls(df):
-    np.argwhere(df.isnull().values)
+    print np.argwhere(df.isnull().values)
 
 
 def clean(df):
-    pass
+    df.drop(['github', 'meetup'], axis=1, inplace=True)
+    df['profile_pics_matched'] = df['profile_pics_matched'].apply(int)
+    """
+    CONVERT github_name AND meetup_name TO name_similarity
+    """
+    """
+    CONVERT github_text AND meetup_text (STRINGS) TO VECTORS
+    """
+
+    """
+    MISSING VALUES IN DISTANCE COLUMNS
+    FILLING WITH MEAN - CONSIDER LATER
+
+    PLOT HIST WITH AND WITHOUT FILLING
+    """
+    df.fillna(df.mean(), inplace=True)
+
+    return df
+
+
 
 if __name__ == '__main__':
     df = load_data()
