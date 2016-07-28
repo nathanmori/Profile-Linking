@@ -47,6 +47,8 @@ def clean(df):
     dist_means = df[dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
     df_clean[dist_cols] = df[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
 
+    """ Convert text vectors from strings to list of ints, fill missing values with empty text
+    CONSIDER DROPPING FOR TRAINING PURPOSES """ 
     text_vect_len = len(df_clean.github_text[0].split())
     df_clean.github_text = df_clean.github_text.apply(lambda x: map(int, x.split()) if x else [0] * text_vect_len)
     df_clean.meetup_text = df_clean.meetup_text.apply(lambda x: map(int, x.split()) if x else [0] * text_vect_len) 
