@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from time import time
 
+
 def open_conn():
 
     params = {
@@ -18,6 +19,7 @@ def open_conn():
     c = conn.cursor()
 
     return conn, c
+
 
 def close_conn(conn):
 
@@ -42,6 +44,7 @@ def query_to_df(query):
 
     return pd.DataFrame(data, columns=cols)
 
+
 def get_columns(table):
 
     query = 'select * from %s limit 0' % table
@@ -53,8 +56,8 @@ def get_columns(table):
     return cols
 
 
-
 def load_data():
+
     similars_cols = get_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier
     # NOTE: name_similar, profile_pics_processed === True`
@@ -69,14 +72,14 @@ def load_data():
     # NOTE: github_meetup_combined is missing values.  Could easily create, but not valuable
     # NOTE: github_meetup_combined is not significant
     similars_drops = ['id',
-                 'name_similar',
-                 'profile_pics_processed',
-                 'randomly_paired',
-                 'face_pics_processed',
-                 'face_pics_matched',
-                 'verified',
-                 'correct_match',
-                 'github_meetup_combined']
+                      'name_similar',
+                      'profile_pics_processed',
+                      'randomly_paired',
+                      'face_pics_processed',
+                      'face_pics_matched',
+                      'verified',
+                      'correct_match',
+                      'github_meetup_combined']
     similars_keeps = [col for col in similars_cols if col not in similars_drops]
     similars_col_string = ', '.join(similars_keeps)
 
