@@ -111,7 +111,7 @@ def model(df_engr, write=False):
     num_useless_feats = len(useless_feats)
 
     if write:
-    	fig = plt.figure(figsize=(15, 10))
+    	fig = plt.figure(figsize=(15, 12))
     	x_ind = np.arange(num_feats_plot)
     	plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3, align='center')
     	plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
@@ -123,11 +123,11 @@ def model(df_engr, write=False):
     end_time(start_time)
 
     print '\nThreshold: 0.5'
-    print 'RFC Train Data Accuracy:', mod_train_acc
+    print 'RFC Train Accuracy:', mod_train_acc
     print 'RFC Train Precision:', mod_train_prec
     print 'RFC Train Recall:', mod_train_rec
     print 'RFC Out Of Bag Accuracy:', mod_oob_acc
-    print 'RFC Test Data Accuracy:', mod_test_acc
+    print 'RFC Test Accuracy:', mod_test_acc
     print 'RFC Test Precision:', mod_test_prec
     print 'RFC Test Recall:', mod_test_rec
     print 'RFC Test AUC:', mod_test_auc
