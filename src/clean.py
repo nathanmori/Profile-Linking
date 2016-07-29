@@ -60,7 +60,7 @@ def clean(df):
     df_clean.github_text = df_clean.github_text.apply(lambda x: np.array(map(int, x.split())).reshape(1,-1) if x else np.zeros((1, text_vect_len), dtype=int))
     df_clean.meetup_text = df_clean.meetup_text.apply(lambda x: np.array(map(int, x.split())).reshape(1,-1) if x else np.zeros((1, text_vect_len), dtype=int))
 
-    end_time(start_time)
+    end_time(start)
  
     return df_clean
 

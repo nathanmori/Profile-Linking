@@ -119,7 +119,7 @@ def model(df_engr, write=False):
     	plt.savefig('../img/feature_importances')
     	plt.close('all')
 
-    end_time(start_time)
+    end_time(start)
 
     print '\nThreshold: 0.5'
     print 'RFC Train Accuracy: %.3f' % mod_train_acc

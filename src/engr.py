@@ -24,7 +24,7 @@ def engr(df_clean):
 
     df_clean.drop(['github_name', 'meetup_name', 'github_text', 'meetup_text'], axis=1, inplace=True)
 
-    end_time(start_time)
+    end_time(start)
 
     return df_clean
 
