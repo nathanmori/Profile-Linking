@@ -34,10 +34,10 @@ def end_time(start_time):
 
 def query_to_df(query):
 
-    print '\nExecuting query:'
-    print ' '.join(query.split())
-    print '...'
-    start_time = time()
+    #print '\nExecuting query:'
+    #print ' '.join(query.split())
+    #print '...'
+    #start_time = time()
 
     conn, c = open_conn()
     c.execute(query)
@@ -45,7 +45,7 @@ def query_to_df(query):
     cols = [desc[0] for desc in c.description]
     close_conn(conn)
 
-    end_time(start_time)
+    #end_time(start_time)
 
     return pd.DataFrame(data, columns=cols)
 
@@ -62,6 +62,9 @@ def get_columns(table):
 
 
 def load():
+
+    print 'Loading data...'
+    start_time = time()
 
     similars_cols = get_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier
@@ -114,6 +117,8 @@ def load():
             or similars.meetup in (select meetup from matches)
         ''' % similars_col_string
     df = query_to_df(matches_query)
+
+    end_time(start_time)
 
     return df
 """

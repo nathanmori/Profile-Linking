@@ -17,6 +17,9 @@ import pdb
 
 def model(df_engr):
 
+    print 'Modeling...'
+    start_time = time()
+
     df_copy = df_engr.copy()
 
     y = df_copy.pop('profile_pics_matched').values
@@ -38,7 +41,6 @@ def model(df_engr):
     """
     Model.
     """
-    pdb.set_trace()
     mod = RandomForestClassifier(oob_score=True, n_jobs=-1, random_state=0, \
                                  n_estimators=250).fit(X_train, y_train)
 
@@ -76,6 +78,9 @@ def model(df_engr):
         thresh_acc.append(accuracy_score(y_test, y_pred))
         thresh_prec.append(precision_score(y_test, y_pred))
         thresh_rec.append(recall_score(y_test, y_pred))
+
+    pdb.set_trace()
+
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
@@ -108,6 +113,8 @@ def model(df_engr):
     plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
     plt.title('RFC Feature Importances')
     plt.show()
+
+    end_time(start_time)
 
     return mod
 
