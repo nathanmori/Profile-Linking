@@ -57,39 +57,39 @@ def model(df_engr, write=False):
     y_test_prob = mod.predict_proba(X_test)[:,1]
 
     """
-    Calculate and print scores of interest (using threshold of 0.5).
+    Calculate scores of interest (using threshold of 0.5).
     """
-    print 'RFC Train Data Score:', mod.score(X_train, y_train)
-    print 'RFC Test Data Score:', mod.score(X_test, y_test)
-    print 'RFC Out Of Bag Score:', mod.oob_score_
-    print 'RFC Train Precision:', precision_score(y_train, y_train_pred)
-    print 'RFC Test Precision:', precision_score(y_test, y_test_pred)
-    print 'RFC Train Recall:', recall_score(y_train, y_train_pred)
-    print 'RFC Test Recall:', recall_score(y_test, y_test_pred)
-    print 'RFC AUC:', roc_auc_score(y_test, y_test_prob)
+    mod_train_acc = mod.score(X_train, y_train)
+    mod_train_prec = precision_score(y_train, y_train_pred)
+    mod_train_rec = recall_score(y_train, y_train_pred)
+    mod_oob_acc = mod.oob_score_
+    mod_test_acc = mod.score(X_test, y_test)
+    mod_test_prec = precision_score(y_test, y_test_pred)
+    mod_test_rec = recall_score(y_test, y_test_pred)
+    mod_test_auc = roc_auc_score(y_test, y_test_prob)
 
     """
     Calculate accuracy, precision, recall for varying thresholds.
     """
     if write:
-	thresholds = y_test_prob.copy()
-	thresholds.sort()
-	thresh_acc = []
-	thresh_prec = []
-	thresh_rec = []
-	for threshold in thresholds:
-	    y_pred = []
-	    for ytp in y_test_prob:
-		y_pred.append(int(ytp >= threshold))
-	    thresh_acc.append(accuracy_score(y_test, y_pred))
-	    thresh_prec.append(precision_score(y_test, y_pred))
+    	thresholds = y_test_prob.copy()
+    	thresholds.sort()
+    	thresh_acc = []
+    	thresh_prec = []
+    	thresh_rec = []
+    	for threshold in thresholds:
+    	    y_pred = []
+    	    for ytp in y_test_prob:
+    		y_pred.append(int(ytp >= threshold))
+    	    thresh_acc.append(accuracy_score(y_test, y_pred))
+    	    thresh_prec.append(precision_score(y_test, y_pred))
             thresh_rec.append(recall_score(y_test, y_pred))
-	plt.plot(thresholds, thresh_acc, label='accuracy')
-	plt.plot(thresholds, thresh_prec, label='precision')
-	plt.plot(thresholds, thresh_rec, label='recall')
-	plt.legend()
-	plt.savefig('performance')
-	plt.close('all')
+    	plt.plot(thresholds, thresh_acc, label='accuracy')
+    	plt.plot(thresholds, thresh_prec, label='precision')
+    	plt.plot(thresholds, thresh_rec, label='recall')
+    	plt.legend()
+    	plt.savefig('performance')
+    	plt.close('all')
 
     """
     Calculate and plot feature importances.
@@ -108,20 +108,34 @@ def model(df_engr, write=False):
         imps.append(imp)
         if imp == 0:
             useless_feats.append(feat)
-    print 'RFC num_feats:', len(feats)
-    print 'RFC num_useless_feats:', len(useless_feats)
+    num_feats = len(feats)
+    num_useless_feats = len(useless_feats)
 
     if write:
-	fig = plt.figure(figsize=(15, 10))
-	x_ind = np.arange(num_feats_plot)
-	plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3, align='center')
-	plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
-	plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
-	plt.title('RFC Feature Importances')
-	plt.savefig('feature_importances')
-	plt.close('all')
+    	fig = plt.figure(figsize=(15, 10))
+    	x_ind = np.arange(num_feats_plot)
+    	plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3, align='center')
+    	plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
+    	plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
+    	plt.title('RFC Feature Importances')
+    	plt.savefig('feature_importances')
+    	plt.close('all')
 
     end_time(start_time)
+
+    print 'Threshold: 0.5'
+    print 'RFC Train Data Accuracy:', mod_train_acc
+    print 'RFC Train Precision:', mod_train_prec
+    print 'RFC Train Recall:', mod_train_rec
+    print 'RFC Out Of Bag Accuracy:', mod_oob_acc
+    print 'RFC Test Data Accuracy:', mod_test_acc
+    print 'RFC Test Precision:', mod_test_prec
+    print 'RFC Test Recall:', mod_test_rec
+    print '\n'
+    print 'RFC Test AUC:', mod_test_auc
+    print '\n'
+    print 'RFC num_feats:', num_feats
+    print 'RFC num_useless_feats:', num_useless_feats
 
     return mod
 
