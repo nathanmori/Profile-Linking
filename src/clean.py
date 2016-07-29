@@ -50,8 +50,8 @@ def clean(df):
     """ Convert text vectors from strings to list of ints, fill missing values with empty text
     CONSIDER DROPPING FOR TRAINING PURPOSES """ 
     text_vect_len = len(df_clean.github_text[0].split())
-    df_clean.github_text = df_clean.github_text.apply(lambda x: map(int, x.split()) if x else [0] * text_vect_len)
-    df_clean.meetup_text = df_clean.meetup_text.apply(lambda x: map(int, x.split()) if x else [0] * text_vect_len) 
+    df_clean.github_text = df_clean.github_text.apply(lambda x: np.array(map(int, x.split())).reshape(1,-1) if x else np.zeros((1, text_vect_len), dtype=int))
+    df_clean.meetup_text = df_clean.meetup_text.apply(lambda x: np.array(map(int, x.split())).reshape(1,-1) if x else np.zeros((1, text_vect_len), dtype=int))
  
     return df_clean
 
