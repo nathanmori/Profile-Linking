@@ -35,9 +35,9 @@ def start_time(text):
     return time()
 
 
-def end_time(start_time):
+def end_time(start):
 
-    print 'DONE (%.2f seconds).' % (time() - start_time)
+    print 'DONE (%.2f seconds).' % (time() - start)
 
 
 def query_to_df(query):
@@ -67,7 +67,7 @@ def query_columns(table):
 
 def load():
 
-    start_time = start('Loading data...')
+    start = start_time('Loading data...')
 
     similars_cols = query_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier
