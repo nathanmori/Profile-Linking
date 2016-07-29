@@ -29,6 +29,9 @@ def clean(df):
  
     df_clean.drop(['github', 'meetup'], axis=1, inplace=True)
     df_clean['profile_pics_matched'] = df['profile_pics_matched'].apply(int)
+
+    df_clean['github_name'] = df['github_name'].apply(lambda x: ' '.join(x.split()))
+    df_clean['meetup_name'] = df['meetup_name'].apply(lambda x: ' '.join(x.split()))
     """
     CONVERT github_name AND meetup_name TO name_similarity
     """

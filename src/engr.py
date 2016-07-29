@@ -1,24 +1,22 @@
 from load import *
 from clean import *
 from sklearn.metrics.pairwise import cosine_similarity
+from name_tools import match 
 
 
-def name_sim(name1, name2):
-
-    pass
-
-
-def engr(df):
+def engr(df_clean):
 
     print 'Feature engineering...'
     start_time = time()
 
-    df['text_cos_sim'] = df.apply(lambda row: float(cosine_similarity(row['github_text'], row['meetup_text'])), axis=1)
-    df['name_sim'] = df.apply(lambda row: float(name_sim(row['github_name'], row['meetup_name'])), axis=1)
+    df_clean['text_sim'] = df_clean.apply(lambda row: float(cosine_similarity(row['github_text'], row['meetup_text'])), axis=1)
+    df_clean['name_sim'] = df_clean.apply(lambda row: match(row['github_name'], row['meetup_name']), axis=1)
+
+    df_clean.drop(['github_name', 'meetup_name', 'github_text', 'meetup_text'], axis=1, inplace=True)
 
     end_time(start_time)
 
-    return df
+    return df_clean
 
 
 if __name__ == '__main__':
