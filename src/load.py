@@ -27,6 +27,11 @@ def close_conn(conn):
     conn.close()
 
 
+def end_time(start_time):
+
+    print 'Done (%.2f seconds).' % (time() - start_time)
+
+
 def query_to_df(query):
 
     print '\nExecuting query:'
@@ -40,7 +45,7 @@ def query_to_df(query):
     cols = [desc[0] for desc in c.description]
     close_conn(conn)
 
-    print 'Done (%.2f seconds).' % (time() - start_time)
+    end_time(start_time)
 
     return pd.DataFrame(data, columns=cols)
 
@@ -56,7 +61,7 @@ def get_columns(table):
     return cols
 
 
-def load_data():
+def load():
 
     similars_cols = get_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier
@@ -126,4 +131,4 @@ ASSUMPTION: No user has multiple profiles on the same site.
 """
 
 if __name__ == '__main__':
-    load_data()
+    load()

@@ -5,7 +5,8 @@ from copy import deepcopy
 import os
 import numpy as np
 import pandas as pd
-from load_data import load_data
+from load import *
+from time import time
 
 
 def check_nulls(df):
@@ -20,6 +21,9 @@ def ix_nulls(df):
 
 
 def clean(df):
+
+    print 'Cleaning...'
+    start_time = time()
     
     df_clean = df.copy()
  
@@ -52,10 +56,12 @@ def clean(df):
     text_vect_len = len(df_clean.github_text[0].split())
     df_clean.github_text = df_clean.github_text.apply(lambda x: np.array(map(int, x.split())).reshape(1,-1) if x else np.zeros((1, text_vect_len), dtype=int))
     df_clean.meetup_text = df_clean.meetup_text.apply(lambda x: np.array(map(int, x.split())).reshape(1,-1) if x else np.zeros((1, text_vect_len), dtype=int))
+
+    end_time(start_time)
  
     return df_clean
 
 
 if __name__ == '__main__':
-    df = load_data()
+    df = load()
     df_clean = clean(df)
