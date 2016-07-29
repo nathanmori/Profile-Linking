@@ -118,7 +118,7 @@ def load():
         ''' % similars_col_string
     df = query_to_df(matches_query)
 
-    end_time(start_time)
+    end_time(start)
 
     return df
 
