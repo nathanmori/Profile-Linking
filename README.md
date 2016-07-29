@@ -3,6 +3,8 @@
 ## CRISP-DM Workflow
 <img src="./images/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" style="width: 500px;"/>
 
+<img src="./images/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" style="width: 50px;"/>
+
 ### Business Understanding
 Talentful seeks to identify ideal candidates to meet client hiring needs. Social media profiles are a great way to gain information on potential recommendations.
 
