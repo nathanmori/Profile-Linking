@@ -28,6 +28,13 @@ def close_conn(conn):
     conn.close()
 
 
+def start(text):
+
+    sys.stdout.write(text.ljust(25))
+
+    return time()
+
+
 def end_time(start_time):
 
     print 'DONE (%.2f seconds).' % (time() - start_time)
@@ -64,8 +71,7 @@ def get_columns(table):
 
 def load():
 
-    sys.stdout.write('Loading data...')
-    start_time = time()
+    start_time = start('Loading data...')
 
     similars_cols = get_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier

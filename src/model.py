@@ -21,8 +21,7 @@ from sys import argv
 
 def model(df_engr, write=False):
 
-    sys.stdout.write('Modeling...')
-    start_time = time()
+    start_time = start('Modeling...')
 
     df_copy = df_engr.copy()
 
@@ -123,7 +122,7 @@ def model(df_engr, write=False):
 
     end_time(start_time)
 
-    print 'Threshold: 0.5'
+    print '\nThreshold: 0.5'
     print 'RFC Train Data Accuracy:', mod_train_acc
     print 'RFC Train Precision:', mod_train_prec
     print 'RFC Train Recall:', mod_train_rec
@@ -131,10 +130,8 @@ def model(df_engr, write=False):
     print 'RFC Test Data Accuracy:', mod_test_acc
     print 'RFC Test Precision:', mod_test_prec
     print 'RFC Test Recall:', mod_test_rec
-    print '\n'
     print 'RFC Test AUC:', mod_test_auc
-    print '\n'
-    print 'RFC num_feats:', num_feats
+    print '\nRFC num_feats:', num_feats
     print 'RFC num_useless_feats:', num_useless_feats
 
     return mod
