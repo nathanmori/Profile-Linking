@@ -143,4 +143,4 @@ ASSUMPTION: No user has multiple profiles on the same site.
 """
 
 if __name__ == '__main__':
-    load()
+    df = load()

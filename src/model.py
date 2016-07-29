@@ -24,7 +24,6 @@ def model(df_engr, write=False):
     start_time = start('Modeling...')
 
     df_copy = df_engr.copy()
-
     y = df_copy.pop('profile_pics_matched').values
     X = df_copy.values
 
