@@ -16,9 +16,10 @@ import operator
 import seaborn
 import pdb
 import sys
+from sys import argv
 
 
-def model(df_engr):
+def model(df_engr, write=False):
 
     sys.stdout.write('Modeling...')
     start_time = time()
@@ -31,9 +32,10 @@ def model(df_engr):
     """
     Plot scatter matrix.
     """
-    scatter_matrix(df_copy, alpha=0.2, figsize=(15,12))
-    plt.savefig('scatter_matrix')
-    plt.close('all')
+    if write:
+        scatter_matrix(df_copy, alpha=0.2, figsize=(15,12))
+        plt.savefig('scatter_matrix')
+        plt.close('all')
 
     """
     Train/test split.
@@ -69,24 +71,25 @@ def model(df_engr):
     """
     Calculate accuracy, precision, recall for varying thresholds.
     """
-    thresholds = y_test_prob.copy()
-    thresholds.sort()
-    thresh_acc = []
-    thresh_prec = []
-    thresh_rec = []
-    for threshold in thresholds:
-        y_pred = []
-        for ytp in y_test_prob:
-            y_pred.append(int(ytp >= threshold))
-        thresh_acc.append(accuracy_score(y_test, y_pred))
-        thresh_prec.append(precision_score(y_test, y_pred))
-        thresh_rec.append(recall_score(y_test, y_pred))
-    plt.plot(thresholds, thresh_acc, label='accuracy')
-    plt.plot(thresholds, thresh_prec, label='precision')
-    plt.plot(thresholds, thresh_rec, label='recall')
-    plt.legend()
-    plt.savefig('performance')
-    plt.close('all')
+    if write:
+	thresholds = y_test_prob.copy()
+	thresholds.sort()
+	thresh_acc = []
+	thresh_prec = []
+	thresh_rec = []
+	for threshold in thresholds:
+	    y_pred = []
+	    for ytp in y_test_prob:
+		y_pred.append(int(ytp >= threshold))
+	    thresh_acc.append(accuracy_score(y_test, y_pred))
+	    thresh_prec.append(precision_score(y_test, y_pred))
+            thresh_rec.append(recall_score(y_test, y_pred))
+	plt.plot(thresholds, thresh_acc, label='accuracy')
+	plt.plot(thresholds, thresh_prec, label='precision')
+	plt.plot(thresholds, thresh_rec, label='recall')
+	plt.legend()
+	plt.savefig('performance')
+	plt.close('all')
 
     """
     Calculate and plot feature importances.
@@ -107,14 +110,16 @@ def model(df_engr):
             useless_feats.append(feat)
     print 'RFC num_feats:', len(feats)
     print 'RFC num_useless_feats:', len(useless_feats)
-    fig = plt.figure(figsize=(15, 10))
-    x_ind = np.arange(num_feats_plot)
-    plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3, align='center')
-    plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
-    plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
-    plt.title('RFC Feature Importances')
-    plt.savefig('feature_importances')
-    plt.close('all')
+
+    if write:
+	fig = plt.figure(figsize=(15, 10))
+	x_ind = np.arange(num_feats_plot)
+	plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3, align='center')
+	plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
+	plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
+	plt.title('RFC Feature Importances')
+	plt.savefig('feature_importances')
+	plt.close('all')
 
     end_time(start_time)
 
@@ -123,7 +128,9 @@ def model(df_engr):
 
 if __name__ == '__main__':
 
+    write = True if 'write' in argv else False
+
     df = load()
     df_clean = clean(df)
     df_engr = engr(df_clean)
-    mod = model(df_engr)
+    mod = model(df_engr, write)
