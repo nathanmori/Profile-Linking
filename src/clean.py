@@ -23,7 +23,7 @@ def ix_nulls(df):
 
 def clean(df):
 
-    start_time = start('Cleaning...')
+    start = start_time('Cleaning...')
     
     df_clean = df.copy()
  

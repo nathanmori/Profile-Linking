@@ -21,7 +21,7 @@ from sys import argv
 
 def model(df_engr, write=False):
 
-    start_time = start('Modeling...')
+    start = start_time('Modeling...')
 
     df_copy = df_engr.copy()
     y = df_copy.pop('profile_pics_matched').values

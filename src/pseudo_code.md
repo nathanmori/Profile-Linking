@@ -1,12 +1,10 @@
-## EDA.py
+# Pseudo-Code
 
-- Scratch work (not referenced into other files).
+## load.py
 
-## load_data.py
-
-- Open psycopg2 connection
-- Query data and store in dataframe(s)
-- Close psycopg2 connection
+- Identify columns
+- Drop unhelpful columns
+- Query data with known labels, store to dataframe
 - Return dataframe(s)
 
 ## clean.py
@@ -14,6 +12,9 @@
 - Clean data
 - Feature engineering
 - Return prepared data
+
+## engr.py
+-
 
 ## model.py
 

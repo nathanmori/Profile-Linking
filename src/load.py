@@ -28,7 +28,7 @@ def close_conn(conn):
     conn.close()
 
 
-def start(text):
+def start_time(text):
 
     sys.stdout.write(text.ljust(25))
 
@@ -44,8 +44,6 @@ def query_to_df(query):
 
     #print '\nExecuting query:'
     #print ' '.join(query.split())
-    #print '...'
-    #start_time = time()
 
     conn, c = open_conn()
     c.execute(query)
@@ -53,12 +51,10 @@ def query_to_df(query):
     cols = [desc[0] for desc in c.description]
     close_conn(conn)
 
-    #end_time(start_time)
-
     return pd.DataFrame(data, columns=cols)
 
 
-def get_columns(table):
+def query_columns(table):
 
     query = 'select * from %s limit 0' % table
     conn, c = open_conn()
@@ -73,14 +69,11 @@ def load():
 
     start_time = start('Loading data...')
 
-    similars_cols = get_columns('github_meetup_staging')
+    similars_cols = query_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier
     # NOTE: name_similar, profile_pics_processed === True`
     # NOTE: randomly_paired === False
-    # NOTE: profile_pics vs face_pics?
-    """
-    NEED TO DISCUSS
-    """
+    # NOTE: ignore face_pics
     # NOTE: face_pics exists for 971 out of 44534 (18 / 1111 matches, 953 / 43423 not matches)
     # NOTE: face_pics_processed === face_pics_matched === False when exists
     # NOTE: profile_pics_matched === verified === correct_match
@@ -128,18 +121,11 @@ def load():
     end_time(start_time)
 
     return df
+
 """
 NEED TO ADDRESS DUPLICATE github, meetup IN matches
-- same person? consider a match - ALSO CONSIDER ASSUMPTION BELOW
+- same person? consider a match OR label for multi-profiles?
 - different person? drop rows OR create separate label for non-match matches
-"""
-
-"""
-NEED TO CONSIDER IF github/meetup TAKEN BY A MATCH BIASES THE RESULTS
-"""
-
-"""
-ASSUMPTION: No user has multiple profiles on the same site.
 """
 
 if __name__ == '__main__':

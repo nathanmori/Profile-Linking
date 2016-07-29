@@ -8,7 +8,7 @@ import sys
 
 def engr(df_clean):
 
-    start_time = start('Feature engineering...')
+    start = start_time('Feature engineering...')
 
     #X_github = np.array(df_clean['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
     #X_meetup = np.array(df_clean['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
