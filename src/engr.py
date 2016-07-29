@@ -1,12 +1,13 @@
 from load import *
 from clean import *
 from sklearn.metrics.pairwise import cosine_similarity
-from name_tools import match 
+from name_tools import match
+import sys
 
 
 def engr(df_clean):
 
-    print 'Feature engineering...'
+    sys.stdout.write('Feature engineering...')
     start_time = time()
 
     df_clean['text_sim'] = df_clean.apply(lambda row: float(cosine_similarity(row['github_text'], row['meetup_text'])), axis=1)

@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from load import *
 from time import time
+import sys
 
 
 def check_nulls(df):
@@ -22,7 +23,7 @@ def ix_nulls(df):
 
 def clean(df):
 
-    print 'Cleaning...'
+    sys.stdout.write('Cleaning...')
     start_time = time()
     
     df_clean = df.copy()

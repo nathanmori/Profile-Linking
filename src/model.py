@@ -15,11 +15,12 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_a
 import operator
 import seaborn
 import pdb
+import sys
 
 
 def model(df_engr):
 
-    print 'Modeling...'
+    sys.stdout.write('Modeling...')
     start_time = time()
 
     df_copy = df_engr.copy()

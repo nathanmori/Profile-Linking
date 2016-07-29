@@ -5,6 +5,7 @@ from copy import deepcopy
 import os
 import pandas as pd
 from time import time
+import sys
 
 
 def open_conn():
@@ -29,7 +30,7 @@ def close_conn(conn):
 
 def end_time(start_time):
 
-    print 'Done (%.2f seconds).' % (time() - start_time)
+    print 'DONE (%.2f seconds).' % (time() - start_time)
 
 
 def query_to_df(query):
@@ -63,7 +64,7 @@ def get_columns(table):
 
 def load():
 
-    print 'Loading data...'
+    sys.stdout.write('Loading data...')
     start_time = time()
 
     similars_cols = get_columns('github_meetup_staging')
