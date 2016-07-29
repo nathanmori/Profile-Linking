@@ -1,7 +1,7 @@
-## **Linking Profiles Across Social Media Sites By User**
-## CRISP-DM Workflow
+# Linking Profiles Across Social Media Sites By User
 
-![Image of CRISP-DM](https://upload.wikimedia.org/wikipedia/commons/b/b9/CRISP-DM_Process_Diagram.png)
+## CRISP-DM Workflow
+<img src="./images/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" style="width: 500px;"/>
 
 ### Business Understanding
 Talentful seeks to identify ideal candidates to meet client hiring needs. Social media profiles are a great way to gain information on potential recommendations.
