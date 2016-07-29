@@ -32,7 +32,7 @@ def model(df_engr, write=False):
     """
     if write:
         scatter_matrix(df_copy, alpha=0.2, figsize=(15,12))
-        plt.savefig('scatter_matrix')
+        plt.savefig('../img/scatter_matrix')
         plt.close('all')
 
     """
@@ -86,7 +86,7 @@ def model(df_engr, write=False):
     	plt.plot(thresholds, thresh_prec, label='precision')
     	plt.plot(thresholds, thresh_rec, label='recall')
     	plt.legend()
-    	plt.savefig('performance')
+    	plt.savefig('../img/performance')
     	plt.close('all')
 
     """
@@ -116,22 +116,22 @@ def model(df_engr, write=False):
     	plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
     	plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
     	plt.title('RFC Feature Importances')
-    	plt.savefig('feature_importances')
+    	plt.savefig('../img/feature_importances')
     	plt.close('all')
 
     end_time(start_time)
 
     print '\nThreshold: 0.5'
-    print 'RFC Train Accuracy:', mod_train_acc
-    print 'RFC Train Precision:', mod_train_prec
-    print 'RFC Train Recall:', mod_train_rec
-    print 'RFC Out Of Bag Accuracy:', mod_oob_acc
-    print 'RFC Test Accuracy:', mod_test_acc
-    print 'RFC Test Precision:', mod_test_prec
-    print 'RFC Test Recall:', mod_test_rec
-    print 'RFC Test AUC:', mod_test_auc
-    print '\nRFC num_feats:', num_feats
-    print 'RFC num_useless_feats:', num_useless_feats
+    print 'RFC Train Accuracy: %.3f' % mod_train_acc
+    print 'RFC Train Precision: %.3f' % mod_train_prec
+    print 'RFC Train Recall: %.3f' % mod_train_rec
+    print 'RFC Out Of Bag Accuracy: %.3f' % mod_oob_acc
+    print 'RFC Test Accuracy: %.3f' % mod_test_acc
+    print 'RFC Test Precision: %.3f' % mod_test_prec
+    print 'RFC Test Recall: %.3f' % mod_test_rec
+    print 'RFC Test AUC: %.3f' % mod_test_auc
+    print '\nRFC num_feats: %d' % num_feats
+    print 'RFC num_useless_feats: %d' % num_useless_feats
 
     return mod
 
