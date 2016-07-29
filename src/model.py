@@ -4,6 +4,8 @@ from engr import *
 import numpy as np
 import pandas as pd
 from pandas.tools.plotting import scatter_matrix
+#import matplotlib
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
@@ -28,9 +30,9 @@ def model(df_engr):
     """
     Plot scatter matrix.
     """
-    #scatter_matrix(df_copy, alpha=0.2, figsize=(15,12))
-    #plt.savefig('scatter_matrix')
-    #plt.close('all')
+    scatter_matrix(df_copy, alpha=0.2, figsize=(15,12))
+    plt.savefig('scatter_matrix')
+    plt.close('all')
 
     """
     Train/test split.
@@ -78,20 +80,18 @@ def model(df_engr):
         thresh_acc.append(accuracy_score(y_test, y_pred))
         thresh_prec.append(precision_score(y_test, y_pred))
         thresh_rec.append(recall_score(y_test, y_pred))
-
-    pdb.set_trace()
-
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
     plt.legend()
-    plt.show()
+    plt.savefig('performance')
+    plt.close('all')
 
     """
     Calculate and plot feature importances.
     Useless features from earlier runs have been removed in clean_data.
     """
-    num_feats_plot = 15
+    num_feats_plot = min(15, df_copy.shape[1])
     feats = df_copy.columns
     imps = mod.feature_importances_
     feats_imps = zip(feats, imps)
@@ -112,7 +112,8 @@ def model(df_engr):
     plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
     plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
     plt.title('RFC Feature Importances')
-    plt.show()
+    plt.savefig('feature_importances')
+    plt.close('all')
 
     end_time(start_time)
 

@@ -16,6 +16,14 @@ sudo pip install pandas
 sudo apt-get ipython-notebook
 apt-get install libsm6 libxrender1 libfontconfig1
 conda install seaborn
+sudo apt-get build-dep matplotlib
+pip -U matplotlib
+
+#>>> import matplotlib
+#>>> matplotlib.matplotlib_fname()
+# This is the file location in Ubuntu
+#'/etc/matplotlibrc'
+#Then modify the backend in that file to Agg. That is it.
 
 #this might negate the need for some of the above lines
 wget http://repo.continuum.io/archive/Anaconda2-4.1.1-Linux-x86_64.sh
