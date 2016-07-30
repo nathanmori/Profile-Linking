@@ -78,7 +78,7 @@ def load():
     # NOTE: face_pics_processed === face_pics_matched === False when exists
     # NOTE: profile_pics_matched === verified === correct_match
     # NOTE: github_meetup_combined is missing values.  Could easily create, but not valuable
-    # NOTE: github_meetup_combined is not significant
+    # NOTE: github, meetup, github_meetup_combined is not significant
     similars_drops = ['id',
                       'name_similar',
                       'profile_pics_processed',
@@ -87,7 +87,9 @@ def load():
                       'face_pics_matched',
                       'verified',
                       'correct_match',
-                      'github_meetup_combined']
+                      'github_meetup_combined',
+                      'github',
+                      'meetup']
     similars_keeps = [col for col in similars_cols if col not in similars_drops]
     similars_col_string = ', '.join(similars_keeps)
 

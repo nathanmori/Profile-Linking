@@ -27,7 +27,7 @@ def clean(df):
     
     df_clean = df.copy()
     df_clean['match'] = df['profile_pics_matched'].apply(int)
-    df_clean.drop(['github', 'meetup', 'profile_pics_matched'], axis=1, inplace=True)
+    df_clean.drop(['profile_pics_matched'], axis=1, inplace=True)
     df_clean['github_name'] = df['github_name'].apply(lambda x: ' '.join(x.split()))
     df_clean['meetup_name'] = df['meetup_name'].apply(lambda x: ' '.join(x.split()))
 

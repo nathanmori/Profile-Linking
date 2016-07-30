@@ -12,11 +12,19 @@ from sklearn.cross_validation import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from sklearn.feature_extraction.text import TfidfTransformer
 import operator
 import seaborn
 import pdb
 import sys
 from sys import argv
+
+
+def print_evals(model_name, evals):
+    
+    print model_name
+    for key, value in evals:
+        print ('  ' + key + ':').ljust(25), value if type(value) == int else ('%.1f%%' % (value * 100))
 
 
 def model(df_engr, write=False):
@@ -58,6 +66,25 @@ def model(df_engr, write=False):
     dist_means = df_X_train[dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
     df_X_train[dist_cols] = df_X_train[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
     df_X_test[dist_cols] = df_X_test[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
+
+    """CONVERT TO MODEL CLASS....FIT:"""
+    X_train_github = np.array(df_X_train['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
+    X_train_meetup = np.array(df_X_train['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
+    tfidf_github = TfidfTransformer()
+    tfidf_meetup = TfidfTransformer()
+    df_X_train['github_text'] = tfidf_github.fit_transform(X_train_github).toarray().tolist()
+    df_X_train['meetup_text'] = tfidf_meetup.fit_transform(X_train_meetup).toarray().tolist()
+    """TRANSFORM:"""
+    X_test_github = np.array(df_X_test['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
+    X_test_meetup = np.array(df_X_test['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
+    df_X_test['github_text'] = tfidf_github.transform(X_test_github).toarray().tolist()
+    df_X_test['meetup_text'] = tfidf_meetup.transform(X_test_meetup).toarray().tolist()
+
+    df_X_train['text_sim'] = df_X_train.apply(lambda row: float(cosine_similarity(np.array(row['github_text']).reshape(1,-1), np.array(row['meetup_text']).reshape(1,-1))), axis=1)
+    df_X_test['text_sim'] = df_X_test.apply(lambda row: float(cosine_similarity(np.array(row['github_text']).reshape(1,-1), np.array(row['meetup_text']).reshape(1,-1))), axis=1)
+    df_X_train.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
+    df_X_test.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
+
     X_train = df_X_train.values
     X_test = df_X_test.values
 
@@ -77,14 +104,15 @@ def model(df_engr, write=False):
     """
     Calculate scores of interest (using threshold of 0.5).
     """
-    mod_train_acc = mod.score(X_train, y_train)
-    mod_train_prec = precision_score(y_train, y_train_pred)
-    mod_train_rec = recall_score(y_train, y_train_pred)
-    mod_oob_acc = mod.oob_score_
-    mod_test_acc = mod.score(X_test, y_test)
-    mod_test_prec = precision_score(y_test, y_test_pred)
-    mod_test_rec = recall_score(y_test, y_test_pred)
-    mod_test_auc = roc_auc_score(y_test, y_test_prob)
+    evals = []
+    evals.append(('Train Accuracy', mod.score(X_train, y_train)))
+    evals.append(('Train Precision', precision_score(y_train, y_train_pred)))
+    evals.append(('Train Recall', recall_score(y_train, y_train_pred)))
+    evals.append(('OOB Accuracy', mod.oob_score_))
+    evals.append(('Test Accuracy', mod.score(X_test, y_test)))
+    evals.append(('Test Precision', precision_score(y_test, y_test_pred)))
+    evals.append(('Test Recall', recall_score(y_test, y_test_pred)))
+    evals.append(('Test AUC', roc_auc_score(y_test, y_test_prob)))
 
     """
     Calculate accuracy, precision, recall for varying thresholds.
@@ -126,8 +154,8 @@ def model(df_engr, write=False):
         imps.append(imp)
         if imp == 0:
             useless_feats.append(feat)
-    num_feats = len(feats)
-    num_useless_feats = len(useless_feats)
+    evals.append(('# Features', len(feats)))
+    evals.append(('# Useless Features', len(useless_feats)))
 
     if write:
     	fig = plt.figure(figsize=(15, 12))
@@ -141,17 +169,7 @@ def model(df_engr, write=False):
 
     end_time(start)
 
-    print '\nThreshold: 0.5'
-    print 'RFC Train Accuracy: %.3f' % mod_train_acc
-    print 'RFC Train Precision: %.3f' % mod_train_prec
-    print 'RFC Train Recall: %.3f' % mod_train_rec
-    print 'RFC Out Of Bag Accuracy: %.3f' % mod_oob_acc
-    print 'RFC Test Accuracy: %.3f' % mod_test_acc
-    print 'RFC Test Precision: %.3f' % mod_test_prec
-    print 'RFC Test Recall: %.3f' % mod_test_rec
-    print 'RFC Test AUC: %.3f' % mod_test_auc
-    print '\nRFC num_feats: %d' % num_feats
-    print 'RFC num_useless_feats: %d' % num_useless_feats
+    print_evals('Random Forest', evals)
 
     return mod
 
