@@ -2,6 +2,7 @@
 
 ## CRISP-DM Workflow
 <img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
+
 (wikipedia.org)
 
 ### Business Understanding
