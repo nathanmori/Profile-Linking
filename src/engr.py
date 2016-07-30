@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Author: Nathan Mori <nathanmori@gmail.com>
+
 from load import *
 from clean import *
-from sklearn.metrics.pairwise import cosine_similarity
 from name_tools import match
 import sys
 
@@ -11,7 +14,9 @@ def engr(df_clean):
 
     start = start_time('Feature engineering...')
 
-    df_clean['name_sim'] = df_clean.apply(lambda row: match(row['github_name'], row['meetup_name']), axis=1)
+    df_clean['name_sim'] = df_clean.apply(lambda row: match(row['github_name'],
+                                                            row['meetup_name'])
+                                          , axis=1)
     df_clean.drop(['github_name', 'meetup_name'], axis=1, inplace=True)
 
     end_time(start)

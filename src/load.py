@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+# Author: Nathan Mori <nathanmori@gmail.com>
+
 import psycopg2
 from datetime import datetime
 import pdb
@@ -9,6 +13,38 @@ import sys
 
 
 def open_conn():
+    """
+    Compute cosine similarity between samples in X and Y.
+
+    Cosine similarity, or the cosine kernel, computes similarity as the
+    normalized dot product of X and Y:
+
+        K(X, Y) = <X, Y> / (||X||*||Y||)
+
+    On L2-normalized data, this function is equivalent to linear_kernel.
+
+    Read more in the :ref:`User Guide <cosine_similarity>`.
+
+    Parameters
+    ----------
+    X : ndarray or sparse array, shape: (n_samples_X, n_features)
+        Input data.
+
+    Y : ndarray or sparse array, shape: (n_samples_Y, n_features)
+        Input data. If ``None``, the output will be the pairwise
+        similarities between all samples in ``X``.
+
+    dense_output : boolean (optional), default True
+        Whether to return dense output even when the input is sparse. If
+        ``False``, the output is sparse if both input arrays are sparse.
+
+        .. versionadded:: 0.17
+           parameter *dense_output* for sparse output.
+
+    Returns
+    -------
+    kernel matrix : array
+        An array with shape (n_samples_X, n_samples_Y)."""
 
     params = {
       'database': os.environ['TALENTFUL_PG_DATABASE'],
@@ -69,29 +105,27 @@ def load():
 
     start = start_time('Loading data...')
 
-    similars_cols = query_columns('github_meetup_staging')
+    cols = query_columns('github_meetup_staging')
     # NOTE: id is a unique and meaningless identifier
-    # NOTE: name_similar, profile_pics_processed === True`
+    # NOTE: name_similar, profile_pics_processed === True
     # NOTE: randomly_paired === False
     # NOTE: ignore face_pics
-    # NOTE: face_pics exists for 971 out of 44534 (18 / 1111 matches, 953 / 43423 not matches)
-    # NOTE: face_pics_processed === face_pics_matched === False when exists
     # NOTE: profile_pics_matched === verified === correct_match
-    # NOTE: github_meetup_combined is missing values.  Could easily create, but not valuable
+    # NOTE: github_meetup_combined is missing values
     # NOTE: github, meetup, github_meetup_combined is not significant
-    similars_drops = ['id',
-                      'name_similar',
-                      'profile_pics_processed',
-                      'randomly_paired',
-                      'face_pics_processed',
-                      'face_pics_matched',
-                      'verified',
-                      'correct_match',
-                      'github_meetup_combined',
-                      'github',
-                      'meetup']
-    similars_keeps = [col for col in similars_cols if col not in similars_drops]
-    similars_col_string = ', '.join(similars_keeps)
+    drop_cols = ['id',
+                 'name_similar',
+                 'profile_pics_processed',
+                 'randomly_paired',
+                 'face_pics_processed',
+                 'face_pics_matched',
+                 'verified',
+                 'correct_match',
+                 'github_meetup_combined',
+                 'github',
+                 'meetup']
+    keep_cols = [col for col in cols if col not in drop_cols]
+    col_string = ', '.join(keep_cols)
 
     matches_query = '''
         with matches as
@@ -117,7 +151,7 @@ def load():
         where
             similars.github in (select github from matches)
             or similars.meetup in (select meetup from matches)
-        ''' % similars_col_string
+        ''' % col_string
     df = query_to_df(matches_query)
 
     end_time(start)
