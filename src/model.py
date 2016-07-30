@@ -74,10 +74,10 @@ class premodel(object):
             way to get text vect length """
         text_vect_len = len(df_X.github_text.iloc[0].split())
 
-        df_X['github_text'] = df_clean['github_text'].apply(lambda x:
+        df_X['github_text'] = df_X['github_text'].apply(lambda x:
                                 np.array(map(int, x.split())).reshape(1,-1)
                                 if x else np.zeros((1, text_vect_len), dtype=int))
-        df_X['meetup_text'] = df_clean['meetup_text'].apply(lambda x:
+        df_X['meetup_text'] = df_X['meetup_text'].apply(lambda x:
                                 np.array(map(int, x.split())).reshape(1,-1)
                                 if x else np.zeros((1, text_vect_len), dtype=int))
 
@@ -85,6 +85,8 @@ class premodel(object):
                                                 x.flatten().tolist()).tolist())
         X_meetup = np.array(df_X['meetup_text'].apply(lambda x:
                                                 x.flatten().tolist()).tolist())
+
+        #X_github =
 
         #print 'retyped in model for tfidf.transform'
         #print '  type:', type(X_github)
