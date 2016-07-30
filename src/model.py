@@ -27,19 +27,83 @@ from sys import argv
 
 
 class premodel(object):
+    """"""
 
     def __init__(self):
-        pass
+        """"""
+
+        self.dist_cols = ['min_dist_km', 'avg_dist_km', 'median_dist_km', 'max_dist_km']
+
+        return self
 
     def fit(self, df_X_train):
-        pass
+        """"""
+
+        self.dist_means = df_X_train[self.dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
+
+        X_train_github = np.array(df_X_train['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
+        X_train_meetup = np.array(df_X_train['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
+        self.tfidf_github = TfidfTransformer().fit(X_train_github)
+        self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
+
+        return self
 
     def transform(self, df_X):
-        pass
+        """"""
+
+        # Fill empty distances with mean of existing train values
+        df_X[self.dist_cols] = df_X[self.dist_cols].fillna(self.dist_means) \
+                                        .apply(lambda ser: ser.apply(float))
+
+        print 'after engr, before model'
+        print '  type:', type(df_X['github_text'])
+        print '  len :', len(df_X['github_text'])
+        print '  [0] :', df_X['github_text'][0]
+
+        X_github = np.array(df_X['github_text'].apply(lambda x:
+                                                x.flatten().tolist()).tolist())
+        X_meetup = np.array(df_X['meetup_text'].apply(lambda x:
+                                                x.flatten().tolist()).tolist())
+
+        print 'retyped in model for tfidf.transform'
+        print '  type:', type(df_X['github_text'])
+        print '  len :', len(df_X['github_text'])
+        print '  [0] :', df_X['github_text'][0]
+
+        X_github_tfidf = tfidf_github.transform(X_github)
+        X_meetup_tfidf = tfidf_meetup.transform(X_meetup)
+        df_X['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
+                                  zip(X_github_tfidf, X_meetup_tfidf)]
+        df_X.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
+
+        X = df_X.values
+        return X
+
+    """
+    GLOBAL FIT / TRANSFORM
+    (model that applies to all algorithms, so performed once up front)
+
+    MISSING VALUES IN DISTANCE COLUMNS
+    FILLING WITH MEAN - CONSIDER LATER
+
+    later: all four distances missing at 6 index locations:
+        [ 717] [1409] [1433] [1463] [1694] [1986]
+    could drop, but assuming we want model to be able to handle,
+        will fill with mean
+
+    PLOT HIST WITH AND WITHOUT FILLING"""
+
+
+
+    """CONVERT TO MODEL CLASS....FIT:"""
+    """TRANSFORM:"""
+
+
+
 
 
 def print_evals(model_name, evals):
-    
+
     print model_name
     for key, value in evals:
         print ('  ' + key + ':').ljust(25), \
@@ -66,51 +130,13 @@ def model(df_engr, write=False):
     """
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
-
     # suppress warning (that changes to df_X_train and df_X_test won't make it
     # back to df_copy
     pd.options.mode.chained_assignment = None  # default='warn'
 
-    """
-    GLOBAL FIT / TRANSFORM
-    (model that applies to all algorithms, so performed once up front)
-
-    MISSING VALUES IN DISTANCE COLUMNS
-    FILLING WITH MEAN - CONSIDER LATER
-
-    later: all four distances missing at 6 index locations:
-        [ 717] [1409] [1433] [1463] [1694] [1986]
-    could drop, but assuming we want model to be able to handle,
-        will fill with mean
-
-    PLOT HIST WITH AND WITHOUT FILLING"""
-    dist_cols = ['min_dist_km', 'avg_dist_km', 'median_dist_km', 'max_dist_km']
-    dist_means = df_X_train[dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
-    df_X_train.loc[:, dist_cols] = df_X_train[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
-    df_X_test.loc[:, dist_cols] = df_X_test[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
-
-    """CONVERT TO MODEL CLASS....FIT:"""
-    X_train_github = np.array(df_X_train['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
-    X_train_meetup = np.array(df_X_train['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
-    tfidf_github = TfidfTransformer()
-    tfidf_meetup = TfidfTransformer()
-    X_train_github_tfidf = tfidf_github.fit_transform(X_train_github)
-    X_train_meetup_tfidf = tfidf_meetup.fit_transform(X_train_meetup)
-    """TRANSFORM:"""
-    X_test_github = np.array(df_X_test['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
-    X_test_meetup = np.array(df_X_test['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
-    X_test_github_tfidf = tfidf_github.transform(X_test_github)
-    X_test_meetup_tfidf = tfidf_meetup.transform(X_test_meetup)
-
-    df_X_train['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
-                              zip(X_train_github_tfidf, X_train_meetup_tfidf)]
-    df_X_test['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in 
-                             zip(X_test_github_tfidf, X_test_meetup_tfidf)]
-    df_X_train.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
-    df_X_test.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
-
-    X_train = df_X_train.values
-    X_test = df_X_test.values
+    pm = premodel().fit(df_X_train)
+    X_train = pm.transform(df_X_train)
+    X_test = pm.transform(df_X_test)
 
     """
     Model.

@@ -16,8 +16,6 @@ An obvious step is to pair profiles that have similar first and last names. With
 The social media data for this project is from github and meetup user profiles.  The original data is stored in three tables of a postgres database. The first and second contain text vector data from 150,000 github profiles and 500,000 meetup profiles, respectively. The third table contains all of the github-meetup pairs with name similarity - 45,000 potential matches. Among the potential matches, there are 11,000 distinct github profiles and 15,000 distinct meetup profiles.
 
 For each potential match, the following information is available:
-- github id
-- meetup id
 - profile_pics_matched
 - github_name
 - meetup_name
