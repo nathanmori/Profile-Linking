@@ -39,8 +39,15 @@ class premodel(object):
 
         self.dist_means = df_X_train[self.dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
 
-        X_train_github = np.array(df_X_train['github_text'].apply(lambda x: x.flatten().tolist()).tolist())
-        X_train_meetup = np.array(df_X_train['meetup_text'].apply(lambda x: x.flatten().tolist()).tolist())
+        """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
+            way to get text vect length """
+        self.text_vect_len = len(df_X_train.github_text.iloc[0].split())
+        X_train_github = np.array([map(int, x.split()) if x
+                                                else [0] * self.text_vect_len
+                             for x in df_X_train['github_text']])
+        X_train_meetup = np.array([map(int, x.split()) if x
+                                                else [0] * self.text_vect_len
+                             for x in df_X_train['meetup_text']])
         self.tfidf_github = TfidfTransformer().fit(X_train_github)
         self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
 
@@ -59,43 +66,16 @@ class premodel(object):
                                       axis=1)
         df_X.drop(['github_name', 'meetup_name'], axis=1, inplace=True)
 
-        # Calculate text similarity
-        #print '\nORIGINAL - after engr, before model'
-        #print '  type:', type(df_X['github_text'])
-        #print '  len :', len(df_X['github_text'])
-        #print '  [0] :', df_X['github_text'].iloc[0]
-
         """ Convert text vectors from strings to list of ints,
-                fill missing values with empty text
-            CONSIDER leaving empty and fill missing cosine sims with mean cosine
-                sim after calc'd """
-
-        """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
-            way to get text vect length """
-        text_vect_len = len(df_X.github_text.iloc[0].split())
-
-        """
-        df_X['github_text'] = df_X['github_text'].apply(lambda x:
-                                np.array(map(int, x.split())).reshape(1,-1)
-                                if x else np.zeros((1, text_vect_len), dtype=int))
-        df_X['meetup_text'] = df_X['meetup_text'].apply(lambda x:
-                                np.array(map(int, x.split())).reshape(1,-1)
-                                if x else np.zeros((1, text_vect_len), dtype=int))
-        X_github = np.array(df_X['github_text'].apply(lambda x:
-                                                x.flatten().tolist()).tolist())
-        X_meetup = np.array(df_X['meetup_text'].apply(lambda x:
-                                                x.flatten().tolist()).tolist())"""
-
-        X_github = np.array([map(int, x.split()) for x in df_X['github_text']
-                            if x else [0] * text_vect_len])
-        X_github = np.array([map(int, x.split()) for x in df_X['meetup_text']
-                            if x else [0] * text_vect_len])
-
-        #print 'retyped in model for tfidf.transform'
-        #print '  type:', type(X_github)
-        #print '  len :', len(X_github)
-        #print '  [0] :', X_github[0]
-
+            fill missing values with empty text
+        CONSIDER leaving empty and fill missing cosine sims with mean cosine
+            sim after calc'd """
+        X_github = np.array([map(int, x.split()) if x
+                                                 else [0] * self.text_vect_len
+                             for x in df_X['github_text']])
+        X_meetup = np.array([map(int, x.split()) if x
+                                                 else [0] * self.text_vect_len
+                             for x in df_X['meetup_text']])
         X_github_tfidf = self.tfidf_github.transform(X_github)
         X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
         df_X['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
@@ -123,9 +103,6 @@ class premodel(object):
 
     """CONVERT TO MODEL CLASS....FIT:"""
     """TRANSFORM:"""
-
-
-
 
 
 def print_evals(model_name, evals):
