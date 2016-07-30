@@ -232,7 +232,12 @@ if __name__ == '__main__':
 
     write = True if 'write' in argv else False
 
-    df = load()
+    csvs_in_argv = [arg for arg in argv if '.csv' in arg]
+    if csvs_in_argv:
+        df = pd.read_csv('csvs_in_argv[0]):')
+    else:
+        df = load()
+
     df_clean = clean(df)
     df_engr = engr(df_clean)
     mod = model(df_engr, write)
