@@ -26,33 +26,10 @@ def clean(df):
     start = start_time('Cleaning...')
     
     df_clean = df.copy()
- 
-    df_clean.drop(['github', 'meetup'], axis=1, inplace=True)
-    df_clean['profile_pics_matched'] = df['profile_pics_matched'].apply(int)
-
+    df_clean['match'] = df['profile_pics_matched'].apply(int)
+    df_clean.drop(['github', 'meetup', 'profile_pics_matched'], axis=1, inplace=True)
     df_clean['github_name'] = df['github_name'].apply(lambda x: ' '.join(x.split()))
     df_clean['meetup_name'] = df['meetup_name'].apply(lambda x: ' '.join(x.split()))
-    """
-    CONVERT github_name AND meetup_name TO name_similarity
-    """
-    """
-    CONVERT github_text AND meetup_text (STRINGS) TO VECTORS
-    """
-
-    """
-    MISSING VALUES IN DISTANCE COLUMNS
-    FILLING WITH MEAN - CONSIDER LATER
-
-    later: all four distances missing at 6 index locations:
-    [ 717] [1409] [1433] [1463] [1694] [1986]
-    could drop, but assuming we want model to be able to handle,
-    will fill with mean
-
-    PLOT HIST WITH AND WITHOUT FILLING
-    """
-    dist_cols = ['min_dist_km', 'avg_dist_km', 'median_dist_km', 'max_dist_km']
-    dist_means = df[dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
-    df_clean[dist_cols] = df[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
 
     """ Convert text vectors from strings to list of ints, fill missing values with empty text
     CONSIDER DROPPING FOR TRAINING PURPOSES """ 

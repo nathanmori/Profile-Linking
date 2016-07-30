@@ -24,8 +24,7 @@ def model(df_engr, write=False):
     start = start_time('Modeling...')
 
     df_copy = df_engr.copy()
-    y = df_copy.pop('profile_pics_matched').values
-    X = df_copy.values
+    y = df_copy.pop('match').values
 
     """
     Plot scatter matrix.
@@ -38,8 +37,29 @@ def model(df_engr, write=False):
     """
     Train/test split.
     """
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
+    df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
+
+    """
+    GLOBAL FIT / TRANSFORM
+    (model that applies to all algorithms, so performed once up front)
+
+        MISSING VALUES IN DISTANCE COLUMNS
+            FILLING WITH MEAN - CONSIDER LATER
+
+                later: all four distances missing at 6 index locations:
+                    [ 717] [1409] [1433] [1463] [1694] [1986]
+                        could drop, but assuming we want model to be able to handle,
+                            will fill with mean
+
+                                PLOT HIST WITH AND WITHOUT FILLING
+                                    """
+    dist_cols = ['min_dist_km', 'avg_dist_km', 'median_dist_km', 'max_dist_km']
+    dist_means = df_X_train[dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
+    df_X_train[dist_cols] = df_X_train[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
+    df_X_test[dist_cols] = df_X_test[dist_cols].fillna(dist_means).apply(lambda ser: ser.apply(float))
+    X_train = df_X_train.values
+    X_test = df_X_test.values
 
     """
     Model.
