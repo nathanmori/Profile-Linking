@@ -53,20 +53,43 @@ class premodel(object):
         df_X[self.dist_cols] = df_X[self.dist_cols].fillna(self.dist_means) \
                                         .apply(lambda ser: ser.apply(float))
 
-        print '\nORIGINAL - after engr, before model'
-        print '  type:', type(df_X['github_text'])
-        print '  len :', len(df_X['github_text'])
-        print '  [0] :', df_X['github_text'].iloc[0]
+        # Calculate name similarity
+        df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],
+                                                        row['meetup_name']),
+                                      axis=1)
+        df_X.drop(['github_name', 'meetup_name'], axis=1, inplace=True)
+
+        # Calculate text similarity
+        #print '\nORIGINAL - after engr, before model'
+        #print '  type:', type(df_X['github_text'])
+        #print '  len :', len(df_X['github_text'])
+        #print '  [0] :', df_X['github_text'].iloc[0]
+
+        """ Convert text vectors from strings to list of ints,
+                fill missing values with empty text
+            CONSIDER leaving empty and fill missing cosine sims with mean cosine
+                sim after calc'd """
+
+        """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
+            way to get text vect length """
+        text_vect_len = len(df_X.github_text.iloc[0].split())
+
+        df_X['github_text'] = df_clean['github_text'].apply(lambda x:
+                                np.array(map(int, x.split())).reshape(1,-1)
+                                if x else np.zeros((1, text_vect_len), dtype=int))
+        df_X['meetup_text'] = df_clean['meetup_text'].apply(lambda x:
+                                np.array(map(int, x.split())).reshape(1,-1)
+                                if x else np.zeros((1, text_vect_len), dtype=int))
 
         X_github = np.array(df_X['github_text'].apply(lambda x:
                                                 x.flatten().tolist()).tolist())
         X_meetup = np.array(df_X['meetup_text'].apply(lambda x:
                                                 x.flatten().tolist()).tolist())
 
-        print 'retyped in model for tfidf.transform'
-        print '  type:', type(X_github)
-        print '  len :', len(X_github)
-        print '  [0] :', X_github[0]
+        #print 'retyped in model for tfidf.transform'
+        #print '  type:', type(X_github)
+        #print '  len :', len(X_github)
+        #print '  [0] :', X_github[0]
 
         X_github_tfidf = self.tfidf_github.transform(X_github)
         X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
