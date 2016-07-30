@@ -34,8 +34,6 @@ class premodel(object):
 
         self.dist_cols = ['min_dist_km', 'avg_dist_km', 'median_dist_km', 'max_dist_km']
 
-        return self
-
     def fit(self, df_X_train):
         """"""
 
@@ -55,10 +53,10 @@ class premodel(object):
         df_X[self.dist_cols] = df_X[self.dist_cols].fillna(self.dist_means) \
                                         .apply(lambda ser: ser.apply(float))
 
-        print 'after engr, before model'
+        print '\nORIGINAL - after engr, before model'
         print '  type:', type(df_X['github_text'])
         print '  len :', len(df_X['github_text'])
-        print '  [0] :', df_X['github_text'][0]
+        print '  [0] :', df_X['github_text'].iloc[0]
 
         X_github = np.array(df_X['github_text'].apply(lambda x:
                                                 x.flatten().tolist()).tolist())
@@ -66,12 +64,12 @@ class premodel(object):
                                                 x.flatten().tolist()).tolist())
 
         print 'retyped in model for tfidf.transform'
-        print '  type:', type(df_X['github_text'])
-        print '  len :', len(df_X['github_text'])
-        print '  [0] :', df_X['github_text'][0]
+        print '  type:', type(X_github)
+        print '  len :', len(X_github)
+        print '  [0] :', X_github[0]
 
-        X_github_tfidf = tfidf_github.transform(X_github)
-        X_meetup_tfidf = tfidf_meetup.transform(X_meetup)
+        X_github_tfidf = self.tfidf_github.transform(X_github)
+        X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
         df_X['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
                                   zip(X_github_tfidf, X_meetup_tfidf)]
         df_X.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
