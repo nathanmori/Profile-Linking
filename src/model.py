@@ -4,7 +4,6 @@
 
 from load import *
 from clean import *
-from engr import *
 import numpy as np
 import pandas as pd
 from pandas.tools.plotting import scatter_matrix
@@ -19,6 +18,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             roc_auc_score
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from name_tools import match
 import operator
 import seaborn
 import pdb
@@ -42,10 +42,10 @@ class premodel(object):
         """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
             way to get text vect length """
         self.text_vect_len = len(df_X_train.github_text.iloc[0].split())
-        X_train_github = np.array([map(int, x.split()) if x
+        X_train_github = np.array([map(int, x.split()) if type(x) == str
                                                 else [0] * self.text_vect_len
                              for x in df_X_train['github_text']])
-        X_train_meetup = np.array([map(int, x.split()) if x
+        X_train_meetup = np.array([map(int, x.split()) if type(x) == str
                                                 else [0] * self.text_vect_len
                              for x in df_X_train['meetup_text']])
         self.tfidf_github = TfidfTransformer().fit(X_train_github)
@@ -70,10 +70,10 @@ class premodel(object):
             fill missing values with empty text
         CONSIDER leaving empty and fill missing cosine sims with mean cosine
             sim after calc'd """
-        X_github = np.array([map(int, x.split()) if x
+        X_github = np.array([map(int, x.split()) if type(x) == str
                                                  else [0] * self.text_vect_len
                              for x in df_X['github_text']])
-        X_meetup = np.array([map(int, x.split()) if x
+        X_meetup = np.array([map(int, x.split()) if type(x) == str
                                                  else [0] * self.text_vect_len
                              for x in df_X['meetup_text']])
         X_github_tfidf = self.tfidf_github.transform(X_github)
