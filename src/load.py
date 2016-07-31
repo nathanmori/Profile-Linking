@@ -3,13 +3,12 @@
 # Author: Nathan Mori <nathanmori@gmail.com>
 
 import psycopg2
-from datetime import datetime
 import pdb
-from copy import deepcopy
 import os
 import pandas as pd
 from time import time
 import sys
+from sys import argv
 
 
 def open_conn():
@@ -165,4 +164,13 @@ NEED TO ADDRESS DUPLICATE github, meetup IN matches
 """
 
 if __name__ == '__main__':
+
+    write = 'write' in argv
     df = load()
+
+    if 'write' in argv:
+        df.to_csv('../data/similars.csv', encoding='utf-8')
+    if 'shard' in argv:
+        ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
+        rows = ints_in_argv[0] if ints_in_argv else 100
+        df.head(rows).to_csv('../data/similars_shard.csv', encoding='utf-8')

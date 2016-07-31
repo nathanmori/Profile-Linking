@@ -3,9 +3,9 @@
 # Author: Nathan Mori <nathanmori@gmail.com>
 
 import pdb
-import os
 import numpy as np
 import pandas as pd
+from sys import argv
 from load import *
 
 
@@ -38,5 +38,13 @@ def clean(df):
 
 
 if __name__ == '__main__':
-    df = load()
+    
+    if 'read' in argv:
+        if 'shard' in argv:
+            df = pd.read_csv('../data/similars_shard.csv') 
+        else:
+            df = pd.read_csv('../data/similars.csv')
+    else:
+        df = load()
+
     df_clean = clean(df)

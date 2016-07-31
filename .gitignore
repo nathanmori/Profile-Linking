@@ -1,8 +1,8 @@
 Talentful Confidentiality Agreement
 data
 project-proposals
-src/.ipynb_checkpoints
-forNathan.pem
+*.ipynb_checkpoints
+*.pem
 *.pyc
 *.swp
 aws_installs.sh
