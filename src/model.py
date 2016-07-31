@@ -113,11 +113,11 @@ def print_evals(model_name, evals):
                     value if type(value) == int else ('%.1f%%' % (value * 100))
 
 
-def model(df_engr, write=False):
+def model(df_clean, write=False):
 
     start = start_time('Modeling...')
 
-    df_copy = df_engr.copy()
+    df_copy = df_clean.copy()
     y = df_copy.pop('match').values
 
     """
@@ -230,14 +230,13 @@ def model(df_engr, write=False):
 
 if __name__ == '__main__':
 
-    write = True if 'write' in argv else False
-
-    csvs_in_argv = [arg for arg in argv if '.csv' in arg]
-    if csvs_in_argv:
-        df = pd.read_csv('csvs_in_argv[0]):')
+    if 'read' in argv:
+        if 'shard' in argv:
+            df_clean = pd.read_csv('../data/clean_shard.csv')
+        else:
+            df_clean = pd.read_csv('../data/clean.csv')
     else:
-        df = load()
+        df_clean = clean(load())
 
-    df_clean = clean(df)
-    df_engr = engr(df_clean)
-    mod = model(df_engr, write)
+    write = True if 'write' in argv else False
+    mod = model(df_clean, write)

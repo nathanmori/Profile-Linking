@@ -165,11 +165,11 @@ NEED TO ADDRESS DUPLICATE github, meetup IN matches
 
 if __name__ == '__main__':
 
-    write = 'write' in argv
     df = load()
 
     if 'write' in argv:
         df.to_csv('../data/similars.csv', encoding='utf-8')
+        
     if 'shard' in argv:
         ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
         rows = ints_in_argv[0] if ints_in_argv else 100
