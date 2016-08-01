@@ -10,10 +10,11 @@ from pandas.tools.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier, \
+                             GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
@@ -31,7 +32,17 @@ import fill_missing_texts
 import vector_space_model
 import name_similarity
 import df_to_array
+import ast
 
+
+def get_classes(step):
+
+    with open(step + '.py') as f:
+        source = f.read()
+    p = ast.parse(source)
+    classes = [node.name for node in ast.walk(p) if isinstance(node, ast.ClassDef)]
+
+    return classes
 
 def print_evals(model_name, evals):
 
@@ -70,7 +81,8 @@ def model(df_clean, write=False):
                        ('fill_missing_texts', fill_missing_texts.zero()),
                        ('vector_space_model', vector_space_model.idf_cosine()),
                        ('name_similarity', name_similarity.name_tools_match()),
-                       ('df_to_array', df_to_array.df_to_array())])
+                       ('df_to_array', df_to_array.df_to_array()),
+                       ('scaler', StandardScaler())])
     premod.fit(df_X_train_fit)
     X_train = premod.transform(df_X_train)
     X_test = premod.transform(df_X_test)
@@ -86,7 +98,10 @@ def model(df_clean, write=False):
                                    random_state=0,
                                    n_estimators=250),
             GradientBoostingClassifier(random_state=0),
-            MultinomialNB(),
+            AdaBoostClassifier(random_state=0),
+            #MultinomialNB removed for negative values. TRY WITHOUT SCALING
+            #MultinomialNB(),
+            GaussianNB(),
             SVC(random_state=0,
                 probability=True),
             LinearSVC(random_state=0),
@@ -95,6 +110,8 @@ def model(df_clean, write=False):
         #Logit boosting (ada boost variant)
 
     for mod in mods:
+
+        """ ADD FUNCTIONALITY TO STORE VARIABLES SEPARATELY """
 
         mod.fit(X_train, y_train)
 
@@ -118,11 +135,10 @@ def model(df_clean, write=False):
         if hasattr(mod, 'oob_score_'):
             evals.append(('OOB Accuracy', mod.oob_score_))
         evals.append(('Test Accuracy', mod.score(X_test, y_test)))
-        if hasattr(mod, 'predict_proba'):
-            evals.append(('Test Precision', precision_score(y_test,
-                                                            y_test_pred)))
+        evals.append(('Test Precision', precision_score(y_test, y_test_pred)))
         evals.append(('Test Recall', recall_score(y_test, y_test_pred)))
-        evals.append(('Test AUC', roc_auc_score(y_test, y_test_prob)))
+        if hasattr(mod, 'predict_proba'):
+            evals.append(('Test AUC', roc_auc_score(y_test, y_test_prob)))
 
         """
         Calculate accuracy, precision, recall for varying thresholds.
