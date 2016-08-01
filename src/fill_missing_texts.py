@@ -6,7 +6,7 @@ class zero(object):
 
         pass
 
-    def fit(self, df_X_train):
+    def fit(self, df_X_train, y=None):
         """"""
 
         """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
@@ -23,7 +23,7 @@ class zero(object):
 
         return self
 
-    def transform(self, df_X):
+    def transform(self, df_X, y=None):
         """"""
 
         """ Convert text vectors from strings to list of ints,

@@ -22,6 +22,10 @@ import seaborn
 import pdb
 import sys
 from sys import argv
+import fill_missing_dists
+import fill_missing_texts
+import name_similarity
+import df_to_array
 
 
 def print_evals(model_name, evals):
@@ -56,14 +60,16 @@ def model(df_clean, write=False):
     # back to df_copy
     pd.options.mode.chained_assignment = None  # default='warn'
 
+    pdb.set_trace()
+
     premodel = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
                          ('fill_missing_texts', fill_missing_texts.zero()),
                          ('name_similarity', name_similarity.name_tools_match()),
-                         ('df_to_array', df_to_array.df_to_array())])
-
-    pm = premodel().fit(df_X_train)
-    X_train = pm.transform(df_X_train)
-    X_test = pm.transform(df_X_test)
+                         ('df_to_array', df_to_array.df_to_array())
+                        ])
+    premodel.fit(df_X_train)
+    X_train = premodel.transform(df_X_train)
+    X_test = premodel.transform(df_X_test)
 
     """
     Model.

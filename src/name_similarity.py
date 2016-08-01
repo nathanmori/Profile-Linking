@@ -6,12 +6,12 @@ class name_tools_match(object):
 
         pass
 
-    def fit(self, df_X_train):
+    def fit(self, df_X_train, y=None):
         """"""
 
         return self
 
-    def transform(self, df_X):
+    def transform(self, df_X, y=None):
         """"""
 
         df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],

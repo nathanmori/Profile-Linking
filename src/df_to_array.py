@@ -6,12 +6,12 @@ class df_to_array(object):
 
         pass
 
-    def fit(self, df_X_train):
+    def fit(self, df_X_train, y=None):
         """"""
 
         return self
 
-    def transform(self, df_X):
+    def transform(self, df_X, y=None):
         """"""
 
         X = df_X.values
