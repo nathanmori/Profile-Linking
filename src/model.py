@@ -10,7 +10,11 @@ from pandas.tools.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             roc_auc_score
@@ -74,86 +78,111 @@ def model(df_clean, write=False):
     """
     Model.
     """
-    mod = RandomForestClassifier(oob_score=True, n_jobs=-1, random_state=0, \
-                                 n_estimators=250).fit(X_train, y_train)
+    """NEED TO TAKE OFF COSINE SIMILARITY FOR MultinomialNB"""
+    mods = [LogisticRegression(random_state=0,
+                               n_jobs=-1),
+            RandomForestClassifier(oob_score=True,
+                                   n_jobs=-1,
+                                   random_state=0,
+                                   n_estimators=250),
+            GradientBoostingClassifier(random_state=0),
+            MultinomialNB(),
+            SVC(random_state=0,
+                probability=True),
+            LinearSVC(random_state=0),
+            NuSVC(random_state=0)]
+        #Neural Network
+        #Logit boosting (ada boost variant)
 
-    """
-    Calculate predictions (using 0.5 threshold) and probabilities of test data.
-    """
-    y_train_pred = mod.predict(X_train)
-    y_test_pred = mod.predict(X_test)
-    y_test_prob = mod.predict_proba(X_test)[:,1]
+    for mod in mods:
 
-    """
-    Calculate scores of interest (using threshold of 0.5).
-    """
-    evals = []
-    evals.append(('Train Accuracy', mod.score(X_train, y_train)))
-    evals.append(('Train Precision', precision_score(y_train, y_train_pred)))
-    evals.append(('Train Recall', recall_score(y_train, y_train_pred)))
-    evals.append(('OOB Accuracy', mod.oob_score_))
-    evals.append(('Test Accuracy', mod.score(X_test, y_test)))
-    evals.append(('Test Precision', precision_score(y_test, y_test_pred)))
-    evals.append(('Test Recall', recall_score(y_test, y_test_pred)))
-    evals.append(('Test AUC', roc_auc_score(y_test, y_test_prob)))
+        mod.fit(X_train, y_train)
 
-    """
-    Calculate accuracy, precision, recall for varying thresholds.
-    """
-    if write:
-    	thresholds = y_test_prob.copy()
-    	thresholds.sort()
-    	thresh_acc = []
-    	thresh_prec = []
-    	thresh_rec = []
-    	for threshold in thresholds:
-    	    y_pred = []
-    	    for ytp in y_test_prob:
-    		y_pred.append(int(ytp >= threshold))
-    	    thresh_acc.append(accuracy_score(y_test, y_pred))
-    	    thresh_prec.append(precision_score(y_test, y_pred))
-            thresh_rec.append(recall_score(y_test, y_pred))
-    	plt.plot(thresholds, thresh_acc, label='accuracy')
-    	plt.plot(thresholds, thresh_prec, label='precision')
-    	plt.plot(thresholds, thresh_rec, label='recall')
-    	plt.legend()
-    	plt.savefig('../img/performance')
-    	plt.close('all')
+        """
+        Calculate predictions (using 0.5 threshold) and probabilities of test data.
+        """
+        y_train_pred = mod.predict(X_train)
+        y_test_pred = mod.predict(X_test)
+        """ CONSIDER FOR CLASSES WITHOUT predict_proba """
+        if hasattr(mod, 'predict_proba'):
+            y_test_prob = mod.predict_proba(X_test)[:,1]
 
-    """
-    Calculate and plot feature importances.
-    Useless features from earlier runs have been removed in clean_data.
-    """
-    num_feats_plot = min(15, df_copy.shape[1])
-    feats = df_copy.columns
-    imps = mod.feature_importances_
-    feats_imps = zip(feats, imps)
-    feats_imps.sort(key=operator.itemgetter(1), reverse=True)
-    feats = []
-    imps = []
-    useless_feats = []
-    for feat, imp in feats_imps:
-        feats.append(feat)
-        imps.append(imp)
-        if imp == 0:
-            useless_feats.append(feat)
-    evals.append(('# Features', len(feats)))
-    evals.append(('# Useless Features', len(useless_feats)))
+        """
+        Calculate scores of interest (using threshold of 0.5).
+        """
+        evals = []
+        evals.append(('Train Accuracy', mod.score(X_train, y_train)))
+        evals.append(('Train Precision', precision_score(y_train,
+                                                         y_train_pred)))
+        evals.append(('Train Recall', recall_score(y_train, y_train_pred)))
+        if hasattr(mod, 'oob_score_'):
+            evals.append(('OOB Accuracy', mod.oob_score_))
+        evals.append(('Test Accuracy', mod.score(X_test, y_test)))
+        if hasattr(mod, 'predict_proba'):
+            evals.append(('Test Precision', precision_score(y_test,
+                                                            y_test_pred)))
+        evals.append(('Test Recall', recall_score(y_test, y_test_pred)))
+        evals.append(('Test AUC', roc_auc_score(y_test, y_test_prob)))
 
-    if write:
-    	fig = plt.figure(figsize=(15, 12))
-    	x_ind = np.arange(num_feats_plot)
-    	plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3,
-                 align='center')
-    	plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
-    	plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
-    	plt.title('RFC Feature Importances')
-    	plt.savefig('../img/feature_importances')
-    	plt.close('all')
+        """
+        Calculate accuracy, precision, recall for varying thresholds.
+        """
+        if write:
+            thresholds = y_test_prob.copy()
+            thresholds.sort()
+            thresh_acc = []
+            thresh_prec = []
+            thresh_rec = []
+            for threshold in thresholds:
+                y_pred = []
+                for ytp in y_test_prob:
+                    y_pred.append(int(ytp >= threshold))
+                thresh_acc.append(accuracy_score(y_test, y_pred))
+                thresh_prec.append(precision_score(y_test, y_pred))
+                thresh_rec.append(recall_score(y_test, y_pred))
+            plt.plot(thresholds, thresh_acc, label='accuracy')
+            plt.plot(thresholds, thresh_prec, label='precision')
+            plt.plot(thresholds, thresh_rec, label='recall')
+            plt.legend()
+            plt.savefig('../img/performance')
+            plt.close('all')
 
-    end_time(start)
+        """
+        Calculate and plot feature importances.
+        Useless features from earlier runs have been removed in clean_data.
+        """
+        num_feats_plot = min(15, df_copy.shape[1])
+        feats = df_copy.columns
+        evals.append(('# Features', len(feats)))
+        """CONSIDER FOR ALGS W/O feature_importances_"""
+        if hasattr(mod, 'feature_importances_'):
+            imps = mod.feature_importances_
+            feats_imps = zip(feats, imps)
+            feats_imps.sort(key=operator.itemgetter(1), reverse=True)
+            feats = []
+            imps = []
+            useless_feats = []
+            for feat, imp in feats_imps:
+                feats.append(feat)
+                imps.append(imp)
+                if imp == 0:
+                    useless_feats.append(feat)
+            evals.append(('# Useless Features', len(useless_feats)))
 
-    print_evals('Random Forest', evals)
+        if write:
+            fig = plt.figure(figsize=(15, 12))
+            x_ind = np.arange(num_feats_plot)
+            plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3,
+                     align='center')
+            plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
+            plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
+            plt.title('RFC Feature Importances')
+            plt.savefig('../img/feature_importances')
+            plt.close('all')
+
+        end_time(start)
+
+        print_evals(mod.__class__.__name__, evals)
 
     return mod
 

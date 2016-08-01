@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+# Author: Nathan Mori <nathanmori@gmail.com>
+
 from name_tools import match
 
 

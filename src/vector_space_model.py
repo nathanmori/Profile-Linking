@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+# Author: Nathan Mori <nathanmori@gmail.com>
+
 import numpy as np
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity

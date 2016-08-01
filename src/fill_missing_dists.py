@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+# Author: Nathan Mori <nathanmori@gmail.com>
+
 class mean(object):
     """"""
 
