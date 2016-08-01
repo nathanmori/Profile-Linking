@@ -3,12 +3,13 @@
 # Author: Nathan Mori <nathanmori@gmail.com>
 
 import numpy as np
+from scipy.sparse.linalg import norm
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pdb
 
 
-class cosine(object):
+class all(object):
     """"""
 
     def __init__(self):
@@ -24,7 +25,13 @@ class cosine(object):
     def transform(self, (df_X, X_github, X_meetup), y=None):
         """"""
 
-        df_X['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
-                                  zip(X_github_tfidf, X_meetup_tfidf)]
+
+        df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
+                                  zip(X_github, X_meetup)]
+
+        df_X['text_norm_github'] = [norm(x) for x in X_github]
+        df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
+        df_X['text_norm_diff'] = df_X['text_norm_github'] - \
+                                 df_X['text_norm_meetup']
 
         return df_X

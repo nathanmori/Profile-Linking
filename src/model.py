@@ -10,7 +10,6 @@ from pandas.tools.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, \
                              GradientBoostingClassifier, AdaBoostClassifier
@@ -28,11 +27,12 @@ import pdb
 import sys
 from sys import argv
 import dist_fill_missing
+import dist_diff
 import text_fill_missing
 import text_idf
-import text_aggreagate
+import text_aggregate
 import name_similarity
-import df_to_array
+import scaler
 import ast
 
 
@@ -48,7 +48,7 @@ def get_classes(step):
 def print_evals(model_name, evals):
 
     print model_name
-    for key, value in evals:
+    for key, value in evals.iteritems():
         print ('  ' + key + ':').ljust(25), \
                     value if type(value) == int else ('%.1f%%' % (value * 100))
 
@@ -65,7 +65,7 @@ def model(df_clean, write=False):
     """
     if write:
         scatter_matrix(df_copy, alpha=0.2, figsize=(15,12))
-        plt.savefig('../img/scatter_matrix')
+        plt.savefig('../img/scatter_matrix_data')
         plt.close('all')
 
     """
@@ -78,21 +78,30 @@ def model(df_clean, write=False):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     df_X_train_fit = df_X_train.copy()
-    premod = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
+    premod = Pipeline([('dist_fill_missing', dist_fill_missing.mean()),
+                       ('dist_diff', dist_diff.all()),
                        ('text_fill_missing', text_fill_missing.zero()),
                        ('text_idf', text_idf.idf()),
-                       ('text_aggreagate', text_aggregate.cosine()),
+                       ('text_aggregate', text_aggregate.all()),
                        ('name_similarity', name_similarity.name_tools_match()),
-                       ('df_to_array', df_to_array.df_to_array()),
-                       ('scaler', StandardScaler())])
+                       ('scaler', scaler.standard())])
     premod.fit(df_X_train_fit)
-    X_train = premod.transform(df_X_train)
-    X_test = premod.transform(df_X_test)
+    df_X_train_trans = premod.transform(df_X_train)
+    df_X_test_trans = premod.transform(df_X_test)
+    X_train = df_X_train_trans.values
+    X_test = df_X_test_trans.values
+
+    if write:
+        scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
+        plt.savefig('../img/scatter_matrix_data_trans-train')
+        plt.close('all')
+        scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
+        plt.savefig('../img/scatter_matrix_data_trans-test')
+        plt.close('all')
 
     """
     Model.
     """
-    """NEED TO TAKE OFF COSINE SIMILARITY FOR MultinomialNB"""
     mods = [LogisticRegression(random_state=0,
                                n_jobs=-1),
             RandomForestClassifier(oob_score=True,
@@ -101,8 +110,6 @@ def model(df_clean, write=False):
                                    n_estimators=250),
             GradientBoostingClassifier(random_state=0),
             AdaBoostClassifier(random_state=0),
-            #MultinomialNB removed for negative values. TRY WITHOUT SCALING
-            #MultinomialNB(),
             GaussianNB(),
             SVC(random_state=0,
                 probability=True),
@@ -111,6 +118,7 @@ def model(df_clean, write=False):
         #Neural Network
         #Logit boosting (ada boost variant)
 
+    best_accuracy = 0.
     for mod in mods:
 
         """ ADD FUNCTIONALITY TO STORE VARIABLES SEPARATELY """
@@ -118,7 +126,7 @@ def model(df_clean, write=False):
         mod.fit(X_train, y_train)
 
         """
-        Calculate predictions (using 0.5 threshold) and probabilities of test data.
+        Calculate predictions (using 0.5 threshold).
         """
         y_train_pred = mod.predict(X_train)
         y_test_pred = mod.predict(X_test)
@@ -129,23 +137,23 @@ def model(df_clean, write=False):
         """
         Calculate scores of interest (using threshold of 0.5).
         """
-        evals = []
-        evals.append(('Train Accuracy', mod.score(X_train, y_train)))
-        evals.append(('Train Precision', precision_score(y_train,
-                                                         y_train_pred)))
-        evals.append(('Train Recall', recall_score(y_train, y_train_pred)))
+        evals = {}
+        evals['Train Accuracy'] = mod.score(X_train, y_train)
+        evals['Train Precision'] = precision_score(y_train, y_train_pred)
+        evals['Train Recall'] = recall_score(y_train, y_train_pred)
         if hasattr(mod, 'oob_score_'):
-            evals.append(('OOB Accuracy', mod.oob_score_))
-        evals.append(('Test Accuracy', mod.score(X_test, y_test)))
-        evals.append(('Test Precision', precision_score(y_test, y_test_pred)))
-        evals.append(('Test Recall', recall_score(y_test, y_test_pred)))
+            evals['OOB Accuracy'] = mod.oob_score_
+        evals['Test Accuracy'] = mod.score(X_test, y_test)
+        evals['Test Precision'] = precision_score(y_test, y_test_pred)
+        evals['Test Recall'] = recall_score(y_test, y_test_pred)
         if hasattr(mod, 'predict_proba'):
-            evals.append(('Test AUC', roc_auc_score(y_test, y_test_prob)))
+            evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
 
         """
         Calculate accuracy, precision, recall for varying thresholds.
         """
-        if write:
+        """ UPDATE FOR OTHER MODELS """
+        if write and (mod.__class__.__name__ == 'RandomForestClassifier'):
             thresholds = y_test_prob.copy()
             thresholds.sort()
             thresh_acc = []
@@ -169,9 +177,9 @@ def model(df_clean, write=False):
         Calculate and plot feature importances.
         Useless features from earlier runs have been removed in clean_data.
         """
-        num_feats_plot = min(15, df_copy.shape[1])
-        feats = df_copy.columns
-        evals.append(('# Features', len(feats)))
+        feats = df_X_train_trans.columns
+        evals['# Features'] = len(feats)
+        num_feats_plot = evals['# Features'] #min(15, df_copy.shape[1])
         """CONSIDER FOR ALGS W/O feature_importances_"""
         if hasattr(mod, 'feature_importances_'):
             imps = mod.feature_importances_
@@ -185,9 +193,9 @@ def model(df_clean, write=False):
                 imps.append(imp)
                 if imp == 0:
                     useless_feats.append(feat)
-            evals.append(('# Useless Features', len(useless_feats)))
+            evals['# Useless Features'] = len(useless_feats)
 
-        if write:
+        if write and (mod.__class__.__name__ == 'RandomForestClassifier'):
             fig = plt.figure(figsize=(15, 12))
             x_ind = np.arange(num_feats_plot)
             plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3,
