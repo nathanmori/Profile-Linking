@@ -42,6 +42,7 @@ class zero(object):
         X_meetup = np.array([map(int, x.split()) if type(x) == str
                                                  else [0] * self.text_vect_len
                              for x in df_X['meetup_text']])
+        df_X.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
 
         """NOTE UNIQUE INTERFACE """
 

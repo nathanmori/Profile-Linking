@@ -27,9 +27,10 @@ import seaborn
 import pdb
 import sys
 from sys import argv
-import fill_missing_dists
-import fill_missing_texts
-import vector_space_model
+import dist_fill_missing
+import text_fill_missing
+import text_idf
+import text_aggreagate
 import name_similarity
 import df_to_array
 import ast
@@ -78,8 +79,9 @@ def model(df_clean, write=False):
 
     df_X_train_fit = df_X_train.copy()
     premod = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
-                       ('fill_missing_texts', fill_missing_texts.zero()),
-                       ('vector_space_model', vector_space_model.idf_cosine()),
+                       ('text_fill_missing', text_fill_missing.zero()),
+                       ('text_idf', text_idf.idf()),
+                       ('text_aggreagate', text_aggregate.cosine()),
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('df_to_array', df_to_array.df_to_array()),
                        ('scaler', StandardScaler())])
