@@ -7,8 +7,6 @@ from clean import *
 import numpy as np
 import pandas as pd
 from pandas.tools.plotting import scatter_matrix
-#import matplotlib
-#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
@@ -24,85 +22,6 @@ import seaborn
 import pdb
 import sys
 from sys import argv
-
-
-class premodel(object):
-    """"""
-
-    def __init__(self):
-        """"""
-
-        self.dist_cols = ['min_dist_km', 'avg_dist_km', 'median_dist_km', 'max_dist_km']
-
-    def fit(self, df_X_train):
-        """"""
-
-        self.dist_means = df_X_train[self.dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
-
-        """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
-            way to get text vect length """
-        self.text_vect_len = len(df_X_train.github_text.iloc[0].split())
-        X_train_github = np.array([map(int, x.split()) if type(x) == str
-                                                else [0] * self.text_vect_len
-                             for x in df_X_train['github_text']])
-        X_train_meetup = np.array([map(int, x.split()) if type(x) == str
-                                                else [0] * self.text_vect_len
-                             for x in df_X_train['meetup_text']])
-        self.tfidf_github = TfidfTransformer().fit(X_train_github)
-        self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
-
-        return self
-
-    def transform(self, df_X):
-        """"""
-
-        # Fill empty distances with mean of existing train values
-        df_X[self.dist_cols] = df_X[self.dist_cols].fillna(self.dist_means) \
-                                        .apply(lambda ser: ser.apply(float))
-
-        # Calculate name similarity
-        df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],
-                                                        row['meetup_name']),
-                                      axis=1)
-        df_X.drop(['github_name', 'meetup_name'], axis=1, inplace=True)
-
-        """ Convert text vectors from strings to list of ints,
-            fill missing values with empty text
-        CONSIDER leaving empty and fill missing cosine sims with mean cosine
-            sim after calc'd """
-        X_github = np.array([map(int, x.split()) if type(x) == str
-                                                 else [0] * self.text_vect_len
-                             for x in df_X['github_text']])
-        X_meetup = np.array([map(int, x.split()) if type(x) == str
-                                                 else [0] * self.text_vect_len
-                             for x in df_X['meetup_text']])
-        X_github_tfidf = self.tfidf_github.transform(X_github)
-        X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
-        df_X['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
-                                  zip(X_github_tfidf, X_meetup_tfidf)]
-        df_X.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
-
-        X = df_X.values
-        return X
-
-    """
-    GLOBAL FIT / TRANSFORM
-    (model that applies to all algorithms, so performed once up front)
-
-    MISSING VALUES IN DISTANCE COLUMNS
-    FILLING WITH MEAN - CONSIDER LATER
-
-    later: all four distances missing at 6 index locations:
-        [ 717] [1409] [1433] [1463] [1694] [1986]
-    could drop, but assuming we want model to be able to handle,
-        will fill with mean
-
-    PLOT HIST WITH AND WITHOUT FILLING"""
-
-
-
-    """CONVERT TO MODEL CLASS....FIT:"""
-    """TRANSFORM:"""
 
 
 def print_evals(model_name, evals):
@@ -136,6 +55,11 @@ def model(df_clean, write=False):
     # suppress warning (that changes to df_X_train and df_X_test won't make it
     # back to df_copy
     pd.options.mode.chained_assignment = None  # default='warn'
+
+    premodel = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
+                         ('fill_missing_texts', fill_missing_texts.zero()),
+                         ('name_similarity', name_similarity.name_tools_match()),
+                         ('df_to_array', df_to_array.df_to_array())])
 
     pm = premodel().fit(df_X_train)
     X_train = pm.transform(df_X_train)
