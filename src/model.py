@@ -24,6 +24,7 @@ import sys
 from sys import argv
 import fill_missing_dists
 import fill_missing_texts
+import vector_space_model
 import name_similarity
 import df_to_array
 
@@ -63,12 +64,12 @@ def model(df_clean, write=False):
     df_X_train_fit = df_X_train.copy()
     premod = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
                        ('fill_missing_texts', fill_missing_texts.zero()),
-                       ('vector_space_model', vector_space_model.idf_cosine())
+                       ('vector_space_model', vector_space_model.idf_cosine()),
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('df_to_array', df_to_array.df_to_array())])
-    premodel.fit(df_X_train_fit)
-    X_train = premodel.transform(df_X_train)
-    X_test = premodel.transform(df_X_test)
+    premod.fit(df_X_train_fit)
+    X_train = premod.transform(df_X_train)
+    X_test = premod.transform(df_X_test)
 
     """
     Model.

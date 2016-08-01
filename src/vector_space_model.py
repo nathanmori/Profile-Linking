@@ -12,7 +12,7 @@ class idf_cosine(object):
 
         pass
 
-    def fit(self, df_X_train, y=None):
+    def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
         """"""
 
         self.tfidf_github = TfidfTransformer().fit(X_train_github)
@@ -20,7 +20,7 @@ class idf_cosine(object):
 
         return self
 
-    def transform(self, df_X, y=None):
+    def transform(self, (df_X, X_github, X_meetup), y=None):
         """"""
 
         X_github_tfidf = self.tfidf_github.transform(X_github)

@@ -13,8 +13,6 @@ class zero(object):
     def fit(self, df_X_train, y=None):
         """"""
 
-        print '\n\nfit: fill_missing_texts', df_X_train.head()
-
         """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
             way to get text vect length """
         self.text_vect_len = len(df_X_train.github_text.iloc[0].split())
@@ -30,8 +28,6 @@ class zero(object):
     def transform(self, df_X, y=None):
         """"""
 
-        print '\n\ntransform: fill_missing_texts', df_X.head()
-
         """ Convert text vectors from strings to list of ints,
             fill missing values with empty text
         CONSIDER leaving empty and fill missing cosine sims with mean cosine
@@ -43,4 +39,6 @@ class zero(object):
                                                  else [0] * self.text_vect_len
                              for x in df_X['meetup_text']])
 
-        return df_X
+        """NOTE UNIQUE INTERFACE """
+
+        return (df_X, X_github, X_meetup)
