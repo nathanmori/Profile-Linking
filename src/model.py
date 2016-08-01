@@ -61,11 +61,11 @@ def model(df_clean, write=False):
     pd.options.mode.chained_assignment = None  # default='warn'
 
     df_X_train_fit = df_X_train.copy()
-    premodel = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
-                         ('fill_missing_texts', fill_missing_texts.zero()),
-                         ('name_similarity', name_similarity.name_tools_match()),
-                         ('df_to_array', df_to_array.df_to_array())
-                        ])
+    premod = Pipeline([('fill_missing_dists', fill_missing_dists.mean()),
+                       ('fill_missing_texts', fill_missing_texts.zero()),
+                       ('vector_space_model', vector_space_model.idf_cosine())
+                       ('name_similarity', name_similarity.name_tools_match()),
+                       ('df_to_array', df_to_array.df_to_array())])
     premodel.fit(df_X_train_fit)
     X_train = premodel.transform(df_X_train)
     X_test = premodel.transform(df_X_test)

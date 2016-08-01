@@ -1,6 +1,4 @@
 import numpy as np
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.metrics.pairwise import cosine_similarity
 import pdb
 
 
@@ -26,8 +24,6 @@ class zero(object):
         X_train_meetup = np.array([map(int, x.split()) if type(x) == str
                                                 else [0] * self.text_vect_len
                              for x in df_X_train['meetup_text']])
-        self.tfidf_github = TfidfTransformer().fit(X_train_github)
-        self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
 
         return self
 
@@ -46,10 +42,5 @@ class zero(object):
         X_meetup = np.array([map(int, x.split()) if type(x) == str
                                                  else [0] * self.text_vect_len
                              for x in df_X['meetup_text']])
-        X_github_tfidf = self.tfidf_github.transform(X_github)
-        X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
-        df_X['text_sim'] = [cosine_similarity(x1, x2) for x1, x2 in
-                                  zip(X_github_tfidf, X_meetup_tfidf)]
-        df_X.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
 
         return df_X
