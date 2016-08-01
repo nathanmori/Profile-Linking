@@ -1,3 +1,9 @@
+import numpy as np
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+import pdb
+
+
 class zero(object):
     """"""
 
@@ -8,6 +14,8 @@ class zero(object):
 
     def fit(self, df_X_train, y=None):
         """"""
+
+        print '\n\nfit: fill_missing_texts', df_X_train.head()
 
         """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
             way to get text vect length """
@@ -25,6 +33,8 @@ class zero(object):
 
     def transform(self, df_X, y=None):
         """"""
+
+        print '\n\ntransform: fill_missing_texts', df_X.head()
 
         """ Convert text vectors from strings to list of ints,
             fill missing values with empty text
