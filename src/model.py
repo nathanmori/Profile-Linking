@@ -108,7 +108,8 @@ def model(df_clean, write=False):
                                    n_jobs=-1,
                                    random_state=0,
                                    n_estimators=250),
-            GradientBoostingClassifier(random_state=0),
+            GradientBoostingClassifier(n_estimators=250,
+                                       random_state=0),
             AdaBoostClassifier(random_state=0),
             GaussianNB(),
             SVC(random_state=0,
@@ -210,7 +211,16 @@ def model(df_clean, write=False):
 
         print_evals(mod.__class__.__name__, evals)
 
-    return mod
+        if evals['Test Accuracy'] > best_accuracy:
+            best_accuracy = evals['Test Accuracy']
+            best_mod = mod
+
+    print '\n\nBest Model:', best_mod.__class__.__name__
+    print 'Test Accuracy: %.1f%%' % 100 * best_accuracy
+
+    print 'probas:', mod.predict_proba(X_test)
+
+    return best_mod
 
 
 if __name__ == '__main__':
@@ -224,4 +234,4 @@ if __name__ == '__main__':
         df_clean = clean(load())
 
     write = True if 'write' in argv else False
-    mod = model(df_clean, write)
+    best_mod = model(df_clean, write)
