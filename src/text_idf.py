@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pdb
+from scipy.sparse import csr_matrix
 
 
 class idf(object):
@@ -48,4 +49,4 @@ class skip(object):
     def transform(self, (df_X, X_github, X_meetup), y=None):
         """"""
 
-        return (df_X, X_github, X_meetup)
+        return (df_X, csr_matrix(X_github), csr_matrix(X_meetup))

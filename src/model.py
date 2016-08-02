@@ -47,10 +47,15 @@ def get_classes(step):
 
     return classes
 
-def print_evals(model_name, evals):
+def print_evals(model_name, evals, accuracy_only=True):
     """"""
 
-    print model_name
+    print '\n' + model_name
+    if accuracy_only:
+        print (' Test Accuracy: %.1f%%').ljust(25) % (
+                                evals['Test Accuracy'] * 100)
+        return
+
     for key, value in evals.iteritems():
         print ('  ' + key + ':').ljust(25), \
                     value if type(value) == int else ('%.1f%%' % (value * 100))
@@ -66,10 +71,14 @@ def strip_users(df_X):
     return df_X, github, meetup
 
 
-def check_duplicates(best_mod, best_accuracy, best_pred, X_train, X_test,
-                     y_train,
+def check_duplicates(best_mod, best_pred, X_train, X_test, y_train,
                      github_train, meetup_train, github_test, meetup_test):
     """"""
+
+    print 'There are %d train observations' % len(y_train)
+    print 'There are %d test observations' % len(best_pred)
+    print 'There are %d train matches' % sum(y_train)
+    print 'There are %d predicted matches' % sum(best_pred)
 
     ix_matches_train = np.argwhere(y_train == 1).flatten()
     ix_matches_pred = np.argwhere(best_pred == 1).flatten()
@@ -89,6 +98,7 @@ def check_duplicates(best_mod, best_accuracy, best_pred, X_train, X_test,
         duplicates = sum(unique_counts) - len(unique_counts)
         print 'There are %d duplicates in %s' % (duplicates, set_name)
 
+
     count_duplicates(github_train_matches, 'github_train_matches')
     count_duplicates(meetup_train_matches, 'meetup_train_matches')
     count_duplicates(github_pred_matches, 'github_pred_matches')
@@ -98,10 +108,60 @@ def check_duplicates(best_mod, best_accuracy, best_pred, X_train, X_test,
     count_duplicates(meetup_train_and_pred_matches,
                      'meetup_train_and_pred_matches')
 
-    pdb.set_trace()
+    uniques, counts = np.unique(github_pred_matches, return_counts=True)
+    duplicate_githubs = [g for g, c in zip(uniques, counts) if c > 1]
+    duplicate_githubs_meetups = []
+    for g in duplicate_githubs:
+        ix = np.argwhere((github_test == g) & (best_pred == 1)).flatten()
+        ms = meetup_test[ix]
+        duplicate_githubs_meetups.append((g, ms))
+
+    print '\ngithubs linked to multiple meetups'
+    for k, v in duplicate_githubs_meetups:
+        print 'github:', k
+        print 'meetups:', v
+
+    uniques, counts = np.unique(meetup_pred_matches, return_counts=True)
+    duplicate_meetups = [m for m, c in zip(uniques, counts) if c > 1]
+    duplicate_meetups_githubs = []
+    for m in duplicate_meetups:
+        ix = np.argwhere((meetup_test == m) & (best_pred == 1)).flatten()
+        gs = github_test[ix]
+        duplicate_meetups_githubs.append((m, gs))
+
+    print '\nmeetups linked to multiple githubs'
+    for k, v in duplicate_meetups_githubs:
+        print 'meetup:', k
+        print 'githubs:', v
 
 
-def model(df_clean, write=False):
+def filter_duplicates(mod, prob, github_test, meetup_test, github_train=None,\
+                      meetup_train=None, filter_train=False):
+    """"""
+
+    
+    if filter_train:
+        taken_githubs = np.unique(github_train).tolist()
+        taken_meetups = np.unique(meetup_train).tolist()
+    else:
+        taken_githubs = []
+        taken_meetups = []
+
+    preds = np.zeros(len(prob))
+
+    for ix in np.argsort(prob)[::-1]:
+        if (prob[ix] < 0.5):
+            break
+        if (github_test[ix] not in taken_githubs) and \
+           (meetup_test[ix] not in taken_meetups):
+            preds[ix] = 1
+            taken_githubs.append(github_test[ix])
+            taken_meetups.append(meetup_test[ix])
+
+    return preds
+    
+
+def model(df_clean, write=False, accuracy_only=True):
     """"""
 
     start = start_time('Modeling...')
@@ -122,18 +182,19 @@ def model(df_clean, write=False):
     """
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
-    df_X_train, github_train, meetup_train = strip_users(df_X_train)
-    df_X_test, github_test, meetup_test = strip_users(df_X_test)
 
     # suppress warning (that changes to df_X_train and df_X_test won't make it
     # back to df_copy
     pd.options.mode.chained_assignment = None  # default='warn'
 
+    df_X_train, github_train, meetup_train = strip_users(df_X_train)
+    df_X_test, github_test, meetup_test = strip_users(df_X_test)
+
     df_X_train_fit = df_X_train.copy()
     premod = Pipeline([('dist_fill_missing', dist_fill_missing.mean()),
                        ('dist_diff', dist_diff.all()),
                        ('text_fill_missing', text_fill_missing.zero()),
-                       ('text_idf', text_idf.idf()),
+                       ('text_idf', text_idf.skip()),
                        ('text_aggregate', text_aggregate.all()),
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('scaler', scaler.standard())])
@@ -262,7 +323,7 @@ def model(df_clean, write=False):
 
         end_time(start)
 
-        print_evals(mod.__class__.__name__, evals)
+        print_evals(mod.__class__.__name__, evals, accuracy_only)
 
         if ((evals['Test Accuracy'] > best_accuracy) and
              callable(getattr(mod, 'predict_proba', None))):
@@ -270,16 +331,28 @@ def model(df_clean, write=False):
             best_accuracy = deepcopy(evals['Test Accuracy'])
             best_mod = deepcopy(mod)
             best_pred = deepcopy(y_test_pred)
+            best_prob = deepcopy(y_test_prob)
 
     print '\n\nBest Model with predict_proba:', best_mod.__class__.__name__
     print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
-    positive_class_ix = best_mod.classes_[best_mod.classes_ == 1][0]
-    print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix]
 
-    check_duplicates(best_mod, best_accuracy, best_pred, X_train, X_test, 
-                     y_train,
+    check_duplicates(best_mod, best_pred, X_train, X_test, y_train,
                      github_train, meetup_train, github_test, meetup_test)
 
+    filtered_pred = filter_duplicates(best_mod, best_prob, github_test,
+                                      meetup_test)
+    filtered_score = accuracy_score(y_test, filtered_pred)
+    print ('\n Filtered Test Accuracy: %.1f%%').ljust(25) % (
+                                    filtered_score * 100)
+    
+    filtered_pred = filter_duplicates(best_mod, best_prob, github_test,
+                                      meetup_test, github_train,
+                                      meetup_train, filter_train=True)
+    filtered_score = accuracy_score(y_test, filtered_pred)
+    print ('\n Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
+                                    filtered_score * 100)
+
+    
     return best_mod, X_test
 
 
@@ -298,5 +371,8 @@ if __name__ == '__main__':
     else:
         df_clean = clean(load())
 
-    write = True if 'write' in argv else False
-    best_mod, X_test = model(df_clean, write)
+    write = 'write' in argv
+    accuracy_only = 'evals' not in argv
+    #filter_train = 'filter_train' in argv
+
+    best_mod, X_test = model(df_clean, write, accuracy_only)
