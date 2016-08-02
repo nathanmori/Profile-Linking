@@ -71,7 +71,7 @@ def strip_users(df_X):
     return df_X, github, meetup
 
 
-def check_duplicates(best_mod, best_pred, X_train, X_test, y_train,
+def check_duplicates(best_pred, X_train, X_test, y_train,
                      github_train, meetup_train, github_test, meetup_test):
     """"""
 
@@ -325,6 +325,22 @@ def model(df_clean, write=False, accuracy_only=True):
 
         print_evals(mod.__class__.__name__, evals, accuracy_only)
 
+        if callable(getattr(mod, 'predict_proba', None)):
+            filtered_pred = filter_duplicates(y_test_prob, github_test,
+                                      meetup_test)
+            filtered_score = accuracy_score(y_test, filtered_pred)
+            print ('  Filtered Test Accuracy: %.1f%%').ljust(25) % (
+                                            filtered_score * 100)
+            
+            filtered_pred = filter_duplicates(y_test_prob, github_test,
+                                              meetup_test, y_train,
+                                              github_train, meetup_train,
+                                              filter_train=True)
+            filtered_score = accuracy_score(y_test, filtered_pred)
+            print ('  Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
+                                            filtered_score * 100)
+
+
         if ((evals['Test Accuracy'] > best_accuracy) and
              callable(getattr(mod, 'predict_proba', None))):
 
@@ -332,26 +348,15 @@ def model(df_clean, write=False, accuracy_only=True):
             best_mod = deepcopy(mod)
             best_pred = deepcopy(y_test_pred)
             best_prob = deepcopy(y_test_prob)
+            best_filtered_pred = deepcopy(filtered_pred)
 
     print '\n\nBest Model with predict_proba:', best_mod.__class__.__name__
     print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
 
-    check_duplicates(best_mod, best_pred, X_train, X_test, y_train,
+    check_duplicates(best_pred, X_train, X_test, y_train,
                      github_train, meetup_train, github_test, meetup_test)
-
-    filtered_pred = filter_duplicates(best_prob, github_test,
-                                      meetup_test)
-    filtered_score = accuracy_score(y_test, filtered_pred)
-    print ('\n Filtered Test Accuracy: %.1f%%').ljust(25) % (
-                                    filtered_score * 100)
-    
-    filtered_pred = filter_duplicates(best_prob, github_test,
-                                      meetup_test, y_train, github_train,
-                                      meetup_train, filter_train=True)
-    filtered_score = accuracy_score(y_test, filtered_pred)
-    print ('\n Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
-                                    filtered_score * 100)
-
+    check_duplicates(best_filtered_pred, X_train, X_test, y_train,
+                     github_train, meetup_train, github_test, meetup_test)
     
     return best_mod, X_test
 
