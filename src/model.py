@@ -219,11 +219,9 @@ def model(df_clean, write=False):
     print '\n\nBest Model:', best_mod.__class__.__name__
     print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
     positive_class_ix = best_mod.classes_[best_mod.classes_ == 1][0]
-    print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix]
+    print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix] 
 
-    
-
-    return best_mod
+    return best_mod, X_test
 
 
 if __name__ == '__main__':
@@ -232,9 +230,14 @@ if __name__ == '__main__':
         if 'shard' in argv:
             df_clean = pd.read_csv('../data/clean_shard.csv')
         else:
-            df_clean = pd.read_csv('../data/clean.csv')
+            ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
+            if ints_in_argv:
+                rows = ints_in_argv[0]
+                df_clean = pd.read_csv('../data/clean.csv', nrows=rows)
+            else:
+                df_clean = pd.read_csv('../data/clean.csv')
     else:
         df_clean = clean(load())
 
     write = True if 'write' in argv else False
-    best_mod = model(df_clean, write)
+    best_mod, X_test = model(df_clean, write)
