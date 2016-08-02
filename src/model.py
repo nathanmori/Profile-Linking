@@ -133,7 +133,8 @@ def model(df_clean, write=False):
         y_test_pred = mod.predict(X_test)
         """ CONSIDER FOR CLASSES WITHOUT predict_proba """
         if hasattr(mod, 'predict_proba'):
-            y_test_prob = mod.predict_proba(X_test)[:,1]
+            positive_class_ix = mod.classes_[mod.classes_ == 1][0]
+            y_test_prob = mod.predict_proba(X_test)[:, positive_class_ix]
 
         """
         Calculate scores of interest (using threshold of 0.5).
@@ -216,9 +217,11 @@ def model(df_clean, write=False):
             best_mod = mod
 
     print '\n\nBest Model:', best_mod.__class__.__name__
-    print 'Test Accuracy: %.1f%%' % 100 * best_accuracy
+    print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
+    positive_class_ix = best_mod.classes_[best_mod.classes_ == 1][0]
+    print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix]
 
-    print 'probas:', mod.predict_proba(X_test)
+    
 
     return best_mod
 
