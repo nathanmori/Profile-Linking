@@ -37,6 +37,7 @@ import ast
 
 
 def get_classes(step):
+    """"""
 
     with open(step + '.py') as f:
         source = f.read()
@@ -46,14 +47,23 @@ def get_classes(step):
     return classes
 
 def print_evals(model_name, evals):
+    """"""
 
     print model_name
     for key, value in evals.iteritems():
         print ('  ' + key + ':').ljust(25), \
                     value if type(value) == int else ('%.1f%%' % (value * 100))
 
+""" NEED TO IMPLEMENT """
+""" ALSO NEED TO HANDLE github, meetup COLUMNS THAT SHOULD NOT BE USED FOR MODELING """
+def check_duplicates(best_mod, best_accuracy, X_train, X_test):
+    """"""
+
+    pass
+
 
 def model(df_clean, write=False):
+    """"""
 
     start = start_time('Modeling...')
 
@@ -212,14 +222,18 @@ def model(df_clean, write=False):
 
         print_evals(mod.__class__.__name__, evals)
 
-        if evals['Test Accuracy'] > best_accuracy:
+        if ((evals['Test Accuracy'] > best_accuracy) and
+             callable(getattr(mod, 'predict_proba', None))):
+
             best_accuracy = evals['Test Accuracy']
             best_mod = mod
 
     print '\n\nBest Model:', best_mod.__class__.__name__
     print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
     positive_class_ix = best_mod.classes_[best_mod.classes_ == 1][0]
-    print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix] 
+    print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix]
+
+    check_duplicates(best_mod, best_accuracy, X_train, X_test)
 
     return best_mod, X_test
 

@@ -111,7 +111,8 @@ def load():
     # NOTE: ignore face_pics
     # NOTE: profile_pics_matched === verified === correct_match
     # NOTE: github_meetup_combined is missing values
-    # NOTE: github, meetup, github_meetup_combined is not significant
+    # NOTE: ADDING github, meetup back in to check duplicates
+    # NOTE: github_meetup_combined is not significant
     drop_cols = ['id',
                  'name_similar',
                  'profile_pics_processed',
@@ -120,9 +121,9 @@ def load():
                  'face_pics_matched',
                  'verified',
                  'correct_match',
-                 'github_meetup_combined',
-                 'github',
-                 'meetup']
+                 'github_meetup_combined']#,
+                 #'github',
+                 #'meetup']
     keep_cols = [col for col in cols if col not in drop_cols]
     col_string = ', '.join(keep_cols)
 
