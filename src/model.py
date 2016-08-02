@@ -21,6 +21,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from name_tools import match
+from copy import deepcopy
 import operator
 import seaborn
 import pdb
@@ -54,12 +55,50 @@ def print_evals(model_name, evals):
         print ('  ' + key + ':').ljust(25), \
                     value if type(value) == int else ('%.1f%%' % (value * 100))
 
-""" NEED TO IMPLEMENT """
-""" ALSO NEED TO HANDLE github, meetup COLUMNS THAT SHOULD NOT BE USED FOR MODELING """
-def check_duplicates(best_mod, best_accuracy, X_train, X_test):
+def strip_users(df_X):
     """"""
 
-    pass
+    github = df_X['github'].values
+    meetup = df_X['meetup'].values
+    
+    df_X.drop(['github', 'meetup'], axis=1, inplace=True)
+
+    return df_X, github, meetup
+
+
+def check_duplicates(best_mod, best_accuracy, best_pred, X_train, X_test,
+                     y_train,
+                     github_train, meetup_train, github_test, meetup_test):
+    """"""
+
+    ix_matches_train = np.argwhere(y_train == 1).flatten()
+    ix_matches_pred = np.argwhere(best_pred == 1).flatten()
+
+    github_train_matches = github_train[ix_matches_train]
+    meetup_train_matches = meetup_train[ix_matches_train]
+    github_pred_matches = github_test[ix_matches_pred]
+    meetup_pred_matches = meetup_test[ix_matches_pred]
+    github_train_and_pred_matches = np.append(github_train_matches,
+                                              github_pred_matches)
+    meetup_train_and_pred_matches = np.append(meetup_train_matches,
+                                              meetup_pred_matches)
+
+    def count_duplicates(matches, set_name):
+
+        unique_counts = np.unique(matches, return_counts=True)[1]
+        duplicates = sum(unique_counts) - len(unique_counts)
+        print 'There are %d duplicates in %s' % (duplicates, set_name)
+
+    count_duplicates(github_train_matches, 'github_train_matches')
+    count_duplicates(meetup_train_matches, 'meetup_train_matches')
+    count_duplicates(github_pred_matches, 'github_pred_matches')
+    count_duplicates(meetup_pred_matches, 'meetup_pred_matches')
+    count_duplicates(github_train_and_pred_matches,
+                     'github_train_and_pred_matches')
+    count_duplicates(meetup_train_and_pred_matches,
+                     'meetup_train_and_pred_matches')
+
+    pdb.set_trace()
 
 
 def model(df_clean, write=False):
@@ -83,6 +122,9 @@ def model(df_clean, write=False):
     """
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
+    df_X_train, github_train, meetup_train = strip_users(df_X_train)
+    df_X_test, github_test, meetup_test = strip_users(df_X_test)
+
     # suppress warning (that changes to df_X_train and df_X_test won't make it
     # back to df_copy
     pd.options.mode.chained_assignment = None  # default='warn'
@@ -225,15 +267,18 @@ def model(df_clean, write=False):
         if ((evals['Test Accuracy'] > best_accuracy) and
              callable(getattr(mod, 'predict_proba', None))):
 
-            best_accuracy = evals['Test Accuracy']
-            best_mod = mod
+            best_accuracy = deepcopy(evals['Test Accuracy'])
+            best_mod = deepcopy(mod)
+            best_pred = deepcopy(y_test_pred)
 
-    print '\n\nBest Model:', best_mod.__class__.__name__
+    print '\n\nBest Model with predict_proba:', best_mod.__class__.__name__
     print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
     positive_class_ix = best_mod.classes_[best_mod.classes_ == 1][0]
     print 'probas:', best_mod.predict_proba(X_test)[:, positive_class_ix]
 
-    check_duplicates(best_mod, best_accuracy, X_train, X_test)
+    check_duplicates(best_mod, best_accuracy, best_pred, X_train, X_test, 
+                     y_train,
+                     github_train, meetup_train, github_test, meetup_test)
 
     return best_mod, X_test
 
