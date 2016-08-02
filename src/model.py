@@ -135,17 +135,17 @@ def check_duplicates(best_mod, best_pred, X_train, X_test, y_train,
         print 'githubs:', v
 
 
-def filter_duplicates(mod, prob, github_test, meetup_test, github_train=None,\
-                      meetup_train=None, filter_train=False):
+def filter_duplicates(prob, github_test, meetup_test, y_train=None,
+                      github_train=None, meetup_train=None,
+                      filter_train=False):
     """"""
-
     
     if filter_train:
-        taken_githubs = np.unique(github_train).tolist()
-        taken_meetups = np.unique(meetup_train).tolist()
+        taken_githubs = set(github_train[y_train == 1])
+        taken_meetups = set(meetup_train[y_train == 1])
     else:
-        taken_githubs = []
-        taken_meetups = []
+        taken_githubs = set()
+        taken_meetups = set()
 
     preds = np.zeros(len(prob))
 
@@ -155,8 +155,8 @@ def filter_duplicates(mod, prob, github_test, meetup_test, github_train=None,\
         if (github_test[ix] not in taken_githubs) and \
            (meetup_test[ix] not in taken_meetups):
             preds[ix] = 1
-            taken_githubs.append(github_test[ix])
-            taken_meetups.append(meetup_test[ix])
+            taken_githubs.add(github_test[ix])
+            taken_meetups.add(meetup_test[ix])
 
     return preds
     
@@ -339,14 +339,14 @@ def model(df_clean, write=False, accuracy_only=True):
     check_duplicates(best_mod, best_pred, X_train, X_test, y_train,
                      github_train, meetup_train, github_test, meetup_test)
 
-    filtered_pred = filter_duplicates(best_mod, best_prob, github_test,
+    filtered_pred = filter_duplicates(best_prob, github_test,
                                       meetup_test)
     filtered_score = accuracy_score(y_test, filtered_pred)
     print ('\n Filtered Test Accuracy: %.1f%%').ljust(25) % (
                                     filtered_score * 100)
     
-    filtered_pred = filter_duplicates(best_mod, best_prob, github_test,
-                                      meetup_test, github_train,
+    filtered_pred = filter_duplicates(best_prob, github_test,
+                                      meetup_test, y_train, github_train,
                                       meetup_train, filter_train=True)
     filtered_score = accuracy_score(y_test, filtered_pred)
     print ('\n Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
