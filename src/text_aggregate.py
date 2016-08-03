@@ -22,7 +22,7 @@ class all(object):
 
         return self
 
-    def transform(self, (df_X, X_github, X_meetup), y=None):
+    def transform(self, (df_X, X_github, X_meetup)):
         """"""
 
 

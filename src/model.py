@@ -188,12 +188,12 @@ def model(df_clean, write=False, accuracy_only=True):
     df_X_train, github_train, meetup_train = strip_users(df_X_train)
     df_X_test, github_test, meetup_test = strip_users(df_X_test)
 
-    df_X_train_fit = df_X_train.copy()
     premod = Pipeline([('dist_fill_missing', dist_fill_missing.mean()),
                        ('dist_diff', dist_diff.all()),
                        ('text', text.all()),
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('scaler', scaler.standard())])
+    df_X_train_fit = df_X_train.copy()
     premod.fit(df_X_train_fit)
     df_X_train_trans = premod.transform(df_X_train)
     df_X_test_trans = premod.transform(df_X_test)

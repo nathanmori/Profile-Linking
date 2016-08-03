@@ -25,13 +25,39 @@ class idf(object):
 
         return self
 
-    def transform(self, (df_X, X_github, X_meetup), y=None):
+    def transform(self, (df_X, X_github, X_meetup)):
         """"""
 
         X_github_tfidf = self.tfidf_github.transform(X_github)
         X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
 
         return (df_X, X_github_tfidf, X_meetup_tfidf)
+        
+        
+class both(object):
+    """"""
+
+    def __init__(self):
+        """"""
+
+        pass
+
+    def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
+        """"""
+
+        self.tfidf_github = TfidfTransformer().fit(X_train_github)
+        self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
+
+        return self
+
+    def transform(self, (df_X, X_github, X_meetup)):
+        """"""
+
+        X_github_tfidf = self.tfidf_github.transform(X_github)
+        X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
+
+        return (df_X, X_github, X_meetup, X_github_tfidf, X_meetup_tfidf)
+
 
 class skip(object):
     """"""
@@ -46,7 +72,7 @@ class skip(object):
 
         return self
 
-    def transform(self, (df_X, X_github, X_meetup), y=None):
+    def transform(self, (df_X, X_github, X_meetup)):
         """"""
 
         return (df_X, csr_matrix(X_github), csr_matrix(X_meetup))
