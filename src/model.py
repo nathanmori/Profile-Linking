@@ -35,6 +35,7 @@ import name_similarity
 import scaler
 import ast
 import xgboost as xgb
+from xgboost import XGBClassifier
 
 
 def get_classes(step):
@@ -161,16 +162,29 @@ def filter_duplicates(prob, github_test, meetup_test, y_train=None,
     return preds
 
 
-def model_xgb(X_train, y_train, X_test, y_test):
+def model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
+                        github_test, meetup_test):
     
-    dtrain = xgb.DMatrix(X_train)
-    dtest = xgb.DMatrix(X_test)
+    mod = xgb.XGBClassifier(seed=0).fit(X_train, y_train)
+    y_pred = mod.predict(X_test)
+    score = accuracy_score(y_test, y_pred)
+    print '\nXGB Test Accuracy: %.1f%%' % (score * 100)
 
-    gbm = xgb.XGBClassifier().fit(X_train, y_train)
-    y_pred = gbm.predict(X_test)
-
-    print '\nXGB Test Accuracy:', accuracy_score(y_test, y_pred)
+    positive_class_ix = np.argwhere(np.array(mod.classes_) == 1)[0,0]
+    y_test_prob = mod.predict_proba(X_test)[:,positive_class_ix]
+    filtered_pred = filter_duplicates(y_test_prob, github_test, meetup_test)
+    filtered_score = accuracy_score(y_test, filtered_pred)
+    print ('  Filtered Test Accuracy: %.1f%%').ljust(25) % (
+                                                        filtered_score * 100)
     
+    filtered_pred = filter_duplicates(y_test_prob, github_test,
+                                      meetup_test, y_train,
+                                      github_train, meetup_train,
+                                      filter_train=True)
+    filtered_score = accuracy_score(y_test, filtered_pred)
+    print ('  Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
+                                                        filtered_score * 100)
+
 
 def model(df_clean, write=False, accuracy_only=True):
     """"""
@@ -247,7 +261,8 @@ def model(df_clean, write=False, accuracy_only=True):
             SVC(random_state=0,
                 probability=True),
             #LinearSVC(random_state=0),
-            #NuSVC(random_state=0)
+            #NuSVC(random_state=0),
+            XGBClassifier(seed=0)
             ]
         #Neural Network
         #Logit boosting (ada boost variant)
@@ -266,7 +281,8 @@ def model(df_clean, write=False, accuracy_only=True):
         y_test_pred = mod.predict(X_test)
         """ CONSIDER FOR CLASSES WITHOUT predict_proba """
         if hasattr(mod, 'predict_proba'):
-            positive_class_ix = mod.classes_[mod.classes_ == 1][0]
+            class_arr = np.array(mod.classes_)
+            positive_class_ix = class_arr[class_arr == 1][0]
             y_test_prob = mod.predict_proba(X_test)[:, positive_class_ix]
 
         """
@@ -383,7 +399,8 @@ def model(df_clean, write=False, accuracy_only=True):
                      #github_train, meetup_train, github_test, meetup_test)
 
 
-    model_xgb(X_train, y_train, X_test, y_test)
+    model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
+              github_test, meetup_test)
     
     return best_mod, X_test
 
