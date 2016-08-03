@@ -29,9 +29,7 @@ import sys
 from sys import argv
 import dist_fill_missing
 import dist_diff
-import text_fill_missing
-import text_idf
-import text_aggregate
+import text
 import name_similarity
 import scaler
 import ast
@@ -193,9 +191,7 @@ def model(df_clean, write=False, accuracy_only=True):
     df_X_train_fit = df_X_train.copy()
     premod = Pipeline([('dist_fill_missing', dist_fill_missing.mean()),
                        ('dist_diff', dist_diff.all()),
-                       ('text_fill_missing', text_fill_missing.zero()),
-                       ('text_idf', text_idf.skip()),
-                       ('text_aggregate', text_aggregate.all()),
+                       ('text', text.all()),
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('scaler', scaler.standard())])
     premod.fit(df_X_train_fit)
