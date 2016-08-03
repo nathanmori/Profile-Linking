@@ -6,26 +6,34 @@ import numpy as np
 import pdb
 
 
-class zero(object):
+class fill(object):
     """"""
 
-    def __init__(self):
+    def __init__(self, zero=True):
         """"""
 
-        pass
+        self.zero = zero
 
     def fit(self, df_X_train, y=None):
         """"""
 
         """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
             way to get text vect length """
+
         self.text_vect_len = len(df_X_train.github_text.iloc[0].split())
-        X_train_github = np.array([map(int, x.split()) if type(x) == str
-                                                else [0] * self.text_vect_len
-                             for x in df_X_train['github_text']])
-        X_train_meetup = np.array([map(int, x.split()) if type(x) == str
-                                                else [0] * self.text_vect_len
-                             for x in df_X_train['meetup_text']])
+
+        fill_val = [0] * self.text_vect_len if self.zero else np.nan
+            
+        X_train_github = np.array([map(int, x.split())
+                                        if type(x) == str
+                                        else fill_val
+                                        for x
+                                        in df_X_train['github_text']])
+        X_train_meetup = np.array([map(int, x.split())
+                                        if type(x) == str
+                                        else fill_val
+                                        for x
+                                        in df_X_train['meetup_text']])
 
         return self
 

@@ -14,8 +14,9 @@ class all(object):
     def __init__(self):
         """"""
 
-        self.pipe = Pipeline([('fill_missing', text_fill_missing.zero()),
-                              ('idf', text_idf.both()),
+        self.pipe = Pipeline([('fill_missing',
+                                    text_fill_missing.fill(zero=False)),
+                              ('idf', text_idf.idf(idf='both')),
                               ('aggregate', text_aggregate.all())])
 
     def fit(self, df_X_train, y_train=None):

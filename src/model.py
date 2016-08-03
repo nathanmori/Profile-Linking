@@ -22,6 +22,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from name_tools import match
 from copy import deepcopy
+from collections import OrderedDict
 import operator
 import seaborn
 import pdb
@@ -257,7 +258,7 @@ def model(df_clean, write=False, accuracy_only=True):
         """
         Calculate scores of interest (using threshold of 0.5).
         """
-        evals = {}
+        evals = OrderedDict()
         evals['Train Accuracy'] = mod.score(X_train, y_train)
         evals['Train Precision'] = precision_score(y_train, y_train_pred)
         evals['Train Recall'] = recall_score(y_train, y_train_pred)
@@ -362,10 +363,10 @@ def model(df_clean, write=False, accuracy_only=True):
     print '\n\nBest Model with predict_proba:', best_mod.__class__.__name__
     print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
 
-    check_duplicates(best_pred, X_train, X_test, y_train,
-                     github_train, meetup_train, github_test, meetup_test)
-    check_duplicates(best_filtered_pred, X_train, X_test, y_train,
-                     github_train, meetup_train, github_test, meetup_test)
+    #check_duplicates(best_pred, X_train, X_test, y_train,
+                     #github_train, meetup_train, github_test, meetup_test)
+    #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
+                     #github_train, meetup_train, github_test, meetup_test)
     
     return best_mod, X_test
 
