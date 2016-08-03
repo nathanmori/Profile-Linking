@@ -22,6 +22,7 @@ class idf(object):
 
     def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
         """"""
+
         if self.idf in ['yes', 'both']:
             self.tfidf_github = TfidfTransformer().fit(X_train_github)
             self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
@@ -30,8 +31,6 @@ class idf(object):
 
     def transform(self, (df_X, X_github, X_meetup)):
         """"""
-
-        pdb.set_trace()
 
         if self.idf == 'no':
             return (df_X, csr_matrix(X_github), csr_matrix(X_meetup))

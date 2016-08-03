@@ -6,6 +6,10 @@ import numpy as np
 import pdb
 
 
+def check_nans(arr):
+    print '%d missing values' % np.isnan(arr).sum()
+
+
 class fill(object):
     """"""
 
@@ -17,42 +21,46 @@ class fill(object):
     def fit(self, df_X_train, y=None):
         """"""
 
-        """ NEED TO ADDRESS POSSIBILITY THAT iloc[0] is empty, figure a better
-            way to get text vect length """
+        print 'fit missing'
 
-        self.text_vect_len = len(df_X_train.github_text.iloc[0].split())
-
-        fill_val = [0] * self.text_vect_len if self.zero else np.nan
-            
-        X_train_github = np.array([map(int, x.split())
-                                        if type(x) == str
-                                        else fill_val
-                                        for x
-                                        in df_X_train['github_text']])
-        X_train_meetup = np.array([map(int, x.split())
-                                        if type(x) == str
-                                        else fill_val
-                                        for x
-                                        in df_X_train['meetup_text']])
+        i = 0
+        while type(df_X_train.github_text.iloc[i]) != str:
+            i += 1
+        self.text_vect_len = len(df_X_train.github_text.iloc[i].split())
 
         return self
 
     def transform(self, df_X):
         """"""
 
-        """ Convert text vectors from strings to list of ints,
-            fill missing values with empty text
-        CONSIDER leaving empty and fill missing cosine sims with mean cosine
-            sim after calc'd """
+        df_X['github_text_missing'] = df_X['github_text'].apply(
+                                        lambda x: type(x) != str)
+        df_X['meetup_text_missing'] = df_X['meetup_text'].apply(
+                                        lambda x: type(x) != str)
+        df_X['text_missing'] = df_X['github_text_missing'] | \
+                               df_X['meetup_text_missing']
 
-        X_github = np.array([map(int, x.split()) if type(x) == str
-                                                 else [0] * self.text_vect_len
-                             for x in df_X['github_text']])
-        X_meetup = np.array([map(int, x.split()) if type(x) == str
-                                                 else [0] * self.text_vect_len
-                             for x in df_X['meetup_text']])
+
+        """ FIGURE OUT WHY NONE MISSING ON SECOND TIME """
+
+        print 'trans missing'
+        print df_X['github_text_missing'].value_counts()
+        print df_X['meetup_text_missing'].value_counts()
+        print df_X['text_missing'].value_counts()
+
+        fill_val = [0] * self.text_vect_len if self.zero else np.nan
+            
+        X_github = np.array([map(int, x.split())
+                                if type(x) == str
+                                else fill_val
+                                for x
+                                in df_X['github_text']])
+        X_meetup = np.array([map(int, x.split())
+                                if type(x) == str
+                                else fill_val
+                                for x
+                                in df_X['meetup_text']])
+
         df_X.drop(['github_text', 'meetup_text'], axis=1, inplace=True)
-
-        """NOTE UNIQUE INTERFACE """
 
         return (df_X, X_github, X_meetup)

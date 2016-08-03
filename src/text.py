@@ -15,12 +15,15 @@ class all(object):
         """"""
 
         self.pipe = Pipeline([('fill_missing',
-                                    text_fill_missing.fill(zero=False)),
+                                    text_fill_missing.fill()),
                               ('idf', text_idf.idf(idf='both')),
-                              ('aggregate', text_aggregate.all())])
+                              ('aggregate',
+                                text_aggregate.all(refill_missing=True))])
 
     def fit(self, df_X_train, y_train=None):
         """"""
+
+        print 'fit text'
 
         df_X_train_fit = df_X_train.copy()
 
@@ -30,6 +33,8 @@ class all(object):
 
     def transform(self, df_X):
         """"""
+
+        print 'trans text'
 
         df_transform = self.pipe.transform(df_X)
 

@@ -197,7 +197,9 @@ def model(df_clean, write=False, accuracy_only=True):
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('scaler', scaler.standard())])
     df_X_train_fit = df_X_train.copy()
+    print 'fit pipeline'
     premod.fit(df_X_train_fit)
+    print 'trans pipeline'
     df_X_train_trans = premod.transform(df_X_train)
     df_X_test_trans = premod.transform(df_X_test)
    

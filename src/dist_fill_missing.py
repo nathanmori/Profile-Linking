@@ -8,16 +8,14 @@ class mean(object):
     def __init__(self):
         """"""
 
-        #self.dist_cols = ['min_dist_km',
-        #                  'avg_dist_km',
-        #                  'median_dist_km',
-        #                  'max_dist_km']
+        pass
 
     def fit(self, df_X_train, y=None):
         """"""
 
         self.dist_cols = [col for col in df_X_train.columns if 'dist' in col]
-        self.dist_means = df_X_train[self.dist_cols].dropna().apply(lambda ser: ser.apply(float)).mean()
+        self.dist_means = df_X_train[self.dist_cols].dropna().apply(
+                                        lambda ser: ser.apply(float)).mean()
 
         return self
 
