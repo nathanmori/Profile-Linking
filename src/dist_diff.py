@@ -19,8 +19,25 @@ class all(object):
     def transform(self, df_X, y=None):
         """"""
 
-        for i, col1 in enumerate(self.dist_cols):
-            for j, col2 in enumerate(self.dist_cols[1:], start=1):
-                df_X[col1 + '-' + col2] = df_X[col1] - df_X[col2]
+        for i, col1 in enumerate(self.dist_cols, start=1):
+            for col2 in self.dist_cols[i:]:
+                df_X['DIFF:' + col1 + '-' + col2] = df_X[col1] - df_X[col2]
+
+        return df_X
+
+class skip(object):
+
+    def __init__(self):
+        """"""
+        
+        pass
+
+    def fit(self, df_X_train, y=None):
+        """"""
+
+        return self
+
+    def transform(self, df_X, y=None):
+        """"""
 
         return df_X

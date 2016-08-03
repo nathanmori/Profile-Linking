@@ -180,6 +180,8 @@ def model(df_clean, write=False, accuracy_only=True):
     """
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
+    print '# Train Obs:', len(y_train)
+    print '# Test Obs: ', len(y_test)
 
     # suppress warning (that changes to df_X_train and df_X_test won't make it
     # back to df_copy
@@ -197,6 +199,12 @@ def model(df_clean, write=False, accuracy_only=True):
     premod.fit(df_X_train_fit)
     df_X_train_trans = premod.transform(df_X_train)
     df_X_test_trans = premod.transform(df_X_test)
+   
+    #before, 87 GBC, 87.5 SVC 
+    #prev_useless_feats = ['DIFF:min_dist_km-max_dist_km']
+    #df_X_train_trans.drop(prev_useless_feats, axis=1, inplace=True)
+    #df_X_test_trans.drop(prev_useless_feats, axis=1, inplace=True)
+
     X_train = df_X_train_trans.values
     X_test = df_X_test_trans.values
 
@@ -220,11 +228,12 @@ def model(df_clean, write=False, accuracy_only=True):
             GradientBoostingClassifier(n_estimators=250,
                                        random_state=0),
             AdaBoostClassifier(random_state=0),
-            GaussianNB(),
+            #GaussianNB(),
             SVC(random_state=0,
                 probability=True),
-            LinearSVC(random_state=0),
-            NuSVC(random_state=0)]
+            #LinearSVC(random_state=0),
+            #NuSVC(random_state=0)
+            ]
         #Neural Network
         #Logit boosting (ada boost variant)
 
@@ -305,6 +314,10 @@ def model(df_clean, write=False, accuracy_only=True):
                 if imp == 0:
                     useless_feats.append(feat)
             evals['# Useless Features'] = len(useless_feats)
+            print mod.__class__.__name__
+            print 'FEATURE IMPORTANCES'
+            for feat, imp in feats_imps:
+                print feat.ljust(30), imp / feats_imps[0][1]
 
         if write and (mod.__class__.__name__ == 'RandomForestClassifier'):
             fig = plt.figure(figsize=(15, 12))
