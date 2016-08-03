@@ -34,7 +34,17 @@ class all(object):
 
         df_X['text_norm_github'] = [norm(x) for x in X_github]
         df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
-        df_X['text_norm_diff'] = df_X['text_norm_github'] - \
+        df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
                                  df_X['text_norm_meetup']
+
+        df_X['text_norm_github_tfidf'] = [norm(x) for x in X_github_tfidf]
+        df_X['text_norm_meetup_tfidf'] = [norm(x) for x in X_meetup_tfidf]
+        df_X['DIFF:text_norm_tfidf'] = df_X['text_norm_github_tfidf'] - \
+                                       df_X['text_norm_meetup_tfidf']
+
+        df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                                                    in zip(X_github, X_meetup)]
+        df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                                        in zip(X_github_tfidf, X_meetup_tfidf)]
 
         return df_X

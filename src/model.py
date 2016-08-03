@@ -180,7 +180,7 @@ def model(df_clean, write=False, accuracy_only=True):
     """
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
-    print '# Train Obs:', len(y_train)
+    print '\n# Train Obs:', len(y_train)
     print '# Test Obs: ', len(y_test)
 
     # suppress warning (that changes to df_X_train and df_X_test won't make it
