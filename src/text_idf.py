@@ -56,7 +56,8 @@ class both(object):
         X_github_tfidf = self.tfidf_github.transform(X_github)
         X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
 
-        return (df_X, X_github, X_meetup, X_github_tfidf, X_meetup_tfidf)
+        return (df_X, csr_matrix(X_github), csr_matrix(X_meetup),
+                X_github_tfidf, X_meetup_tfidf)
 
 
 class skip(object):

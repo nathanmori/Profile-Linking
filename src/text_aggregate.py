@@ -17,17 +17,20 @@ class all(object):
 
         pass
 
-    def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
+    def fit(self, (df_X_train, X_train_github, X_train_meetup,
+                   X_train_github_tfidf, X_train_meetup_tfidf), y=None):
         """"""
 
         return self
 
-    def transform(self, (df_X, X_github, X_meetup)):
+    def transform(self, (df_X, X_github, X_meetup, X_github_tfidf,
+                         X_meetup_tfidf)):
         """"""
-
 
         df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
                                   zip(X_github, X_meetup)]
+        df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
+                                  zip(X_github_tfidf, X_meetup_tfidf)]
 
         df_X['text_norm_github'] = [norm(x) for x in X_github]
         df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
