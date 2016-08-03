@@ -34,6 +34,7 @@ import text
 import name_similarity
 import scaler
 import ast
+import xgboost as xgb
 
 
 def get_classes(step):
@@ -158,6 +159,17 @@ def filter_duplicates(prob, github_test, meetup_test, y_train=None,
             taken_meetups.add(meetup_test[ix])
 
     return preds
+
+
+def model_xgb(X_train, y_train, X_test, y_test):
+    
+    dtrain = xgb.DMatrix(X_train)
+    dtest = xgb.DMatrix(X_test)
+
+    gbm = xgb.XGBClassifier().fit(X_train, y_train)
+    y_pred = gbm.predict(X_test)
+
+    print '\nXGB Test Accuracy:', accuracy_score(y_test, y_pred)
     
 
 def model(df_clean, write=False, accuracy_only=True):
@@ -369,6 +381,9 @@ def model(df_clean, write=False, accuracy_only=True):
                      #github_train, meetup_train, github_test, meetup_test)
     #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
+
+
+    model_xgb(X_train, y_train, X_test, y_test)
     
     return best_mod, X_test
 
@@ -390,6 +405,5 @@ if __name__ == '__main__':
 
     write = 'write' in argv
     accuracy_only = 'evals' not in argv
-    #filter_train = 'filter_train' in argv
 
     best_mod, X_test = model(df_clean, write, accuracy_only)
