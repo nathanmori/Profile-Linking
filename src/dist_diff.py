@@ -2,11 +2,11 @@
 
 # Author: Nathan Mori <nathanmori@gmail.com>
 
-class diff(object):
+class dist_diff(object):
 
     def __init__(self, diffs):
         """"""
-        
+
         self.diffs = diffs
         #validate
 

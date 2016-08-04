@@ -6,11 +6,7 @@ import numpy as np
 import pdb
 
 
-def check_nans(arr):
-    print '%d missing values' % np.isnan(arr).sum()
-
-
-class fill(object):
+class text_fill_missing(object):
     """"""
 
     def __init__(self, zero=True):
@@ -28,8 +24,10 @@ class fill(object):
 
         return self
 
-    def transform(self, df_X):
+    def transform(self, df_X_input):
         """"""
+
+        df_X = df_X_input.copy()
 
         df_X['github_text_missing'] = df_X['github_text'].apply(
                                         lambda x: type(x) != str)

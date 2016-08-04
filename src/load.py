@@ -170,9 +170,12 @@ if __name__ == '__main__':
     df = load()
 
     if 'write' in argv:
-        df.to_csv('../data/similars.csv', index=False, encoding='utf-8')
-        
-    if 'shard' in argv:
-        ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
-        rows = ints_in_argv[0] if ints_in_argv else 100
-        df.head(rows).to_csv('../data/similars_shard.csv', encoding='utf-8')
+
+        if 'shard' in argv:
+            
+            ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
+            rows = ints_in_argv[0] if ints_in_argv else 100
+            df.head(rows).to_csv('../data/similars_shard.csv', encoding='utf-8')
+
+        else:
+            df.to_csv('../data/similars.csv', index=False, encoding='utf-8')

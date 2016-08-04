@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     if 'read' in argv:
         if 'shard' in argv:
-            df = pd.read_csv('../data/similars_shard.csv') 
+            df = pd.read_csv('../data/similars_shard.csv')
         else:
             df = pd.read_csv('../data/similars.csv')
     else:
@@ -53,9 +53,14 @@ if __name__ == '__main__':
     """ UPDATE TO HANLDE READ AND WRITE WITH OR WO SHARD """
 
     if 'write' in argv:
-        df_clean.to_csv('../data/clean.csv', index=False, encoding='utf-8')
-    if 'shard' in argv:
-        ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
-        rows = ints_in_argv[0] if ints_in_argv else 100
-        df_clean.head(rows).to_csv('../data/clean_shard.csv', index=False, \
-                                   encoding='utf-8')
+
+        if 'shard' in argv:
+
+            ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
+            rows = ints_in_argv[0] if ints_in_argv else 100
+            df_clean.head(rows).to_csv('../data/clean_shard.csv', index=False,\
+                                       encoding='utf-8')
+                                       
+        else:
+
+            df_clean.to_csv('../data/clean.csv', index=False, encoding='utf-8')

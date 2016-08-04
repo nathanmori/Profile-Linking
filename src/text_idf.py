@@ -9,7 +9,7 @@ import pdb
 from scipy.sparse import csr_matrix
 
 
-class idf(object):
+class text_idf(object):
     """"""
 
     def __init__(self, idf='both'):

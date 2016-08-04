@@ -9,7 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pdb
 
 
-class all(object):
+class text_aggregate(object):
     """"""
 
     def __init__(self, refill_missing=False, drop_missing_bools=False):
@@ -18,9 +18,11 @@ class all(object):
         self.refill_missing = refill_missing
         self.drop_missing_bools = drop_missing_bools
 
-    def fit(self, (df_X, X_github, X_meetup,
+    def fit(self, (df_X_input, X_github, X_meetup,
                    X_github_tfidf, X_meetup_tfidf), y=None):
         """"""
+
+        df_X = df_X_input.copy()
 
         df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
                                   zip(X_github, X_meetup)]
@@ -64,9 +66,11 @@ class all(object):
 
         return self
 
-    def transform(self, (df_X, X_github, X_meetup, X_github_tfidf,
+    def transform(self, (df_X_input, X_github, X_meetup, X_github_tfidf,
                          X_meetup_tfidf)):
         """"""
+
+        df_X = df_X_input.copy()
 
         df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
                                   zip(X_github, X_meetup)]

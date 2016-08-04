@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 import pdb
 
 
-class standard(object):
+class scaler(object):
     """"""
 
     def __init__(self):
@@ -17,7 +17,7 @@ class standard(object):
 
     def fit(self, df_X_train, y=None):
         """"""
-        
+
         self.ss = StandardScaler().fit(df_X_train.values)
 
         return self

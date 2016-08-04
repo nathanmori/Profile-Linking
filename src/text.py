@@ -7,8 +7,10 @@ import text_fill_missing
 import text_idf
 import text_aggregate
 
+""" DELETE FILE """
 
-class all(object):
+
+class text(object):
     """"""
 
     def __init__(self):
