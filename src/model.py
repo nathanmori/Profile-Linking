@@ -13,46 +13,20 @@ from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, \
                              GradientBoostingClassifier, AdaBoostClassifier
-from sklearn.naive_bayes import MultinomialNB, GaussianNB
-from sklearn.svm import SVC, LinearSVC, NuSVC
-from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from xgboost import XGBClassifier
+from UD_transforms import UD_pipe
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             roc_auc_score
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-from name_tools import match
 from copy import deepcopy
 from collections import OrderedDict
 import operator
 import seaborn
 import pdb
-import sys
 from sys import argv
-from dist_fill_missing import dist_fill_missing
-from dist_diff import dist_diff
-from text_fill_missing import text_fill_missing
-from text_idf import text_idf
-from text_aggregate import text_aggregate
-from name_similarity import name_similarity
-from scaler import scaler
-from df_to_array import df_to_array
-from drop_github_meetup import drop_github_meetup
 import ast
-import xgboost as xgb
-from xgboost import XGBClassifier
 
-
-""" NOT USED """
-def get_classes(step):
-    """"""
-
-    with open(step + '.py') as f:
-        source = f.read()
-    p = ast.parse(source)
-    classes = [node.name for node in ast.walk(p) if isinstance(node, ast.ClassDef)]
-
-    return classes
 
 def print_evals(model_name, evals, accuracy_only=True):
     """"""
@@ -66,6 +40,7 @@ def print_evals(model_name, evals, accuracy_only=True):
     for key, value in evals.iteritems():
         print ('  ' + key + ':').ljust(25), \
                     value if type(value) == int else ('%.1f%%' % (value * 100))
+
 
 def strip_users(df_X_input):
     """"""
@@ -187,10 +162,11 @@ def filtered_accuracy(estimator, df_X_input, y):
     return acc
 
 
+'''
 def model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
                         github_test, meetup_test):
 
-    mod = xgb.XGBClassifier(seed=0).fit(X_train, y_train)
+    mod = XGBClassifier(seed=0).fit(X_train, y_train)
     y_pred = mod.predict(X_test)
     score = accuracy_score(y_test, y_pred)
     print '\nXGB Test Accuracy: %.1f%%' % (score * 100)
@@ -209,6 +185,7 @@ def model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
     filtered_score = accuracy_score(y_test, filtered_pred)
     print ('  Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
                                                         filtered_score * 100)
+'''
 
 
 def model(df_clean, write=False, accuracy_only=True):
@@ -246,8 +223,8 @@ def model(df_clean, write=False, accuracy_only=True):
                 probability=True),
             XGBClassifier(seed=0)
             ]
-    pipes = []
-    grids = []
+    #pipes = []
+    #grids = []
     best_accuracy = 0.
     for mod in mods:
 
@@ -257,31 +234,26 @@ def model(df_clean, write=False, accuracy_only=True):
         df_X_train_copy = df_X_train.copy()
         df_X_test_copy = df_X_test.copy()
 
-        pipes.append(Pipeline([('drop_github_meetup', drop_github_meetup()),
-                               ('dist_fill_missing', dist_fill_missing()),
-                               ('dist_diff', dist_diff(diffs='all')),
-                               ('text_fill_missing', text_fill_missing()),
-                               ('text_idf', text_idf(idf='both')),
-                               ('text_aggregate',
-                                    text_aggregate(refill_missing=True)
-                               ),
-                               ('name_similarity', name_similarity()),
-                               ('scaler', scaler()),
-                               ('df_to_array', df_to_array()),
-                               ('mod', mod)
-                              ]
-                             )
-                     )
-        grids.append(GridSearchCV(estimator=pipes[-1],
+        #pipes.append(UD_pipe(mod))
+        #grids.append(GridSearchCV(estimator=pipes[-1],
+        #grids[-1].fit(df_X_train_copy, y_train)
+        #acc = grids[-1].score(df_X_test_copy, y_test)
+        """
+        temp remove:
+
+        grid = GridSearchCV(estimator=UD_pipe(mod),
                                    param_grid=[{}],
                                    scoring=filtered_accuracy,
                                    n_jobs=-1,
                                    iid=False)
-                     )
-        grids[-1].fit(df_X_train_copy, y_train)
-        acc = grids[-1].score(df_X_test_copy, y_test)
 
-        print 'Filtered Accuracy:', acc
+        grid.fit(df_X_train_copy, y_train)
+        acc = grid.score(df_X_test_copy, y_test)"""
+        #temp:
+        pipe = UD_pipe(mod)
+        pipe.fit(df_X_train_copy, y_train)
+        acc = filtered_accuracy(pipe, df_X_test_copy, y_test)
+        print ('  Filtered Test Accuracy: %.1f%%').ljust(25) % (acc * 100)
 
         """
 
