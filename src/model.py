@@ -147,17 +147,22 @@ def filtered_accuracy(estimator, df_X_input, y):
     return accuracy
 
 
-def acc_prec_rec(estimator, df_X, y, filtered=True):
+def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
+                 filter_train=False, df_X_train=None, y_train=None):
     """"""
 
     if filtered:
-        preds = filtered_predict(estimator, df_X)
+        preds = filtered_predict(estimator,
+                                 df_X_test,
+                                 filter_train=filter_train,
+                                 df_X_train=df_X_train,
+                                 y_train=y_train)
     else:
-        preds = estimator.predict(df_X)
+        preds = estimator.predict(df_X_test)
 
-    accuracy = accuracy_score(y, preds)
-    precision = precision_score(y, preds)
-    recall = recall_score(y, preds)
+    accuracy = accuracy_score(y_test, preds)
+    precision = precision_score(y_test, preds)
+    recall = recall_score(y_test, preds)
 
     return accuracy, precision, recall
 
@@ -207,11 +212,6 @@ def model(df_clean, write=False, accuracy_only=False):
         df_X_train_copy = df_X_train.copy()
         df_X_test_copy = df_X_test.copy()
 
-        #pipes.append(UD_pipe(mod))
-        #grids.append(GridSearchCV(estimator=pipes[-1],
-        #grids[-1].fit(df_X_train_copy, y_train)
-        #acc = grids[-1].score(df_X_test_copy, y_test)
-
         grid = GridSearchCV(estimator=UD_pipe(mod),
                             param_grid=[{}],
                             scoring=filtered_accuracy,
@@ -242,8 +242,15 @@ def model(df_clean, write=False, accuracy_only=False):
                                                            y_test,
                                                            filtered=True)
 
+        evals['Test Accuracy (Filtered + Train)'], \
+            evals['Test Precision (Filtered + Train)'], \
+            evals['Test Recall (Filtered + Train)'] \
+                = acc_prec_rec(grid, df_X_test_copy, y_test, filtered=True,
+                               filter_train=True, df_X_train=df_X_train,
+                               y_train=y_train)
+
         for key, value in evals.iteritems():
-            print ('  ' + key + ':').ljust(25), \
+            print ('  ' + key + ':').ljust(50), \
                         value if type(value) == int else ('%.1f%%' % (value * 100))
 
         if acc > best_accuracy:
