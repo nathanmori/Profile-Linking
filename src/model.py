@@ -212,6 +212,13 @@ def model(df_clean, write=False, accuracy_only=False):
         df_X_train_copy = df_X_train.copy()
         df_X_test_copy = df_X_test.copy()
 
+        # short grid for testing
+        grid = GridSearchCV(estimator=UD_pipe(mod),
+                            param_grid=[{}],
+                            scoring=filtered_accuracy,
+                            n_jobs=-1)
+
+        """ FULL PARAM GRID
         grid = GridSearchCV(estimator=UD_pipe(mod),
                             param_grid=[{'dist_fill_with':
                                             ['mean',
@@ -230,12 +237,23 @@ def model(df_clean, write=False, accuracy_only=False):
                                              False],
                                          'text_drop_missing_bools':
                                             [True,
+                                             False],
+                                         'fullname':
+                                            [True,
+                                             False],
+                                         'firstname':
+                                            [True,
+                                             False],
+                                         'lastname':
+                                            [True,
+                                             False],
+                                         'calc':
+                                            [True,
                                              False]
                                         }
                                        ],
                             scoring=filtered_accuracy,
-                            n_jobs=-1,
-                            iid=False)
+                            n_jobs=-1)"""
 
         grid.fit(df_X_train_copy, y_train)
         acc = grid.score(df_X_test_copy, y_test)
@@ -272,21 +290,22 @@ def model(df_clean, write=False, accuracy_only=False):
             print ('  ' + key + ':').ljust(50), \
                     value if type(value) == int else ('%.1f%%' % (value * 100))
 
-        with open('../output/%s.txt' % int(time()), 'w') as f:
-            f.write('ALGORITHM')
+        fname = str(int(time()) - 1470348265).zfill(7)
+        with open('../output/%s.txt' % fname, 'w') as f:
+            f.write('ALGORITHM\n')
             f.write(mod.__class__.__name__)
 
-            f.write('BEST SCORE')
-            f.write(grid.best_score_)
+            f.write('\n\nBEST SCORE\n')
+            f.write(str(grid.best_score_))
 
-            f.write('\nBEST PARAMS')
-            f.write(grid.best_params_)
+            f.write('\n\nBEST PARAMS\n')
+            f.write(str(grid.best_params_))
 
-            f.write('\nMETRICS')
-            f.write(evals)
+            f.write('\n\nMETRICS\n')
+            f.write(str(evals))
 
-            f.write('\nGRID SCORES')
-            f.write(grid.grid_scores_)
+            f.write('\n\nGRID SCORES\n')
+            f.write(str(grid.grid_scores_))
 
             f.write('\n\n')
 
@@ -393,4 +412,4 @@ if __name__ == '__main__':
     write = 'write' in argv
     accuracy_only = 'evals' not in argv
 
-    best_mod_name, best_accuracy = model(df_clean, write, accuracy_only)
+    model(df_clean, write, accuracy_only)
