@@ -208,10 +208,11 @@ def model(df_clean, write=False, accuracy_only=True):
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_copy, y,
                                                 test_size=0.5, random_state=0)
     print '\n# Train Obs:', len(y_train)
+    print '    Counts:', np.unique(y_train, return_counts=True)
     print '# Test Obs: ', len(y_test)
+    print '    Counts:', np.unique(y_test, return_counts=True)
 
-    # suppress warning (that changes to df_X_train and df_X_test won't make it
-    # back to df_copy
+    # suppress warning writing on copy warning
     pd.options.mode.chained_assignment = None  # default='warn'
 
     df_X_train, github_train, meetup_train = strip_users(df_X_train)
@@ -223,9 +224,7 @@ def model(df_clean, write=False, accuracy_only=True):
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('scaler', scaler.standard())])
     df_X_train_fit = df_X_train.copy()
-    print 'fit pipeline'
     premod.fit(df_X_train_fit)
-    print 'trans pipeline'
     df_X_train_trans = premod.transform(df_X_train)
     df_X_test_trans = premod.transform(df_X_test)
    

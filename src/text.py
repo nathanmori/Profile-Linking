@@ -23,18 +23,13 @@ class all(object):
     def fit(self, df_X_train, y_train=None):
         """"""
 
-        print 'fit text'
-
         df_X_train_fit = df_X_train.copy()
-
         self.pipe.fit(df_X_train_fit, y_train)
 
         return self
 
     def transform(self, df_X):
         """"""
-
-        print 'trans text'
 
         df_transform = self.pipe.transform(df_X)
 

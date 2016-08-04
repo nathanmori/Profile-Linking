@@ -26,7 +26,6 @@ class standard(object):
         """"""
 
         scaled_arr = self.ss.transform(df_X.values)
-
         df_X = pd.DataFrame(scaled_arr, columns=df_X.columns)
 
         return df_X

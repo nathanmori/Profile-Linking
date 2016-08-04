@@ -92,8 +92,13 @@ class all(object):
             for col in self.refill_cols:
                 df_X[col][df_X['text_missing']] = self.refill_means[col]
 
+        missing_bool_cols = ['github_text_missing',
+                             'meetup_text_missing',
+                             'text_missing']
         if self.drop_missing_bools:
-            df_X.drop(['github_text_missing', 'meetup_text_missing'], axis=1,
-                      inplace=True)
+            df_X.drop(missing_bool_cols, axis=1, inplace=True)
+        else:
+            for col in missing_bool_cols:
+                df_X[col] = df_X[col].apply(int)
 
         return df_X

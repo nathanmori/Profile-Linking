@@ -21,8 +21,6 @@ class fill(object):
     def fit(self, df_X_train, y=None):
         """"""
 
-        print 'fit missing'
-
         i = 0
         while type(df_X_train.github_text.iloc[i]) != str:
             i += 1
@@ -40,16 +38,7 @@ class fill(object):
         df_X['text_missing'] = df_X['github_text_missing'] | \
                                df_X['meetup_text_missing']
 
-
-        """ FIGURE OUT WHY NONE MISSING ON SECOND TIME """
-
-        print 'trans missing'
-        print df_X['github_text_missing'].value_counts()
-        print df_X['meetup_text_missing'].value_counts()
-        print df_X['text_missing'].value_counts()
-
         fill_val = [0] * self.text_vect_len if self.zero else np.nan
-            
         X_github = np.array([map(int, x.split())
                                 if type(x) == str
                                 else fill_val
