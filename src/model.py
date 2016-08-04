@@ -213,7 +213,26 @@ def model(df_clean, write=False, accuracy_only=False):
         df_X_test_copy = df_X_test.copy()
 
         grid = GridSearchCV(estimator=UD_pipe(mod),
-                            param_grid=[{}],
+                            param_grid=[{'dist_fill_with':
+                                            ['mean',
+                                             'median',
+                                             'min',
+                                             'max'],
+                                         'dist_diffs':
+                                            ['all',
+                                             'none'],
+                                         'idf':
+                                            ['yes',
+                                             'no',
+                                             'both'],
+                                         'text_refill_missing':
+                                            [True,
+                                             False],
+                                         'text_drop_missing_bools':
+                                            [True,
+                                             False]
+                                        }
+                                       ],
                             scoring=filtered_accuracy,
                             n_jobs=-1,
                             iid=False)

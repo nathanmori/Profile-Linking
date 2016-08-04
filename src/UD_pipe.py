@@ -59,9 +59,21 @@ class dist_fill_missing(object):
         if self.fill_with == 'mean':
             self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
                                            lambda ser: ser.apply(float)).mean()
-        else:
-            self.fill_vals = np.empty(len(self.dist_cols))
-            self.fill_vals.fill(self.fill_with)
+
+        elif self.fill_with == 'min':
+            self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
+                                           lambda ser: ser.apply(float)).min()
+
+        elif self.fill_with == 'max':
+            self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
+                                           lambda ser: ser.apply(float)).max()
+
+        elif self.fill_with == 'median':
+            self.fill_vals = np.median(
+                                df_X_train[
+                                    self.dist_cols].dropna().apply(
+                                           lambda ser: ser.apply(float)),
+                                axis=0)
 
         return self
 
@@ -103,7 +115,7 @@ class dist_diff(object):
 class text_fill_missing(object):
     """"""
 
-    def __init__(self, zero=True):
+    def __init__(self):
         """"""
 
         pass
@@ -363,7 +375,6 @@ class UD_pipe(object):
                  mod,
                  dist_fill_with='mean',
                  dist_diffs='all',
-                 text_fill_zero=True,
                  idf='both',
                  text_refill_missing=False,
                  text_drop_missing_bools=False
@@ -371,7 +382,6 @@ class UD_pipe(object):
         """"""
         self.params = {'dist_fill_with': dist_fill_with,
                        'dist_diffs': dist_diffs,
-                       'text_fill_zero': text_fill_zero,
                        'idf': idf,
                        'text_refill_missing': text_refill_missing,
                        'text_drop_missing_bools': text_drop_missing_bools,
@@ -387,8 +397,7 @@ class UD_pipe(object):
                                 dist_diff(
                                     self.params['dist_diffs'])),
                               ('text_fill_missing',
-                                text_fill_missing(
-                                    self.params['text_fill_zero'])),
+                                text_fill_missing()),
                               ('text_idf',
                                 text_idf(
                                     self.params['idf'])),
