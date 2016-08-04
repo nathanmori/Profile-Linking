@@ -15,7 +15,6 @@ from copy import deepcopy
 import pdb
 
 
-
 class drop_github_meetup(object):
     """"""
 
@@ -36,6 +35,12 @@ class drop_github_meetup(object):
 
         return df_X
 
+def validate(key, val, alts):
+    """"""
+
+    if val not in alts:
+        raise ValueError("%s=%s must be in %s" % (key, val, alts))
+
 
 class dist_fill_missing(object):
     """"""
@@ -43,8 +48,8 @@ class dist_fill_missing(object):
     def __init__(self, fill_with='mean'):
         """"""
 
+        validate('fill_with', fill_with, ['mean', 'median', 'min', 'max'])
         self.fill_with = fill_with
-        #validate
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -74,8 +79,8 @@ class dist_diff(object):
     def __init__(self, diffs='all'):
         """"""
 
+        validate('diffs', diffs, ['all', 'none'])
         self.diffs = diffs
-        #validate
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -101,9 +106,7 @@ class text_fill_missing(object):
     def __init__(self, zero=True):
         """"""
 
-        self.zero = zero
-        ### MAY NOT NEED
-        #validate
+        pass
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -127,7 +130,7 @@ class text_fill_missing(object):
         df_X['text_missing'] = df_X['github_text_missing'] | \
                                df_X['meetup_text_missing']
 
-        fill_val = [0] * self.text_vect_len# if self.zero else np.nan
+        fill_val = [0] * self.text_vect_len
         X_github = np.array([map(int, x.split())
                                 if type(x) == str
                                 else fill_val
@@ -152,7 +155,6 @@ class text_idf(object):
 
         if idf not in ['yes', 'no', 'both']:
             raise ValueError("idf must be in ['yes', 'no', 'both']")
-
         self.idf = idf
 
     def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
@@ -186,8 +188,9 @@ class text_aggregate(object):
     def __init__(self, refill_missing=False, drop_missing_bools=False):
         """"""
 
-        #validate
+        validate('refill_missing', refill_missing, [True, False])
         self.refill_missing = refill_missing
+        validate('drop_missing_bools', drop_missing_bools, [True, False])
         self.drop_missing_bools = drop_missing_bools
 
     def fit(self, (df_X_input, X_github, X_meetup,
@@ -405,16 +408,6 @@ class UD_pipe(object):
                             )
 
 
-    def get_params(self, deep=True):
-        """"""
-
-        if deep:
-
-            return deepcopy(self.params)
-
-        return self.params
-
-
     def fit(self, df_X, y=None):
         """"""
 
@@ -429,7 +422,33 @@ class UD_pipe(object):
 
         return self.pipe.transform(df_X)
 
+
+    def predict(self, df_X):
+        """"""
+
+        return self.pipe.predict(df_X)
+
+
     def predict_proba(self, df_X):
         """"""
 
         return self.pipe.predict_proba(df_X)
+
+
+
+    def get_params(self, deep=True):
+        """"""
+
+        if deep:
+            return deepcopy(self.params)
+
+        return self.params
+
+
+    def set_params(self, **params):
+        """"""
+
+        for key, value in params.iteritems():
+            self.params[key] = value
+
+        return self

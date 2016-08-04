@@ -15,7 +15,7 @@ from sklearn.ensemble import RandomForestClassifier, \
                              GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
-from UD_transforms import UD_pipe
+from UD_pipe import UD_pipe
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             roc_auc_score
@@ -26,33 +26,6 @@ import seaborn
 import pdb
 from sys import argv
 import ast
-
-
-def print_evals(model_name, evals, accuracy_only=True):
-    """"""
-
-    print '\n' + model_name
-    if accuracy_only:
-        print (' Test Accuracy: %.1f%%').ljust(25) % (
-                                evals['Test Accuracy'] * 100)
-        return
-
-    for key, value in evals.iteritems():
-        print ('  ' + key + ':').ljust(25), \
-                    value if type(value) == int else ('%.1f%%' % (value * 100))
-
-
-def strip_users(df_X_input):
-    """"""
-
-    df_X = df_X_input.copy()
-
-    github = df_X['github'].values
-    meetup = df_X['meetup'].values
-
-    df_X.drop(['github', 'meetup'], axis=1, inplace=True)
-
-    return df_X, github, meetup
 
 
 def check_duplicates(best_pred, X_train, X_test, y_train,
@@ -119,22 +92,42 @@ def check_duplicates(best_pred, X_train, X_test, y_train,
         print 'githubs:', v
 
 
-def filtered_predict(prob, github_test, meetup_test, y_train=None,
-                      github_train=None, meetup_train=None,
-                      filter_train=False):
+def predict_proba_positive(estimator, df_X):
     """"""
 
+    if hasattr(estimator, 'classes_'):
+        class_arr = np.array(estimator.classes_)
+    else:
+        class_arr = np.array(estimator.best_estimator_.classes_)
+
+    positive_class_ix = class_arr[class_arr == 1][0]
+    probs = estimator.predict_proba(df_X)[:, positive_class_ix]
+
+    return probs
+
+
+def filtered_predict(estimator, df_X_test,
+                        filter_train=False, df_X_train=None, y_train=None):
+    """"""
+
+    github_test = df_X_test['github'].values
+    meetup_test = df_X_test['github'].values
+
     if filter_train:
+        github_train = df_X_train['github'].values
+        meetup_train = df_X_train['meetup'].values
+
         taken_githubs = set(github_train[y_train == 1])
         taken_meetups = set(meetup_train[y_train == 1])
     else:
         taken_githubs = set()
         taken_meetups = set()
 
-    preds = np.zeros(len(prob))
+    probs = predict_proba_positive(estimator, df_X_test)
+    preds = np.zeros(len(probs))
 
-    for ix in np.argsort(prob)[::-1]:
-        if (prob[ix] < 0.5):
+    for ix in np.argsort(probs)[::-1]:
+        if (probs[ix] < 0.5):
             break
         if (github_test[ix] not in taken_githubs) and \
            (meetup_test[ix] not in taken_meetups):
@@ -148,47 +141,28 @@ def filtered_predict(prob, github_test, meetup_test, y_train=None,
 def filtered_accuracy(estimator, df_X_input, y):
     """"""
 
-    #df_X, githubs, meetups = strip_users(df_X_input)
+    preds = filtered_predict(estimator, df_X_input)
+    accuracy = accuracy_score(y, preds)
 
-    class_arr = np.array(estimator.classes_)
-    positive_class_ix = class_arr[class_arr == 1][0]
-    probs = estimator.predict_proba(df_X_input)[:, positive_class_ix]
-
-    preds = filtered_predict(probs,
-                             df_X_input['github'].values,
-                             df_X_input['meetup'].values)
-    acc = accuracy_score(y, preds)
-
-    return acc
+    return accuracy
 
 
-'''
-def model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
-                        github_test, meetup_test):
+def acc_prec_rec(estimator, df_X, y, filtered=True):
+    """"""
 
-    mod = XGBClassifier(seed=0).fit(X_train, y_train)
-    y_pred = mod.predict(X_test)
-    score = accuracy_score(y_test, y_pred)
-    print '\nXGB Test Accuracy: %.1f%%' % (score * 100)
+    if filtered:
+        preds = filtered_predict(estimator, df_X)
+    else:
+        preds = estimator.predict(df_X)
 
-    positive_class_ix = np.argwhere(np.array(mod.classes_) == 1)[0,0]
-    y_test_prob = mod.predict_proba(X_test)[:,positive_class_ix]
-    filtered_pred = filtered_predict(y_test_prob, github_test, meetup_test)
-    filtered_score = accuracy_score(y_test, filtered_pred)
-    print ('  Filtered Test Accuracy: %.1f%%').ljust(25) % (
-                                                        filtered_score * 100)
+    accuracy = accuracy_score(y, preds)
+    precision = precision_score(y, preds)
+    recall = recall_score(y, preds)
 
-    filtered_pred = filtered_predict(y_test_prob, github_test,
-                                      meetup_test, y_train,
-                                      github_train, meetup_train,
-                                      filter_train=True)
-    filtered_score = accuracy_score(y_test, filtered_pred)
-    print ('  Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
-                                                        filtered_score * 100)
-'''
+    return accuracy, precision, recall
 
 
-def model(df_clean, write=False, accuracy_only=True):
+def model(df_clean, write=False, accuracy_only=False):
     """"""
 
     start = start_time('Modeling...')
@@ -210,21 +184,20 @@ def model(df_clean, write=False, accuracy_only=True):
     # suppress warning writing on copy warning
     pd.options.mode.chained_assignment = None  # default='warn'
 
-    mods = [RandomForestClassifier(oob_score=True,
-                           n_jobs=-1,
-                           random_state=0,
-                           n_estimators=250),
-            LogisticRegression(random_state=0,
-                               n_jobs=-1),
-            GradientBoostingClassifier(n_estimators=250,
-                                       random_state=0),
-            AdaBoostClassifier(random_state=0),
-            SVC(random_state=0,
-                probability=True),
+    mods = [#RandomForestClassifier(oob_score=True,
+            #               n_jobs=-1,
+            #               random_state=0,
+            #               n_estimators=250),
+            #LogisticRegression(random_state=0,
+            #                   n_jobs=-1),
+            #GradientBoostingClassifier(n_estimators=250,
+            #                           random_state=0),
+            #AdaBoostClassifier(random_state=0),
+            #SVC(random_state=0,
+            #    probability=True),
             XGBClassifier(seed=0)
             ]
-    #pipes = []
-    #grids = []
+
     best_accuracy = 0.
     for mod in mods:
 
@@ -238,24 +211,59 @@ def model(df_clean, write=False, accuracy_only=True):
         #grids.append(GridSearchCV(estimator=pipes[-1],
         #grids[-1].fit(df_X_train_copy, y_train)
         #acc = grids[-1].score(df_X_test_copy, y_test)
-        """
-        temp remove:
 
         grid = GridSearchCV(estimator=UD_pipe(mod),
-                                   param_grid=[{}],
-                                   scoring=filtered_accuracy,
-                                   n_jobs=-1,
-                                   iid=False)
+                            param_grid=[{}],
+                            scoring=filtered_accuracy,
+                            n_jobs=-1,
+                            iid=False)
 
         grid.fit(df_X_train_copy, y_train)
-        acc = grid.score(df_X_test_copy, y_test)"""
-        #temp:
-        pipe = UD_pipe(mod)
-        pipe.fit(df_X_train_copy, y_train)
-        acc = filtered_accuracy(pipe, df_X_test_copy, y_test)
-        print ('  Filtered Test Accuracy: %.1f%%').ljust(25) % (acc * 100)
+        acc = grid.score(df_X_test_copy, y_test)
+
+        y_train_pred = grid.predict(df_X_train_copy)
+        y_test_pred = grid.predict(df_X_test_copy)
+
+        evals = OrderedDict()
+        evals['Test Accuracy'], \
+            evals['Test Precision'], \
+            evals['Test Recall'] = acc_prec_rec(grid,
+                                                df_X_test_copy,
+                                                y_test,
+                                                filtered=False)
+
+        y_test_prob = predict_proba_positive(grid, df_X_test_copy)
+        evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
+
+        evals['Test Accuracy (Filtered)'], \
+            evals['Test Precision (Filtered)'], \
+            evals['Test Recall (Filtered)'] = acc_prec_rec(grid,
+                                                           df_X_test_copy,
+                                                           y_test,
+                                                           filtered=True)
+
+        for key, value in evals.iteritems():
+            print ('  ' + key + ':').ljust(25), \
+                        value if type(value) == int else ('%.1f%%' % (value * 100))
+
+        if acc > best_accuracy:
+            best_accuracy = deepcopy(acc)
+            best_mod_name = deepcopy(mod.__class__.__name__)
+            #best_pred = deepcopy(y_test_pred)å
+            #best_prob = deepcopy(y_test_prob)
+            #best_filtered_pred = deepcopy(filtered_pred)
+
+    #print '\n\nBest Model with predict_proba:', best_mod
+    #print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
+
+    #check_duplicates(best_pred, X_train, X_test, y_train,
+                     #github_train, meetup_train, github_test, meetup_test)
+    #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
+                     #github_train, meetup_train, github_test, meetup_test)
+
 
         """
+        DELETE:
 
         X_train = df_X_train_trans.values
         X_test = df_X_test_trans.values
@@ -267,38 +275,11 @@ def model(df_clean, write=False, accuracy_only=True):
             scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
             plt.savefig('../img/scatter_matrix_data_trans-test')
             plt.close('all')
-
         """
 
-        """ ADD FUNCTIONALITY TO STORE VARIABLES SEPARATELY """
-
-        #mod.fit(X_train, y_train)
-
         """
-        Calculate predictions (using 0.5 threshold).
-        """
-        #y_train_pred = mod.predict(X_train)
-        #y_test_pred = mod.predict(X_test)
-
-        """
-
-        evals = OrderedDict()
-        evals['Train Accuracy'] = mod.score(X_train, y_train)
-        evals['Train Precision'] = precision_score(y_train, y_train_pred)
-        evals['Train Recall'] = recall_score(y_train, y_train_pred)
-        if hasattr(mod, 'oob_score_'):
-            evals['OOB Accuracy'] = mod.oob_score_
-        evals['Test Accuracy'] = mod.score(X_test, y_test)
-        evals['Test Precision'] = precision_score(y_test, y_test_pred)
-        evals['Test Recall'] = recall_score(y_test, y_test_pred)
-        if hasattr(mod, 'predict_proba'):
-            evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
-
-        """
-
-        """ UPDATE FOR OTHER MODELS """
-
-        """
+        acc, prec, recall
+        IMPLEMENT FOR FINAL MODEL?
 
         if write and (mod.__class__.__name__ == 'RandomForestClassifier'):
             thresholds = y_test_prob.copy()
@@ -319,7 +300,9 @@ def model(df_clean, write=False, accuracy_only=True):
             plt.legend()
             plt.savefig('../img/performance')
             plt.close('all')
+        """
 
+        """
         feats = df_X_train_trans.columns
         evals['# Features'] = len(feats)
         num_feats_plot = evals['# Features']
@@ -352,49 +335,10 @@ def model(df_clean, write=False, accuracy_only=True):
             plt.title('RFC Feature Importances')
             plt.savefig('../img/feature_importances')
             plt.close('all')
-
         """
-
-
-
-        """
-
-        print_evals(mod.__class__.__name__, evals, accuracy_only)
-
-        if callable(getattr(mod, 'predict_proba', None)):
-            filtered_pred = filtered_predict(y_test_prob, github_test,
-                                      meetup_test)
-            filtered_score = accuracy_score(y_test, filtered_pred)
-            print ('  Filtered Test Accuracy: %.1f%%').ljust(25) % (
-                                            filtered_score * 100)
-
-            filtered_pred = filtered_predict(y_test_prob, github_test,
-                                              meetup_test, y_train,
-                                              github_train, meetup_train,
-                                              filter_train=True)
-            filtered_score = accuracy_score(y_test, filtered_pred)
-            print ('  Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
-                                            filtered_score * 100)
-
-        """
-
-        if acc > best_accuracy:
-            best_accuracy = deepcopy(acc)
-            best_mod = deepcopy(mod.__class__.__name__)
-            #best_pred = deepcopy(y_test_pred)
-            #best_prob = deepcopy(y_test_prob)
-            #best_filtered_pred = deepcopy(filtered_pred)
-
-    #print '\n\nBest Model with predict_proba:', best_mod
-    #print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
-
-    #check_duplicates(best_pred, X_train, X_test, y_train,
-                     #github_train, meetup_train, github_test, meetup_test)
-    #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
-                     #github_train, meetup_train, github_test, meetup_test)
 
     end_time(start)
-    return best_mod, best_accuracy
+    return best_mod_name, best_accuracy
 
 
 if __name__ == '__main__':
@@ -415,4 +359,4 @@ if __name__ == '__main__':
     write = 'write' in argv
     accuracy_only = 'evals' not in argv
 
-    best_mod, X_test = model(df_clean, write, accuracy_only)
+    best_mod_name, best_accuracy = model(df_clean, write, accuracy_only)
