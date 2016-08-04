@@ -100,13 +100,13 @@ def predict_proba_positive(estimator, df_X):
     else:
         class_arr = np.array(estimator.best_estimator_.classes_)
 
-    positive_class_ix = class_arr[class_arr == 1][0]
+    positive_class_ix = np.argwhere(class_arr == 1)[0,0]
     probs = estimator.predict_proba(df_X)[:, positive_class_ix]
 
     return probs
 
 
-def filtered_predict(estimator, df_X_test,
+def filtered_predict(estimator, df_X_test, y_test=None,
                         filter_train=False, df_X_train=None, y_train=None):
     """"""
 
@@ -167,6 +167,19 @@ def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
     return accuracy, precision, recall
 
 
+def str_params((key, val)):
+    """"""
+
+    return ('  ' + key + ':').ljust(30) + str(val)
+
+
+def str_eval((key, val)):
+    """"""
+
+    return ('  ' + key + ':').ljust(50) + (str(val) if type(val) == int \
+                                                else ('%.1f%%' % (val * 100)))
+
+
 def model(df_clean, write=False, accuracy_only=False):
     """"""
 
@@ -198,8 +211,8 @@ def model(df_clean, write=False, accuracy_only=False):
             #GradientBoostingClassifier(n_estimators=250,
             #                           random_state=0),
             #AdaBoostClassifier(random_state=0),
-            #SVC(random_state=0,
-            #    probability=True),
+            SVC(random_state=0,
+                probability=True),
             XGBClassifier(seed=0)
             ]
 
@@ -214,7 +227,15 @@ def model(df_clean, write=False, accuracy_only=False):
 
         # short grid for testing
         grid = GridSearchCV(estimator=UD_pipe(mod),
-                            param_grid=[{}],
+                            param_grid=[{'dist_diffs':
+                                            ['all',
+                                             'none',
+                                             'ignore_min'],
+                                         'idf':
+                                            ['yes',
+                                             'no',
+                                             'both']
+                                             }],
                             scoring=filtered_accuracy,
                             n_jobs=-1)
 
@@ -227,7 +248,8 @@ def model(df_clean, write=False, accuracy_only=False):
                                              'max'],
                                          'dist_diffs':
                                             ['all',
-                                             'none'],
+                                             'none',
+                                             'ignore_min'],
                                          'idf':
                                             ['yes',
                                              'no',
@@ -286,11 +308,12 @@ def model(df_clean, write=False, accuracy_only=False):
                                filter_train=True, df_X_train=df_X_train,
                                y_train=y_train)
 
-        for key, value in evals.iteritems():
-            print ('  ' + key + ':').ljust(50), \
-                    value if type(value) == int else ('%.1f%%' % (value * 100))
+        for kvpair in evals.iteritems():
+            print str_eval(kvpair)
 
-        fname = str(int(time()) - 1470348265).zfill(7)
+        fname = str(int(start - 1470348265)).zfill(7) + '_' \
+                + mod.__class__.__name__
+
         with open('../output/%s.txt' % fname, 'w') as f:
             f.write('ALGORITHM\n')
             f.write(mod.__class__.__name__)
@@ -299,15 +322,25 @@ def model(df_clean, write=False, accuracy_only=False):
             f.write(str(grid.best_score_))
 
             f.write('\n\nBEST PARAMS\n')
-            f.write(str(grid.best_params_))
+            for kvpair in grid.best_params_.iteritems():
+                f.write(str_params(kvpair))
+                f.write('\n')
 
             f.write('\n\nMETRICS\n')
-            f.write(str(evals))
+            for kvpair in evals.iteritems():
+                f.write(str_eval(kvpair))
+                f.write('\n')
 
             f.write('\n\nGRID SCORES\n')
-            f.write(str(grid.grid_scores_))
-
-            f.write('\n\n')
+            i = 0
+            while i < len(grid.grid_scores_) - 2:
+                f.write(str(grid.grid_scores_[i]))
+                f.write('\n')
+                f.write(str(grid.grid_scores_[i + 1]))
+                f.write('\n')
+                f.write(str(grid.grid_scores_[i + 2]))
+                f.write('\n')
+                i += 3
 
     #check_duplicates(best_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)

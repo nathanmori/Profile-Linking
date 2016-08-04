@@ -12,6 +12,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 from name_tools import match
 from copy import deepcopy
+from time import time
 import pdb
 
 
@@ -91,20 +92,26 @@ class dist_diff(object):
     def __init__(self, diffs='all'):
         """"""
 
-        validate('diffs', diffs, ['all', 'none'])
+        validate('diffs', diffs, ['all', 'none', 'ignore_min'])
         self.diffs = diffs
 
     def fit(self, df_X_train, y=None):
         """"""
 
-        self.dist_cols = [col for col in df_X_train.columns if 'dist' in col]
+        if self.diffs == 'ignore_min':
+            self.dist_cols = [col for col in df_X_train.columns
+                                  if ('dist' in col and
+                                      'min' not in col)]
+        else:
+            self.dist_cols = [col for col in df_X_train.columns
+                                  if 'dist' in col]
 
         return self
 
     def transform(self, df_X, y=None):
         """"""
 
-        if self.diffs == 'all':
+        if self.diffs != 'none':
             for i, col1 in enumerate(self.dist_cols, start=1):
                 for col2 in self.dist_cols[i:]:
                     df_X['DIFF:' + col1 + '-' + col2] = df_X[col1] - df_X[col2]
@@ -165,8 +172,7 @@ class text_idf(object):
     def __init__(self, idf='both'):
         """"""
 
-        if idf not in ['yes', 'no', 'both']:
-            raise ValueError("idf must be in ['yes', 'no', 'both']")
+        validate('idf', idf, ['yes', 'no', 'both'])
         self.idf = idf
 
     def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
@@ -298,11 +304,18 @@ class text_aggregate(object):
 class name_similarity(object):
     """"""
 
-    def __init__(self):
+    def __init__(self, fullname=True, firstname=True, lastname=True,
+                 calc=True):
         """"""
 
-        """ ADD option for name_tools, first, last, full COMBOS ? """
-        pass
+        validate('fullname', fullname, [True, False])
+        self.fullname = fullname
+        validate('firstname', firstname, [True, False])
+        self.firstname = firstname
+        validate('lastname', lastname, [True, False])
+        self.lastname = lastname
+        validate('calc', calc, [True, False])
+        self.calc = calc
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -314,11 +327,20 @@ class name_similarity(object):
 
         df_X = df_X_input.copy()
 
-        df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],
-                                                        row['meetup_name']
-                                                       ),
-                                      axis=1
-                                     )
+        if not self.fullname:
+            df_X.drop(['fullname_similarity'], axis=1, inplace=True)
+
+        if not self.firstname:
+            df_X.drop(['firstname_similarity'], axis=1, inplace=True)
+
+        if not self.lastname:
+            df_X.drop(['lastname_similarity'], axis=1, inplace=True)
+
+        if self.calc:
+            df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],
+                                                            row['meetup_name']
+                                                           ),
+                                          axis=1)
         df_X.drop(['github_name', 'meetup_name'], axis=1, inplace=True)
 
         return df_X
@@ -377,15 +399,23 @@ class UD_pipe(object):
                  dist_diffs='all',
                  idf='both',
                  text_refill_missing=False,
-                 text_drop_missing_bools=False
+                 text_drop_missing_bools=False,
+                 fullname=True,
+                 firstname=True,
+                 lastname=True,
+                 calc=True
                  ):
         """"""
-        self.params = {'dist_fill_with': dist_fill_with,
+        self.params = {'mod': mod,
+                       'dist_fill_with': dist_fill_with,
                        'dist_diffs': dist_diffs,
                        'idf': idf,
                        'text_refill_missing': text_refill_missing,
                        'text_drop_missing_bools': text_drop_missing_bools,
-                       'mod': mod
+                       'fullname': fullname,
+                       'firstname': firstname,
+                       'lastname': lastname,
+                       'calc': calc
         }
 
         self.pipe = Pipeline([('drop_github_meetup',
@@ -406,7 +436,11 @@ class UD_pipe(object):
                                     self.params['text_refill_missing'],
                                     self.params['text_drop_missing_bools'])),
                               ('name_similarity',
-                                name_similarity()),
+                                name_similarity(
+                                    self.params['fullname'],
+                                    self.params['firstname'],
+                                    self.params['lastname'],
+                                    self.params['calc'])),
                               ('scaler',
                                 scaler()),
                               ('df_to_array',
@@ -419,6 +453,8 @@ class UD_pipe(object):
 
     def fit(self, df_X, y=None):
         """"""
+
+        print 'REPORT UD_pipe.fit: time =', time()
 
         self.pipe.fit(df_X, y)
         self.classes_ = self.pipe.named_steps['mod'].classes_
