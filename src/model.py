@@ -257,15 +257,12 @@ def model(df_clean, write=False, accuracy_only=True):
             GradientBoostingClassifier(n_estimators=250,
                                        random_state=0),
             AdaBoostClassifier(random_state=0),
-            #GaussianNB(),
             SVC(random_state=0,
                 probability=True),
-            #LinearSVC(random_state=0),
-            #NuSVC(random_state=0),
             XGBClassifier(seed=0)
             ]
-        #Neural Network
-        #Logit boosting (ada boost variant)
+        #Neural Network?
+        #Logit boosting (ada boost variant)?
 
     best_accuracy = 0.
     for mod in mods:
@@ -380,7 +377,6 @@ def model(df_clean, write=False, accuracy_only=True):
             print ('  Filtered (w/ train) Test Accuracy: %.1f%%').ljust(25) % (
                                             filtered_score * 100)
 
-
         if ((evals['Test Accuracy'] > best_accuracy) and
              callable(getattr(mod, 'predict_proba', None))):
 
@@ -397,7 +393,6 @@ def model(df_clean, write=False, accuracy_only=True):
                      #github_train, meetup_train, github_test, meetup_test)
     #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
-
 
     model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
               github_test, meetup_test)

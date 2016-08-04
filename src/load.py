@@ -120,7 +120,8 @@ def load():
                  'face_pics_processed',
                  'face_pics_matched',
                  'verified',
-                 'correct_match',
+                 #'correct_match',  Replaced with profile_pics_matched
+                 'profile_pics_matched',
                  'github_meetup_combined']#,
                  #'github',
                  #'meetup']
@@ -136,7 +137,7 @@ def load():
             from
                 github_meetup_staging
             where
-                profile_pics_matched = 't'
+                correct_match = 't'
         )
         select
             %s
