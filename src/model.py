@@ -270,17 +270,25 @@ def model(df_clean, write=False, accuracy_only=False):
 
         for key, value in evals.iteritems():
             print ('  ' + key + ':').ljust(50), \
-                        value if type(value) == int else ('%.1f%%' % (value * 100))
+                    value if type(value) == int else ('%.1f%%' % (value * 100))
 
-        if acc > best_accuracy:
-            best_accuracy = deepcopy(acc)
-            best_mod_name = deepcopy(mod.__class__.__name__)
-            #best_pred = deepcopy(y_test_pred)å
-            #best_prob = deepcopy(y_test_prob)
-            #best_filtered_pred = deepcopy(filtered_pred)
+        with open('../output/%s.txt' % int(time()), 'w') as f:
+            f.write('ALGORITHM')
+            f.write(mod.__class__.__name__)
 
-    #print '\n\nBest Model with predict_proba:', best_mod
-    #print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
+            f.write('BEST SCORE')
+            f.write(grid.best_score_)
+
+            f.write('\nBEST PARAMS')
+            f.write(grid.best_params_)
+
+            f.write('\nMETRICS')
+            f.write(evals)
+
+            f.write('\nGRID SCORES')
+            f.write(grid.grid_scores_)
+
+            f.write('\n\n')
 
     #check_duplicates(best_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
@@ -364,7 +372,7 @@ def model(df_clean, write=False, accuracy_only=False):
         """
 
     end_time(start)
-    return best_mod_name, best_accuracy
+    pdb.set_trace()
 
 
 if __name__ == '__main__':
