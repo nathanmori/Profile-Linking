@@ -1,0 +1,16 @@
+ALGORITHM
+XGBClassifier
+
+BEST SCORE
+0.92
+
+BEST PARAMS
+{'calc': 'True', 'dist_diffs': 'all'}
+
+METRICS
+64.0%64.0%100.0%60.1%64.0%64.0%100.0%64.0%64.0%100.0%
+
+GRID SCORES
+mean: 0.92000, std: 0.05594, params: {'calc': 'True', 'dist_diffs': 'all'}
+mean: 0.92000, std: 0.05594, params: {'calc': 'True', 'dist_diffs': 'none'}
+mean: 0.92000, std: 0.05594, params: {'calc': 'False', 'dist_diffs': 'all'}
