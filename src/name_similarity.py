@@ -11,6 +11,7 @@ class name_tools_match(object):
     def __init__(self):
         """"""
 
+        """ ADD option for name_tools, first, last, full COMBOS ? """
         pass
 
     def fit(self, df_X_train, y=None):

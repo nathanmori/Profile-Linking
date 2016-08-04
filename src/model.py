@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestClassifier, \
 from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.pipeline import Pipeline
+from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             roc_auc_score
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -162,6 +163,14 @@ def filter_duplicates(prob, github_test, meetup_test, y_train=None,
     return preds
 
 
+def filtered_accuracy(estimator, X, y):
+    """"""
+
+    pred = estimator.predict(X)
+
+    return accuracy_score(y, pred)
+
+
 def model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
                         github_test, meetup_test):
     
@@ -219,20 +228,19 @@ def model(df_clean, write=False, accuracy_only=True):
     df_X_test, github_test, meetup_test = strip_users(df_X_test)
 
     premod = Pipeline([('dist_fill_missing', dist_fill_missing.mean()),
-                       ('dist_diff', dist_diff.all()),
+                       ('dist_diff', dist_diff.diff(diffs='all')),
                        ('text', text.all()),
                        ('name_similarity', name_similarity.name_tools_match()),
                        ('scaler', scaler.standard())])
-    df_X_train_fit = df_X_train.copy()
-    premod.fit(df_X_train_fit)
-    df_X_train_trans = premod.transform(df_X_train)
-    df_X_test_trans = premod.transform(df_X_test)
-   
-    #before, 87 GBC, 87.5 SVC 
-    #prev_useless_feats = ['DIFF:min_dist_km-max_dist_km']
-    #df_X_train_trans.drop(prev_useless_feats, axis=1, inplace=True)
-    #df_X_test_trans.drop(prev_useless_feats, axis=1, inplace=True)
+    grid_search = GridSearchCV(estimator=premod,
+                               param_grid=[{}],
+                               scoring=filtered_accuracy,
+                               n_jobs=-1,
+                               iid=False)
 
+    grid_search.fit(df_X_train, y_train)
+    grid_search.score(df_X_test, y_test)
+   
     X_train = df_X_train_trans.values
     X_test = df_X_test_trans.values
 
@@ -380,22 +388,19 @@ def model(df_clean, write=False, accuracy_only=True):
              callable(getattr(mod, 'predict_proba', None))):
 
             best_accuracy = deepcopy(evals['Test Accuracy'])
-            best_mod = deepcopy(mod)
+            best_mod = deepcopy.__class__.__name__
             best_pred = deepcopy(y_test_pred)
             best_prob = deepcopy(y_test_prob)
             best_filtered_pred = deepcopy(filtered_pred)
 
-    print '\n\nBest Model with predict_proba:', best_mod.__class__.__name__
-    print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
+    #print '\n\nBest Model with predict_proba:', best_mod
+    #print 'Test Accuracy: %.1f%%' % (100. * best_accuracy)
 
     #check_duplicates(best_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
     #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
 
-    model_xgb(X_train, y_train, X_test, y_test, github_train, meetup_train,
-              github_test, meetup_test)
-    
     return best_mod, X_test
 
 
