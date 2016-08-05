@@ -181,7 +181,7 @@ def str_eval((key, val)):
                                                 else ('%.1f%%' % (val * 100)))
 
 
-def model(df_clean, write=False, accuracy_only=False):
+def model(df_clean, write=False):
     """"""
 
     start = start_time('Modeling...')
@@ -451,6 +451,5 @@ if __name__ == '__main__':
         df_clean = clean(load())
 
     write = 'write' in argv
-    accuracy_only = 'evals' not in argv
 
-    model(df_clean, write, accuracy_only)
+    model(df_clean, write)
