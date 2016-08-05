@@ -16,6 +16,15 @@ from time import time
 import pdb
 
 
+def validate(key, val, alts):
+    """"""
+
+    if val not in alts:
+        raise ValueError("%s=%s must be in %s" % (key, val, alts))
+    else:
+        print 'REPORT   validate: %s=%s OK' % (key, val)
+
+
 class drop_github_meetup(object):
     """"""
 
@@ -35,12 +44,6 @@ class drop_github_meetup(object):
         df_X = df_X_input.drop(['github', 'meetup'], axis=1, inplace=False)
 
         return df_X
-
-def validate(key, val, alts):
-    """"""
-
-    if val not in alts:
-        raise ValueError("%s=%s must be in %s" % (key, val, alts))
 
 
 class dist_fill_missing(object):

@@ -202,18 +202,18 @@ def model(df_clean, write=False, accuracy_only=False):
     # suppress warning writing on copy warning
     pd.options.mode.chained_assignment = None  # default='warn'
 
-    mods = [#RandomForestClassifier(oob_score=True,
-            #               n_jobs=-1,
-            #               random_state=0,
-            #               n_estimators=250),
-            #LogisticRegression(random_state=0,
-            #                   n_jobs=-1),
-            #GradientBoostingClassifier(n_estimators=250,
-            #                           random_state=0),
-            #AdaBoostClassifier(random_state=0),
+    mods = [XGBClassifier(seed=0),
+            RandomForestClassifier(oob_score=True,
+                                   n_jobs=-1,
+                                   random_state=0,
+                                   n_estimators=250),
+            LogisticRegression(random_state=0,
+                               n_jobs=-1),
+            GradientBoostingClassifier(n_estimators=250,
+                                       random_state=0),
+            AdaBoostClassifier(random_state=0),
             SVC(random_state=0,
                 probability=True),
-            XGBClassifier(seed=0)
             ]
 
     best_accuracy = 0.
@@ -225,7 +225,7 @@ def model(df_clean, write=False, accuracy_only=False):
         df_X_train_copy = df_X_train.copy()
         df_X_test_copy = df_X_test.copy()
 
-        # short grid for testing
+        """ SHORT GRID for testing
         grid = GridSearchCV(estimator=UD_pipe(mod),
                             param_grid=[{'dist_diffs':
                                             ['all',
@@ -237,9 +237,8 @@ def model(df_clean, write=False, accuracy_only=False):
                                              'both']
                                              }],
                             scoring=filtered_accuracy,
-                            n_jobs=-1)
-
-        """ FULL PARAM GRID
+                            n_jobs=-1)"""
+        # FULL GRID
         grid = GridSearchCV(estimator=UD_pipe(mod),
                             param_grid=[{'dist_fill_with':
                                             ['mean',
@@ -275,7 +274,7 @@ def model(df_clean, write=False, accuracy_only=False):
                                         }
                                        ],
                             scoring=filtered_accuracy,
-                            n_jobs=-1)"""
+                            n_jobs=-1)
 
         grid.fit(df_X_train_copy, y_train)
         acc = grid.score(df_X_test_copy, y_test)
