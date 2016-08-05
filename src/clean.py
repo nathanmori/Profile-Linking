@@ -10,22 +10,24 @@ from load import *
 
 
 def check_nulls(df):
+    """"""
 
     for col in df.columns:
         print df[col].isnull().value_counts()
 
 
 def ix_nulls(df):
+    """"""
 
     print np.argwhere(df.isnull().values)
 
 
 def clean(df):
+    """"""
 
     start = start_time('Cleaning...')
 
     df_clean = df.copy()
-    #df_clean['match'] = df['profile_pics_matched'].apply(int)
     df_clean['match'] = df['correct_match'].apply(int)
     df_clean.drop(['correct_match'], axis=1, inplace=True)
     df_clean['github_name'] = df['github_name'].apply(
@@ -49,8 +51,6 @@ if __name__ == '__main__':
         df = load()
 
     df_clean = clean(df)
-
-    """ UPDATE TO HANLDE READ AND WRITE WITH OR WO SHARD """
 
     if 'write' in argv:
 

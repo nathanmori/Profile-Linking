@@ -15,7 +15,8 @@ from sklearn.ensemble import RandomForestClassifier, \
                              GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
-from UD_pipe import UD_pipe
+from UD_transforms import *
+from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
                             roc_auc_score
@@ -238,37 +239,57 @@ def model(df_clean, write=False, accuracy_only=False):
                                              }],
                             scoring=filtered_accuracy,
                             n_jobs=-1)"""
-        # FULL GRID
-        grid = GridSearchCV(estimator=UD_pipe(mod),
-                            param_grid=[{'dist_fill_with':
+
+        grid = GridSearchCV(Pipeline([('drop_github_meetup',
+                                        drop_github_meetup()),
+                                      ('dist_fill_missing',
+                                        dist_fill_missing()),
+                                      ('dist_diff',
+                                        dist_diff()),
+                                      ('text_fill_missing',
+                                        text_fill_missing()),
+                                      ('text_idf',
+                                        text_idf()),
+                                      ('text_aggregate',
+                                        text_aggregate()),
+                                      ('name_similarity',
+                                        name_similarity()),
+                                      ('scaler',
+                                        scaler()),
+                                      ('df_to_array',
+                                        df_to_array()),
+                                      ('mod',
+                                        mod)]),
+                            #grid = GridSearchCV(estimator=UD_pipe(mod),
+                            param_grid=[{'dist_fill_missing__fill_with':
                                             ['mean',
                                              'median',
                                              'min',
                                              'max'],
-                                         'dist_diffs':
+                                         'dist_diff__include':
                                             ['all',
                                              'none',
                                              'ignore_min'],
-                                         'idf':
-                                            ['yes',
-                                             'no',
+                                         'text_idf__idf':
+                                            [#'yes',
+                                             #'no',
                                              'both'],
-                                         'text_refill_missing':
+                                         'text_aggregate__refill_missing':
                                             [True,
                                              False],
-                                         'text_drop_missing_bools':
+                                         'text_aggregate__drop_missing_bools':
                                             [True,
                                              False],
-                                         'fullname':
+                                         'name_similarity__fullname':
                                             [True,
                                              False],
-                                         'firstname':
+                                         'name_similarity__firstname':
                                             [True,
                                              False],
-                                         'lastname':
+                                         'name_similarity__lastname':
                                             [True,
                                              False],
-                                         'calc':
+                                         'name_similarity__calc':
                                             [True,
                                              False]
                                         }

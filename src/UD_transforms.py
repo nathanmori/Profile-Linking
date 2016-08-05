@@ -25,20 +25,39 @@ def validate(key, val, alts):
         print 'REPORT   validate: %s=%s OK' % (key, val)
 
 
-class drop_github_meetup(object):
+class UD_transform_class(object):
     """"""
 
     def __init__(self):
         """"""
 
-        pass
+        self.params = {}
 
-    def fit(self, df_X_train, y=None):
+    def fit(self, *args):
         """"""
 
         return self
 
-    def transform(self, df_X_input, y=None):
+    def get_params(self, deep=True):
+        """"""
+
+        if deep:
+            return deepcopy(self.params)
+
+        return self.params
+
+    def set_params(self, **params):
+        """"""
+
+        for key, value in params.iteritems():
+            validate(key, value, self.valids[key])
+            self.params[key] = value
+
+ 
+class drop_github_meetup(UD_transform_class):
+    """"""
+
+    def transform(self, df_X_input):
         """"""
 
         df_X = df_X_input.drop(['github', 'meetup'], axis=1, inplace=False)
@@ -46,33 +65,33 @@ class drop_github_meetup(object):
         return df_X
 
 
-class dist_fill_missing(object):
+class dist_fill_missing(UD_transform_class):
     """"""
 
-    def __init__(self, fill_with='mean'):
+    def __init__(self):
         """"""
-
-        validate('fill_with', fill_with, ['mean', 'median', 'min', 'max'])
-        self.fill_with = fill_with
+        
+        self.params = {}
+        self.valids = {'fill_with': ['mean', 'median', 'min', 'max']}
 
     def fit(self, df_X_train, y=None):
         """"""
 
         self.dist_cols = [col for col in df_X_train.columns if 'dist' in col]
 
-        if self.fill_with == 'mean':
+        if self.params['fill_with'] == 'mean':
             self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
                                            lambda ser: ser.apply(float)).mean()
 
-        elif self.fill_with == 'min':
+        elif self.params['fill_with'] == 'min':
             self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
                                            lambda ser: ser.apply(float)).min()
 
-        elif self.fill_with == 'max':
+        elif self.params['fill_with'] == 'max':
             self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
                                            lambda ser: ser.apply(float)).max()
 
-        elif self.fill_with == 'median':
+        elif self.params['fill_with'] == 'median':
             self.fill_vals = np.median(
                                 df_X_train[
                                     self.dist_cols].dropna().apply(
@@ -81,7 +100,7 @@ class dist_fill_missing(object):
 
         return self
 
-    def transform(self, df_X, y=None):
+    def transform(self, df_X):
         """"""
 
         df_X[self.dist_cols] = df_X[self.dist_cols].fillna(self.fill_vals) \
@@ -90,18 +109,19 @@ class dist_fill_missing(object):
         return df_X
 
 
-class dist_diff(object):
+class dist_diff(UD_transform_class):
+    """"""
 
-    def __init__(self, diffs='all'):
+    def __init__(self):
         """"""
 
-        validate('diffs', diffs, ['all', 'none', 'ignore_min'])
-        self.diffs = diffs
+        self.params = {}
+        self.valids = {'include': ['all', 'none', 'ignore_min']}
 
     def fit(self, df_X_train, y=None):
         """"""
 
-        if self.diffs == 'ignore_min':
+        if self.params['include'] == 'ignore_min':
             self.dist_cols = [col for col in df_X_train.columns
                                   if ('dist' in col and
                                       'min' not in col)]
@@ -111,10 +131,10 @@ class dist_diff(object):
 
         return self
 
-    def transform(self, df_X, y=None):
+    def transform(self, df_X):
         """"""
 
-        if self.diffs != 'none':
+        if self.params['include'] != 'none':
             for i, col1 in enumerate(self.dist_cols, start=1):
                 for col2 in self.dist_cols[i:]:
                     df_X['DIFF:' + col1 + '-' + col2] = df_X[col1] - df_X[col2]
@@ -122,13 +142,8 @@ class dist_diff(object):
         return df_X
 
 
-class text_fill_missing(object):
+class text_fill_missing(UD_transform_class):
     """"""
-
-    def __init__(self):
-        """"""
-
-        pass
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -169,19 +184,20 @@ class text_fill_missing(object):
         return (df_X, X_github, X_meetup)
 
 
-class text_idf(object):
+
+class text_idf(UD_transform_class):
     """"""
 
-    def __init__(self, idf='both'):
+    def __init__(self):
         """"""
 
-        validate('idf', idf, ['yes', 'no', 'both'])
-        self.idf = idf
+        self.params = {}
+        self.valids = {'idf': ['yes', 'no', 'both']}
 
     def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
         """"""
 
-        if self.idf in ['yes', 'both']:
+        if self.params['idf'] in ['yes', 'both']:
             self.tfidf_github = TfidfTransformer().fit(X_train_github)
             self.tfidf_meetup = TfidfTransformer().fit(X_train_meetup)
 
@@ -190,29 +206,28 @@ class text_idf(object):
     def transform(self, (df_X, X_github, X_meetup)):
         """"""
 
-        if self.idf == 'no':
+        if self.params['idf'] == 'no':
             return (df_X, csr_matrix(X_github), csr_matrix(X_meetup))
 
         X_github_tfidf = self.tfidf_github.transform(X_github)
         X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
 
-        if self.idf == 'yes':
+        if self.params['idf'] == 'yes':
             return (df_X, X_github_tfidf, X_meetup_tfidf)
 
         return (df_X, csr_matrix(X_github), csr_matrix(X_meetup),
                 X_github_tfidf, X_meetup_tfidf)
 
 
-class text_aggregate(object):
+class text_aggregate(UD_transform_class):
     """"""
 
-    def __init__(self, refill_missing=False, drop_missing_bools=False):
+    def __init__(self):
         """"""
 
-        validate('refill_missing', refill_missing, [True, False])
-        self.refill_missing = refill_missing
-        validate('drop_missing_bools', drop_missing_bools, [True, False])
-        self.drop_missing_bools = drop_missing_bools
+        self.params = {}
+        self.valids = {'refill_missing': [True, False],
+                       'drop_missing_bools': [True, False]}
 
     def fit(self, (df_X_input, X_github, X_meetup,
                    X_github_tfidf, X_meetup_tfidf), y=None):
@@ -241,7 +256,7 @@ class text_aggregate(object):
                                         in zip(X_github_tfidf, X_meetup_tfidf)]
 
 
-        if self.refill_missing:
+        if self.params['refill_missing']:
             self.refill_cols = ['text_sim',
                                 'text_sim_tfidf',
                                 'text_norm_github',
@@ -255,7 +270,8 @@ class text_aggregate(object):
             self.refill_means = {}
 
             for col in self.refill_cols:
-                self.refill_means[col] = df_X[col] \
+                if col in df_X.columns:
+                    self.refill_means[col] = df_X[col] \
                                             [~ df_X['text_missing']].mean()
 
             pass
@@ -288,14 +304,14 @@ class text_aggregate(object):
         df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
                                         in zip(X_github_tfidf, X_meetup_tfidf)]
 
-        if self.refill_missing:
+        if self.params['refill_missing']:
             for col in self.refill_cols:
                 df_X[col][df_X['text_missing']] = self.refill_means[col]
 
         missing_bool_cols = ['github_text_missing',
                              'meetup_text_missing',
                              'text_missing']
-        if self.drop_missing_bools:
+        if self.params['drop_missing_bools']:
             df_X.drop(missing_bool_cols, axis=1, inplace=True)
         else:
             for col in missing_bool_cols:
@@ -304,42 +320,34 @@ class text_aggregate(object):
         return df_X
 
 
-class name_similarity(object):
+class name_similarity(UD_transform_class):
     """"""
 
     def __init__(self, fullname=True, firstname=True, lastname=True,
                  calc=True):
         """"""
 
-        validate('fullname', fullname, [True, False])
-        self.fullname = fullname
-        validate('firstname', firstname, [True, False])
-        self.firstname = firstname
-        validate('lastname', lastname, [True, False])
-        self.lastname = lastname
-        validate('calc', calc, [True, False])
-        self.calc = calc
+        self.params = {}
+        self.valids = {'fullname': [True, False],
+                       'firstname': [True, False],
+                       'lastname': [True, False],
+                       'calc': [True, False]}
 
-    def fit(self, df_X_train, y=None):
-        """"""
-
-        return self
-
-    def transform(self, df_X_input, y=None):
+    def transform(self, df_X_input):
         """"""
 
         df_X = df_X_input.copy()
 
-        if not self.fullname:
+        if not self.params['fullname']:
             df_X.drop(['fullname_similarity'], axis=1, inplace=True)
 
-        if not self.firstname:
+        if not self.params['firstname']:
             df_X.drop(['firstname_similarity'], axis=1, inplace=True)
 
-        if not self.lastname:
+        if not self.params['lastname']:
             df_X.drop(['lastname_similarity'], axis=1, inplace=True)
 
-        if self.calc:
+        if self.params['calc']:
             df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],
                                                             row['meetup_name']
                                                            ),
@@ -349,13 +357,8 @@ class name_similarity(object):
         return df_X
 
 
-class scaler(object):
+class scaler(UD_transform_class):
     """"""
-
-    def __init__(self):
-        """"""
-
-        pass
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -364,7 +367,7 @@ class scaler(object):
 
         return self
 
-    def transform(self, df_X, y=None):
+    def transform(self, df_X):
         """"""
 
         scaled_arr = self.ss.transform(df_X.values)
@@ -373,26 +376,16 @@ class scaler(object):
         return df_X
 
 
-class df_to_array(object):
+class df_to_array(UD_transform_class):
     """"""
 
-    def __init__(self):
-        """"""
-
-        pass
-
-    def fit(self, df_X_train, y=None):
-        """"""
-
-        return self
-
-    def transform(self, df_X, y=None):
+    def transform(self, df_X):
         """"""
 
         X = df_X.values
         return X
 
-
+'''
 class UD_pipe(object):
     """"""
 
@@ -424,8 +417,9 @@ class UD_pipe(object):
         self.pipe = Pipeline([('drop_github_meetup',
                                 drop_github_meetup()),
                               ('dist_fill_missing',
-                                dist_fill_missing(
-                                    self.params['dist_fill_with'])),
+                                dist_fill_missing()),
+                                #dist_fill_missing(
+                                    #self.params['dist_fill_with'])),
                               ('dist_diff',
                                 dist_diff(
                                     self.params['dist_diffs'])),
@@ -465,7 +459,7 @@ class UD_pipe(object):
         return self
 
 
-    def transform(self, df_X, y=None):
+    def transform(self, df_X):
         """"""
 
         return self.pipe.transform(df_X)
@@ -487,16 +481,23 @@ class UD_pipe(object):
     def get_params(self, deep=True):
         """"""
 
-        if deep:
+        """if deep:
             return deepcopy(self.params)
 
-        return self.params
+        return self.params"""
+
+        return self.pipe.get_params(deep)
 
 
     def set_params(self, **params):
         """"""
 
-        for key, value in params.iteritems():
+        """for key, value in params.iteritems():
+            print key, ':', value
             self.params[key] = value
 
-        return self
+        #self.pipe.set_params("""
+        
+        self.pipe.set_params(params)
+
+        return self'''
