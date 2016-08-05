@@ -226,20 +226,6 @@ def model(df_clean, write=False, accuracy_only=False):
         df_X_train_copy = df_X_train.copy()
         df_X_test_copy = df_X_test.copy()
 
-        """ SHORT GRID for testing
-        grid = GridSearchCV(estimator=UD_pipe(mod),
-                            param_grid=[{'dist_diffs':
-                                            ['all',
-                                             'none',
-                                             'ignore_min'],
-                                         'idf':
-                                            ['yes',
-                                             'no',
-                                             'both']
-                                             }],
-                            scoring=filtered_accuracy,
-                            n_jobs=-1)"""
-
         grid = GridSearchCV(Pipeline([('drop_github_meetup',
                                         drop_github_meetup()),
                                       ('dist_fill_missing',
@@ -260,7 +246,6 @@ def model(df_clean, write=False, accuracy_only=False):
                                         df_to_array()),
                                       ('mod',
                                         mod)]),
-                            #grid = GridSearchCV(estimator=UD_pipe(mod),
                             param_grid=[{'dist_fill_missing__fill_with':
                                             ['mean',
                                              'median',
@@ -271,10 +256,13 @@ def model(df_clean, write=False, accuracy_only=False):
                                              'none',
                                              'ignore_min'],
                                          'text_idf__idf':
-                                            [#'yes',
-                                             #'no',
+                                            ['yes',
+                                             'no',
                                              'both'],
                                          'text_aggregate__refill_missing':
+                                            [True,
+                                             False],
+                                         'text_aggregate__cosine_only':
                                             [True,
                                              False],
                                          'text_aggregate__drop_missing_bools':

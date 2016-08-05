@@ -53,7 +53,7 @@ class UD_transform_class(object):
             validate(key, value, self.valids[key])
             self.params[key] = value
 
- 
+
 class drop_github_meetup(UD_transform_class):
     """"""
 
@@ -70,7 +70,7 @@ class dist_fill_missing(UD_transform_class):
 
     def __init__(self):
         """"""
-        
+
         self.params = {}
         self.valids = {'fill_with': ['mean', 'median', 'min', 'max']}
 
@@ -92,11 +92,8 @@ class dist_fill_missing(UD_transform_class):
                                            lambda ser: ser.apply(float)).max()
 
         elif self.params['fill_with'] == 'median':
-            self.fill_vals = np.median(
-                                df_X_train[
-                                    self.dist_cols].dropna().apply(
-                                           lambda ser: ser.apply(float)),
-                                axis=0)
+            self.fill_vals = df_X_train[self.dist_cols].dropna().apply(
+                                         lambda ser: ser.apply(float)).median()
 
         return self
 
@@ -207,13 +204,14 @@ class text_idf(UD_transform_class):
         """"""
 
         if self.params['idf'] == 'no':
-            return (df_X, csr_matrix(X_github), csr_matrix(X_meetup))
+            return (df_X, csr_matrix(X_github), csr_matrix(X_meetup), None,
+                                                                      None)
 
         X_github_tfidf = self.tfidf_github.transform(X_github)
         X_meetup_tfidf = self.tfidf_meetup.transform(X_meetup)
 
         if self.params['idf'] == 'yes':
-            return (df_X, X_github_tfidf, X_meetup_tfidf)
+            return (df_X, None, None, X_github_tfidf, X_meetup_tfidf)
 
         return (df_X, csr_matrix(X_github), csr_matrix(X_meetup),
                 X_github_tfidf, X_meetup_tfidf)
@@ -227,36 +225,50 @@ class text_aggregate(UD_transform_class):
 
         self.params = {}
         self.valids = {'refill_missing': [True, False],
+                       'cosine_only': [True, False],
                        'drop_missing_bools': [True, False]}
 
     def fit(self, (df_X_input, X_github, X_meetup,
                    X_github_tfidf, X_meetup_tfidf), y=None):
         """"""
 
-        df_X = df_X_input.copy()
-
-        df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
-                                  zip(X_github, X_meetup)]
-        df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
-                                  zip(X_github_tfidf, X_meetup_tfidf)]
-
-        df_X['text_norm_github'] = [norm(x) for x in X_github]
-        df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
-        df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
-                                 df_X['text_norm_meetup']
-
-        df_X['text_norm_github_tfidf'] = [norm(x) for x in X_github_tfidf]
-        df_X['text_norm_meetup_tfidf'] = [norm(x) for x in X_meetup_tfidf]
-        df_X['DIFF:text_norm_tfidf'] = df_X['text_norm_github_tfidf'] - \
-                                       df_X['text_norm_meetup_tfidf']
-
-        df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
-                                                    in zip(X_github, X_meetup)]
-        df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
-                                        in zip(X_github_tfidf, X_meetup_tfidf)]
-
-
         if self.params['refill_missing']:
+
+            df_X = df_X_input.copy()
+
+            if X_github is not None:
+
+                df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2
+                                      in zip(X_github, X_meetup)]
+
+                if not self.params['cosine_only']:
+                    df_X['text_norm_github'] = [norm(x) for x in X_github]
+                    df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
+                    df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
+                                             df_X['text_norm_meetup']
+                    df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                                        in zip(X_github, X_meetup)]
+
+            if X_github_tfidf is not None:
+
+                df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0]
+                                          for x1, x2
+                                          in zip(X_github_tfidf,
+                                                 X_meetup_tfidf)]
+
+                if not self.params['cosine_only']:
+                    df_X['text_norm_github_tfidf'] = [norm(x) for x
+                                                      in X_github_tfidf]
+                    df_X['text_norm_meetup_tfidf'] = [norm(x) for x
+                                                      in X_meetup_tfidf]
+                    df_X['DIFF:text_norm_tfidf'] = \
+                        df_X['text_norm_github_tfidf'] - \
+                        df_X['text_norm_meetup_tfidf']
+                    df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0]
+                                              for x1, x2
+                                              in zip(X_github_tfidf,
+                                                     X_meetup_tfidf)]
+
             self.refill_cols = ['text_sim',
                                 'text_sim_tfidf',
                                 'text_norm_github',
@@ -268,13 +280,10 @@ class text_aggregate(UD_transform_class):
                                 'text_dot',
                                 'text_dot_tfidf']
             self.refill_means = {}
-
             for col in self.refill_cols:
                 if col in df_X.columns:
                     self.refill_means[col] = df_X[col] \
                                             [~ df_X['text_missing']].mean()
-
-            pass
 
         return self
 
@@ -284,29 +293,40 @@ class text_aggregate(UD_transform_class):
 
         df_X = df_X_input.copy()
 
-        df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
-                                  zip(X_github, X_meetup)]
-        df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0] for x1, x2 in
-                                  zip(X_github_tfidf, X_meetup_tfidf)]
+        if X_github is not None:
 
-        df_X['text_norm_github'] = [norm(x) for x in X_github]
-        df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
-        df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
-                                 df_X['text_norm_meetup']
+            df_X['text_sim'] = [cosine_similarity(x1, x2)[0,0] for x1, x2
+                                in zip(X_github, X_meetup)]
 
-        df_X['text_norm_github_tfidf'] = [norm(x) for x in X_github_tfidf]
-        df_X['text_norm_meetup_tfidf'] = [norm(x) for x in X_meetup_tfidf]
-        df_X['DIFF:text_norm_tfidf'] = df_X['text_norm_github_tfidf'] - \
-                                       df_X['text_norm_meetup_tfidf']
+            if not self.params['cosine_only']:
+                df_X['text_norm_github'] = [norm(x) for x in X_github]
+                df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
+                df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
+                                         df_X['text_norm_meetup']
+                df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                                    in zip(X_github, X_meetup)]
 
-        df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
-                                                    in zip(X_github, X_meetup)]
-        df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
-                                        in zip(X_github_tfidf, X_meetup_tfidf)]
+        if X_github_tfidf is not None:
+
+            df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0] for x1, x2
+                                      in zip(X_github_tfidf, X_meetup_tfidf)]
+            
+            if not self.params['cosine_only']:
+                df_X['text_norm_github_tfidf'] = [norm(x) for x
+                                                  in X_github_tfidf]
+                df_X['text_norm_meetup_tfidf'] = [norm(x) for x
+                                                  in X_meetup_tfidf]
+                df_X['DIFF:text_norm_tfidf'] = \
+                    df_X['text_norm_github_tfidf'] - \
+                    df_X['text_norm_meetup_tfidf']
+                df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                                          in zip(X_github_tfidf,
+                                                 X_meetup_tfidf)]
 
         if self.params['refill_missing']:
             for col in self.refill_cols:
-                df_X[col][df_X['text_missing']] = self.refill_means[col]
+                if col in df_X.columns:
+                    df_X[col][df_X['text_missing']] = self.refill_means[col]
 
         missing_bool_cols = ['github_text_missing',
                              'meetup_text_missing',
@@ -352,6 +372,7 @@ class name_similarity(UD_transform_class):
                                                             row['meetup_name']
                                                            ),
                                           axis=1)
+
         df_X.drop(['github_name', 'meetup_name'], axis=1, inplace=True)
 
         return df_X
@@ -384,120 +405,3 @@ class df_to_array(UD_transform_class):
 
         X = df_X.values
         return X
-
-'''
-class UD_pipe(object):
-    """"""
-
-    def __init__(self,
-                 mod,
-                 dist_fill_with='mean',
-                 dist_diffs='all',
-                 idf='both',
-                 text_refill_missing=False,
-                 text_drop_missing_bools=False,
-                 fullname=True,
-                 firstname=True,
-                 lastname=True,
-                 calc=True
-                 ):
-        """"""
-        self.params = {'mod': mod,
-                       'dist_fill_with': dist_fill_with,
-                       'dist_diffs': dist_diffs,
-                       'idf': idf,
-                       'text_refill_missing': text_refill_missing,
-                       'text_drop_missing_bools': text_drop_missing_bools,
-                       'fullname': fullname,
-                       'firstname': firstname,
-                       'lastname': lastname,
-                       'calc': calc
-        }
-
-        self.pipe = Pipeline([('drop_github_meetup',
-                                drop_github_meetup()),
-                              ('dist_fill_missing',
-                                dist_fill_missing()),
-                                #dist_fill_missing(
-                                    #self.params['dist_fill_with'])),
-                              ('dist_diff',
-                                dist_diff(
-                                    self.params['dist_diffs'])),
-                              ('text_fill_missing',
-                                text_fill_missing()),
-                              ('text_idf',
-                                text_idf(
-                                    self.params['idf'])),
-                              ('text_aggregate',
-                                text_aggregate(
-                                    self.params['text_refill_missing'],
-                                    self.params['text_drop_missing_bools'])),
-                              ('name_similarity',
-                                name_similarity(
-                                    self.params['fullname'],
-                                    self.params['firstname'],
-                                    self.params['lastname'],
-                                    self.params['calc'])),
-                              ('scaler',
-                                scaler()),
-                              ('df_to_array',
-                                df_to_array()),
-                              ('mod',
-                                mod)
-                             ]
-                            )
-
-
-    def fit(self, df_X, y=None):
-        """"""
-
-        print 'REPORT UD_pipe.fit: time =', time()
-
-        self.pipe.fit(df_X, y)
-        self.classes_ = self.pipe.named_steps['mod'].classes_
-
-        return self
-
-
-    def transform(self, df_X):
-        """"""
-
-        return self.pipe.transform(df_X)
-
-
-    def predict(self, df_X):
-        """"""
-
-        return self.pipe.predict(df_X)
-
-
-    def predict_proba(self, df_X):
-        """"""
-
-        return self.pipe.predict_proba(df_X)
-
-
-
-    def get_params(self, deep=True):
-        """"""
-
-        """if deep:
-            return deepcopy(self.params)
-
-        return self.params"""
-
-        return self.pipe.get_params(deep)
-
-
-    def set_params(self, **params):
-        """"""
-
-        """for key, value in params.iteritems():
-            print key, ':', value
-            self.params[key] = value
-
-        #self.pipe.set_params("""
-        
-        self.pipe.set_params(params)
-
-        return self'''
