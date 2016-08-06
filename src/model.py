@@ -29,6 +29,73 @@ from sys import argv
 import ast
 
 
+def save_scatter(df_X_train_trans, df_X_test_trans):
+    """"""
+
+    scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
+    plt.savefig('../img/scatter_matrix_data_trans-train')
+    plt.close('all')
+    scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
+    plt.savefig('../img/scatter_matrix_data_trans-test')
+    plt.close('all')
+
+
+def threshold_acc_prec_rec(y_test_prob):
+    """
+    plot acc, prec, recall
+    against threshold
+
+    IMPLEMENT FOR FINAL MODEL?
+    """
+
+    thresholds = y_test_prob.copy()
+    thresholds.sort()
+    thresh_acc = []
+    thresh_prec = []
+    thresh_rec = []
+    for threshold in thresholds:
+        y_pred = []
+        for ytp in y_test_prob:
+            y_pred.append(int(ytp >= threshold))
+        thresh_acc.append(accuracy_score(y_test, y_pred))
+        thresh_prec.append(precision_score(y_test, y_pred))
+        thresh_rec.append(recall_score(y_test, y_pred))
+    plt.plot(thresholds, thresh_acc, label='accuracy')
+    plt.plot(thresholds, thresh_prec, label='precision')
+    plt.plot(thresholds, thresh_rec, label='recall')
+    plt.legend()
+    plt.savefig('../img/performance')
+    plt.close('all')
+
+
+def feature_importances(mod, feats):
+    """"""
+
+    n_feats = len(feats)
+
+    imps = mod.feature_importances_
+    feats_imps = zip(feats, imps)
+    feats_imps.sort(key=operator.itemgetter(1), reverse=True)
+    feats = [feat for feat, imp in feats_imps]
+    imps = [imp for feat, imp in feats_imps]
+    useless_feats = [feat for feat, imp in feats_imps if imp == 0]
+    n_useless_feats = lne(useless_feats)
+
+    print mod.__class__.__name__
+    print 'FEATURE IMPORTANCES'
+    for feat, imp in feats_imps:
+        print feat.ljust(30), imp / feats_imps[0][1]
+
+    fig = plt.figure(figsize=(15, 12))
+    x_ind = np.arange(n_feats)
+    plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats), align='center')
+    plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
+    plt.yticks(x_ind, feats[::-1], fontsize=14)
+    plt.title('%s Feature Importances' % mod.__class__.__name__)
+    plt.savefig('../img/%s_feature_importances' % mod.__class__.__name__)
+    plt.close('all')
+
+
 def check_duplicates(best_pred, X_train, X_test, y_train,
                      github_train, meetup_train, github_test, meetup_test):
     """"""
@@ -181,7 +248,7 @@ def str_eval((key, val)):
                                                 else ('%.1f%%' % (val * 100)))
 
 
-def model(df_clean, write=False):
+def model(df_clean, write=False, short=False):
     """"""
 
     start = start_time('Modeling...')
@@ -203,19 +270,62 @@ def model(df_clean, write=False):
     # suppress warning writing on copy warning
     pd.options.mode.chained_assignment = None  # default='warn'
 
-    mods = [XGBClassifier(seed=0),
-            RandomForestClassifier(oob_score=True,
-                                   n_jobs=-1,
-                                   random_state=0,
-                                   n_estimators=250),
-            LogisticRegression(random_state=0,
-                               n_jobs=-1),
-            GradientBoostingClassifier(n_estimators=250,
-                                       random_state=0),
-            AdaBoostClassifier(random_state=0),
-            SVC(random_state=0,
-                probability=True),
-            ]
+    if short:
+        mods = [XGBClassifier(seed=0)]
+        gs_param_grid = [{'name_similarity__fullname': [True, False],
+                          'name_similarity__lastname': [True, False]}]
+
+    else:
+        mods = [XGBClassifier(seed=0),
+                RandomForestClassifier(oob_score=True,
+                                       n_jobs=-1,
+                                       random_state=0,
+                                       n_estimators=250),
+                LogisticRegression(random_state=0,
+                                   n_jobs=-1),
+                GradientBoostingClassifier(n_estimators=250,
+                                           random_state=0),
+                AdaBoostClassifier(random_state=0),
+                SVC(random_state=0,
+                    probability=True),
+                ]
+        gs_param_grid = [{'dist_fill_missing__fill_with':
+                            [#'mean',
+                             'median',
+                             #'min',
+                             #'max'
+                             ],
+                         'dist_diff__include':
+                            ['all',
+                             'none',
+                             'ignore_min'],
+                         'text_idf__idf':
+                            ['yes',
+                             'no',
+                             'both'],
+                         'text_aggregate__refill_missing':
+                            [True,
+                             False],
+                         'text_aggregate__cosine_only':
+                            [True,
+                             False],
+                         'text_aggregate__drop_missing_bools':
+                            [True,
+                             False],
+                         'name_similarity__fullname':
+                            [True,
+                             False],
+                         'name_similarity__firstname':
+                            [True,
+                             False],
+                         'name_similarity__lastname':
+                            [True,
+                             False],
+                         'name_similarity__calc':
+                            [True,
+                             False]
+                        }
+                       ]
 
     best_accuracy = 0.
     for mod in mods:
@@ -246,50 +356,12 @@ def model(df_clean, write=False):
                                         df_to_array()),
                                       ('mod',
                                         mod)]),
-                            param_grid=[{'dist_fill_missing__fill_with':
-                                            [#'mean',
-                                             'median',
-                                             #'min',
-                                             #'max'
-                                             ],
-                                         'dist_diff__include':
-                                            ['all',
-                                             'none',
-                                             'ignore_min'],
-                                         'text_idf__idf':
-                                            ['yes',
-                                             'no',
-                                             'both'],
-                                         'text_aggregate__refill_missing':
-                                            [True,
-                                             False],
-                                         'text_aggregate__cosine_only':
-                                            [True,
-                                             False],
-                                         'text_aggregate__drop_missing_bools':
-                                            [True,
-                                             False],
-                                         'name_similarity__fullname':
-                                            [True,
-                                             False],
-                                         'name_similarity__firstname':
-                                            [True,
-                                             False],
-                                         'name_similarity__lastname':
-                                            [True,
-                                             False],
-                                         'name_similarity__calc':
-                                            [True,
-                                             False]
-                                        }
-                                       ],
+                            param_grid=gs_param_grid,
                             scoring=filtered_accuracy,
                             n_jobs=-1)
 
         grid.fit(df_X_train_copy, y_train)
-        acc = grid.score(df_X_test_copy, y_test)
 
-        y_train_pred = grid.predict(df_X_train_copy)
         y_test_pred = grid.predict(df_X_test_copy)
 
         evals = OrderedDict()
@@ -341,96 +413,21 @@ def model(df_clean, write=False):
                 f.write('\n')
 
             f.write('\n\nGRID SCORES\n')
-            i = 0
-            while i < len(grid.grid_scores_) - 2:
-                f.write(str(grid.grid_scores_[i]))
+            for score in grid.grid_scores_:
+                f.write(str(score))
                 f.write('\n')
-                f.write(str(grid.grid_scores_[i + 1]))
-                f.write('\n')
-                f.write(str(grid.grid_scores_[i + 2]))
-                f.write('\n')
-                i += 3
+
+    """ NEED TO CHECK IF THESE FUNCS WORK """
 
     #check_duplicates(best_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
     #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
                      #github_train, meetup_train, github_test, meetup_test)
+    #save_scatter(df)
+    #threshold_acc_prec_rec(y_test_prob)
 
-
-        """
-        DELETE:
-
-        X_train = df_X_train_trans.values
-        X_test = df_X_test_trans.values
-
-        if write:
-            scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
-            plt.savefig('../img/scatter_matrix_data_trans-train')
-            plt.close('all')
-            scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
-            plt.savefig('../img/scatter_matrix_data_trans-test')
-            plt.close('all')
-        """
-
-        """
-        acc, prec, recall
-        IMPLEMENT FOR FINAL MODEL?
-
-        if write and (mod.__class__.__name__ == 'RandomForestClassifier'):
-            thresholds = y_test_prob.copy()
-            thresholds.sort()
-            thresh_acc = []
-            thresh_prec = []
-            thresh_rec = []
-            for threshold in thresholds:
-                y_pred = []
-                for ytp in y_test_prob:
-                    y_pred.append(int(ytp >= threshold))
-                thresh_acc.append(accuracy_score(y_test, y_pred))
-                thresh_prec.append(precision_score(y_test, y_pred))
-                thresh_rec.append(recall_score(y_test, y_pred))
-            plt.plot(thresholds, thresh_acc, label='accuracy')
-            plt.plot(thresholds, thresh_prec, label='precision')
-            plt.plot(thresholds, thresh_rec, label='recall')
-            plt.legend()
-            plt.savefig('../img/performance')
-            plt.close('all')
-        """
-
-        """
-        feats = df_X_train_trans.columns
-        evals['# Features'] = len(feats)
-        num_feats_plot = evals['# Features']
-
-        if hasattr(mod, 'feature_importances_'):
-            imps = mod.feature_importances_
-            feats_imps = zip(feats, imps)
-            feats_imps.sort(key=operator.itemgetter(1), reverse=True)
-            feats = []
-            imps = []
-            useless_feats = []
-            for feat, imp in feats_imps:
-                feats.append(feat)
-                imps.append(imp)
-                if imp == 0:
-                    useless_feats.append(feat)
-            evals['# Useless Features'] = len(useless_feats)
-            print mod.__class__.__name__
-            print 'FEATURE IMPORTANCES'
-            for feat, imp in feats_imps:
-                print feat.ljust(30), imp / feats_imps[0][1]
-
-        if write and (mod.__class__.__name__ == 'RandomForestClassifier'):
-            fig = plt.figure(figsize=(15, 12))
-            x_ind = np.arange(num_feats_plot)
-            plt.barh(x_ind, imps[num_feats_plot-1::-1]/imps[0], height=.3,
-                     align='center')
-            plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
-            plt.yticks(x_ind, feats[num_feats_plot-1::-1], fontsize=14)
-            plt.title('RFC Feature Importances')
-            plt.savefig('../img/feature_importances')
-            plt.close('all')
-        """
+    #feature_importances(grid.best_estimator_.named_steps['mod'],
+                        #grid.best_estimator_.named_steps['df_to_array'].feats)
 
     end_time(start)
 
@@ -451,5 +448,6 @@ if __name__ == '__main__':
         df_clean = clean(load())
 
     write = 'write' in argv
+    short = 'short' in argv
 
-    model(df_clean, write)
+    model(df_clean, write, short)

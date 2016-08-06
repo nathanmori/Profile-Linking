@@ -53,6 +53,13 @@ class UD_transform_class(object):
             validate(key, value, self.valids[key])
             self.params[key] = value
 
+    def fill_params(self):
+        """"""
+
+        for param in self.defaults:
+            if param not in self.params:
+                self.params[param] = self.defaults[param]
+
 
 class drop_github_meetup(UD_transform_class):
     """"""
@@ -72,10 +79,13 @@ class dist_fill_missing(UD_transform_class):
         """"""
 
         self.params = {}
+        self.defaults = {'fill_with': 'median'}
         self.valids = {'fill_with': ['mean', 'median', 'min', 'max']}
 
     def fit(self, df_X_train, y=None):
         """"""
+
+        self.fill_params()
 
         self.dist_cols = [col for col in df_X_train.columns if 'dist' in col]
 
@@ -113,10 +123,13 @@ class dist_diff(UD_transform_class):
         """"""
 
         self.params = {}
+        self.defaults = {'include': 'all'}
         self.valids = {'include': ['all', 'none', 'ignore_min']}
 
     def fit(self, df_X_train, y=None):
         """"""
+
+        self.fill_params()
 
         if self.params['include'] == 'ignore_min':
             self.dist_cols = [col for col in df_X_train.columns
@@ -189,10 +202,13 @@ class text_idf(UD_transform_class):
         """"""
 
         self.params = {}
+        self.defaults = {'idf': 'yes'}
         self.valids = {'idf': ['yes', 'no', 'both']}
 
     def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
         """"""
+
+        self.fill_params()
 
         if self.params['idf'] in ['yes', 'both']:
             self.tfidf_github = TfidfTransformer().fit(X_train_github)
@@ -224,6 +240,9 @@ class text_aggregate(UD_transform_class):
         """"""
 
         self.params = {}
+        self.defaults = {'refill_missing': False,
+                         'cosine_only': True,
+                         'drop_missing_bools': True}
         self.valids = {'refill_missing': [True, False],
                        'cosine_only': [True, False],
                        'drop_missing_bools': [True, False]}
@@ -231,6 +250,8 @@ class text_aggregate(UD_transform_class):
     def fit(self, (df_X_input, X_github, X_meetup,
                    X_github_tfidf, X_meetup_tfidf), y=None):
         """"""
+
+        self.fill_params()
 
         if self.params['refill_missing']:
 
@@ -311,7 +332,7 @@ class text_aggregate(UD_transform_class):
 
             df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0] for x1, x2
                                       in zip(X_github_tfidf, X_meetup_tfidf)]
-            
+
             if not self.params['cosine_only']:
                 df_X['text_norm_github_tfidf'] = [norm(x) for x
                                                   in X_github_tfidf]
@@ -344,15 +365,25 @@ class text_aggregate(UD_transform_class):
 class name_similarity(UD_transform_class):
     """"""
 
-    def __init__(self, fullname=True, firstname=True, lastname=True,
-                 calc=True):
+    def __init__(self):
         """"""
 
         self.params = {}
+        self.defaults = {'fullname': False,
+                         'firstname': False,
+                         'lastname': True,
+                         'calc': False}
         self.valids = {'fullname': [True, False],
                        'firstname': [True, False],
                        'lastname': [True, False],
                        'calc': [True, False]}
+
+    def fit(self, df_X, y=None):
+        """"""
+
+        self.fill_params()
+
+        return self
 
     def transform(self, df_X_input):
         """"""
@@ -400,6 +431,13 @@ class scaler(UD_transform_class):
 
 class df_to_array(UD_transform_class):
     """"""
+
+    def fit(self, df_X, y=None):
+        """"""
+
+        self.feats = df_X.columns
+
+        return self
 
     def transform(self, df_X):
         """"""
