@@ -120,11 +120,8 @@ def load():
                  'face_pics_processed',
                  'face_pics_matched',
                  'verified',
-                 #'correct_match',  Replaced with profile_pics_matched
                  'profile_pics_matched',
-                 'github_meetup_combined']#,
-                 #'github',
-                 #'meetup']
+                 'github_meetup_combined']
     keep_cols = [col for col in cols if col not in drop_cols]
     col_string = ', '.join(keep_cols)
 
