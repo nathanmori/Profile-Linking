@@ -246,7 +246,8 @@ class text_aggregate(UD_transform_class):
                     df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
                     df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
                                              df_X['text_norm_meetup']
-                    df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                    df_X['text_dot'] = [x1.dot(x2.T)[0,0]
+                                        for x1, x2
                                         in zip(X_github, X_meetup)]
 
             if X_github_tfidf is not None:
@@ -264,7 +265,7 @@ class text_aggregate(UD_transform_class):
                     df_X['DIFF:text_norm_tfidf'] = \
                         df_X['text_norm_github_tfidf'] - \
                         df_X['text_norm_meetup_tfidf']
-                    df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0]
+                    df_X['text_dot_tfidf'] = [x1.dot(x2.T)[0,0]
                                               for x1, x2
                                               in zip(X_github_tfidf,
                                                      X_meetup_tfidf)]
@@ -303,7 +304,7 @@ class text_aggregate(UD_transform_class):
                 df_X['text_norm_meetup'] = [norm(x) for x in X_meetup]
                 df_X['DIFF:text_norm'] = df_X['text_norm_github'] - \
                                          df_X['text_norm_meetup']
-                df_X['text_dot'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                df_X['text_dot'] = [x1.dot(x2.T)[0,0] for x1, x2
                                     in zip(X_github, X_meetup)]
 
         if X_github_tfidf is not None:
@@ -319,7 +320,7 @@ class text_aggregate(UD_transform_class):
                 df_X['DIFF:text_norm_tfidf'] = \
                     df_X['text_norm_github_tfidf'] - \
                     df_X['text_norm_meetup_tfidf']
-                df_X['text_dot_tfidf'] = [np.dot(x1, x2.T)[0][0,0] for x1, x2
+                df_X['text_dot_tfidf'] = [x1.dot(x2.T)[0,0] for x1, x2
                                           in zip(X_github_tfidf,
                                                  X_meetup_tfidf)]
 

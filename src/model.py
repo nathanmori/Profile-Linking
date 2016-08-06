@@ -251,7 +251,7 @@ def model(df_clean, write=False):
                                              'median',
                                              #'min',
                                              #'max'
-					    ],
+                                             ],
                                          'dist_diff__include':
                                             ['all',
                                              'none',
