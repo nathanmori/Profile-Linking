@@ -247,10 +247,11 @@ def model(df_clean, write=False):
                                       ('mod',
                                         mod)]),
                             param_grid=[{'dist_fill_missing__fill_with':
-                                            ['mean',
+                                            [#'mean',
                                              'median',
-                                             'min',
-                                             'max'],
+                                             #'min',
+                                             #'max'
+					    ],
                                          'dist_diff__include':
                                             ['all',
                                              'none',
@@ -432,7 +433,6 @@ def model(df_clean, write=False):
         """
 
     end_time(start)
-    pdb.set_trace()
 
 
 if __name__ == '__main__':
