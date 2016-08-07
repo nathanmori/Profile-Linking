@@ -259,12 +259,12 @@ def str_eval((key, val)):
                                                 else ('%.1f%%' % (val * 100)))
 
 
-def best_transform(best_pipe, df_X):
+def best_transform(best_pipe, df_X, array=False):
     """"""
 
     data = df_X
 
-    for step in best_pipe.steps[:-1]:
+    for step in (best_pipe.steps[:-1] if array else best_pipe.steps[:-2]):
         data = step[1].transform(data)
 
     return data
@@ -282,11 +282,11 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
     if shard:
         fname = 'shard_' + fname
 
-    scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
+    scatter_matrix(df_train, alpha=0.2, figsize=(15,12))
     plt.title('Train Data')
     plt.savefig('../img/%sscatter-matrix_train' % fname)
     plt.close('all')
-    scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
+    scatter_matrix(df_test, alpha=0.2, figsize=(15,12))
     plt.title('Test Data')
     plt.savefig('../img/%sscatter-matrix_test' % fname)
     plt.close('all')
