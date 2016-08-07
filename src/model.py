@@ -422,7 +422,7 @@ def model(df_clean, short=False, tune=False):
                                                 y_test,
                                                 filtered=False)
 
-        y_test_prob = predict_proba_positive(grid, mod, df_X_test_copy)
+        y_test_prob = predict_proba_positive(grid, df_X_test_copy)
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
         threshold_acc_prec_rec(y_test_prob, mod, start, shard)
 
