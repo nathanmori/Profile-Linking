@@ -238,7 +238,7 @@ def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
 def str_params((key, val)):
     """"""
 
-    return ('  ' + key + ':').ljust(30) + str(val)
+    return ('  ' + key + ':').ljust(40) + str(val)
 
 
 def str_eval((key, val)):
@@ -248,7 +248,7 @@ def str_eval((key, val)):
                                                 else ('%.1f%%' % (val * 100)))
 
 
-def model(df_clean, write=False, short=False):
+def model(df_clean, write=False, short=False, tune=False):
     """"""
 
     start = start_time('Modeling...')
@@ -274,6 +274,26 @@ def model(df_clean, write=False, short=False):
         mods = [XGBClassifier(seed=0)]
         gs_param_grid = [{'name_similarity__fullname': [True, False],
                           'name_similarity__lastname': [True, False]}]
+
+    elif tune:
+
+        mods = [XGBClassifier(seed=0)]
+        gs_param_grid = [{'mod__max_depth': range(3, 10, 2),
+                          'mod__min_child_weight': range(1, 6, 2),
+                          'mod__gamma': [i / 10.0 for i in range(0, 5)],
+                          'mod__subsample': [i/10.0 for i in range(6,10)],
+                          'mod__colsample_bytree': [i/10.0 for i in range(6,10)],
+                          'mod__reg_alpha': [1e-5, 1e-2, 0.1, 1, 100],
+                          'dist_fill_missing__fill_with': ['median'],
+                          'dist_diff__include': ['ignore_min'],
+                          'text_idf__idf': ['yes'],
+                          'text_aggregate__refill_missing': [True],
+                          'text_aggregate__cosine_only': [True],
+                          'text_aggregate__drop_missing_bools': [False],
+                          'name_similarity__fullname': [True],
+                          'name_similarity__firstname': [True],
+                          'name_similarity__lastname': [True],
+                          'name_similarity__calc': [False]}]
 
     else:
         mods = [XGBClassifier(seed=0),
@@ -323,9 +343,7 @@ def model(df_clean, write=False, short=False):
                              False],
                          'name_similarity__calc':
                             [True,
-                             False]
-                        }
-                       ]
+                             False]}]
 
     best_accuracy = 0.
     for mod in mods:
@@ -358,7 +376,9 @@ def model(df_clean, write=False, short=False):
                                         mod)]),
                             param_grid=gs_param_grid,
                             scoring=filtered_accuracy,
-                            n_jobs=-1)
+                            n_jobs=-1,
+                            iid=False,
+                            cv=5)
 
         grid.fit(df_X_train_copy, y_train)
 
@@ -449,5 +469,6 @@ if __name__ == '__main__':
 
     write = 'write' in argv
     short = 'short' in argv
+    tune = 'tune' in argv
 
-    model(df_clean, write, short)
+    model(df_clean, write, short, tune)
