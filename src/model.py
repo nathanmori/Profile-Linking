@@ -29,7 +29,7 @@ from sys import argv
 import ast
 
 
-def threshold_acc_prec_rec(y_test_prob, mod, start, shard):
+def threshold_acc_prec_rec(y_test, y_test_prob, mod, start, shard):
     """"""
 
     thresholds = y_test_prob.copy()
@@ -67,9 +67,9 @@ def feature_importances(mod, feats, start, shard):
 
     if mod.__class__ == XGBClassifier:
         fscores = mod.booster().get_fscore()
-        importances = np.zeros(n_feats)
+        imps = np.zeros(n_feats)
         for k, v in fscores.iteritems():
-            importances[int(k[1:])] = v
+            imps[int(k[1:])] = v
     else:
         imps = mod.feature_importances_
 
@@ -77,13 +77,11 @@ def feature_importances(mod, feats, start, shard):
     feats_imps.sort(key=operator.itemgetter(1), reverse=True)
     feats = [feat for feat, imp in feats_imps]
     imps = [imp for feat, imp in feats_imps]
-    useless_feats = [feat for feat, imp in feats_imps if imp == 0]
-    n_useless_feats = lne(useless_feats)
 
     print mod.__class__.__name__
     print 'FEATURE IMPORTANCES'
-    for feat, imp in feats_imps:
-        print feat.ljust(30), imp / feats_imps[0][1]
+    for feat_imp in feats_imps:
+        print str_feat_imp(feat_imp)
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
@@ -98,6 +96,8 @@ def feature_importances(mod, feats, start, shard):
     plt.savefig('../img/%sfeature_importances_%s' %
                 (fname, mod.__class__.__name__))
     plt.close('all')
+
+    return feats_imps
 
 
 def check_duplicates(best_pred, \
@@ -243,6 +243,12 @@ def str_params((key, val)):
     """"""
 
     return ('  ' + key + ':').ljust(40) + str(val)
+
+
+def str_feat_imp((feat, imp)):
+    """"""
+    
+    return ('  ' + feat + ':').ljust(40) + str(imp)
 
 
 def str_eval((key, val)):
@@ -424,7 +430,7 @@ def model(df_clean, shard=False, short=False, tune=False):
 
         y_test_prob = predict_proba_positive(grid, df_X_test_copy)
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
-        threshold_acc_prec_rec(y_test_prob, mod, start, shard)
+        threshold_acc_prec_rec(y_test, y_test_prob, mod, start, shard)
 
         evals['Test Accuracy (Filtered)'], \
             evals['Test Precision (Filtered)'], \
@@ -443,9 +449,13 @@ def model(df_clean, shard=False, short=False, tune=False):
         for kvpair in evals.iteritems():
             print str_eval(kvpair)
 
+        feats_imps = feature_importances(
+                        grid.best_estimator_.named_steps['mod'],
+                        grid.best_estimator_.named_steps['df_to_array'].feats,
+                        start, shard)
+
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
                 + mod.__class__.__name__
-
         if shard:
             fname = 'shard_' + fname
 
@@ -466,17 +476,18 @@ def model(df_clean, shard=False, short=False, tune=False):
                 f.write(str_eval(kvpair))
                 f.write('\n')
 
+            f.write('\n\nFEATURE IMPORTANCES\n')
+            for feat_imp in feats_imps:
+                f.write(str_feat_imp(feat_imp))
+                f.write('\n')
+
             f.write('\n\nGRID SCORES\n')
             for score in grid.grid_scores_:
                 f.write(str(score))
                 f.write('\n')
-
-        feature_importances(grid.best_estimator_.named_steps['mod'],
-                        grid.best_estimator_.named_steps['df_to_array'].feats,
-                        start, shard)
-
-
+        
         if evals['Test Accuracy (Filtered + Train)'] > best_accuracy:
+
             best_accuracy = evals['Test Accuracy (Filtered + Train)']
 
             best_mod = mod
@@ -484,7 +495,10 @@ def model(df_clean, shard=False, short=False, tune=False):
             best_params = grid.best_params_
             best_pipe = grid.best_estimator_
             best_evals = evals
-
+            best_filtered_pred = filtered_predict(grid, df_X_test, y_test,
+                                                  filter_train=True,
+                                                  df_X_train=df_X_train,
+                                                  y_train=y_train)
 
     check_duplicates(best_filtered_pred, github_train, meetup_train, \
                                          github_test, meetup_test)
