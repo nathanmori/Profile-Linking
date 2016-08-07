@@ -29,27 +29,12 @@ from sys import argv
 import ast
 
 
-def save_scatter(df_X_train_trans, df_X_test_trans):
+def threshold_acc_prec_rec(y_test_prob, mod, start, shard):
     """"""
-
-    scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
-    plt.savefig('../img/scatter_matrix_data_trans-train')
-    plt.close('all')
-    scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
-    plt.savefig('../img/scatter_matrix_data_trans-test')
-    plt.close('all')
-
-
-def threshold_acc_prec_rec(y_test_prob):
-    """
-    plot acc, prec, recall
-    against threshold
-
-    IMPLEMENT FOR FINAL MODEL?
-    """
 
     thresholds = y_test_prob.copy()
     thresholds.sort()
+
     thresh_acc = []
     thresh_prec = []
     thresh_rec = []
@@ -60,20 +45,34 @@ def threshold_acc_prec_rec(y_test_prob):
         thresh_acc.append(accuracy_score(y_test, y_pred))
         thresh_prec.append(precision_score(y_test, y_pred))
         thresh_rec.append(recall_score(y_test, y_pred))
+
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
     plt.legend()
-    plt.savefig('../img/performance')
+
+    fname = str(int(start - 1470348265)).zfill(7) + '_'
+    if shard:
+        fname = 'shard_' + fname
+
+    plt.savefig('../img/%sthresh_acc_prec_rec_%s' % (fname,
+                                                     mod.__class__.__name__))
     plt.close('all')
 
 
-def feature_importances(mod, feats):
+def feature_importances(mod, feats, start, shard):
     """"""
 
     n_feats = len(feats)
 
-    imps = mod.feature_importances_
+    if mod.__class__ == XGBClassifier:
+        fscores = mod.booster().get_fscore()
+        importances = np.zeros(n_feats)
+        for k, v in fscores.iteritems():
+            importances[int(k[1:])] = v
+    else:
+        imps = mod.feature_importances_
+
     feats_imps = zip(feats, imps)
     feats_imps.sort(key=operator.itemgetter(1), reverse=True)
     feats = [feat for feat, imp in feats_imps]
@@ -86,17 +85,22 @@ def feature_importances(mod, feats):
     for feat, imp in feats_imps:
         print feat.ljust(30), imp / feats_imps[0][1]
 
+    fname = str(int(start - 1470348265)).zfill(7) + '_'
+    if shard:
+        fname = 'shard_' + fname
+
     fig = plt.figure(figsize=(15, 12))
     x_ind = np.arange(n_feats)
     plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats), align='center')
     plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
     plt.yticks(x_ind, feats[::-1], fontsize=14)
     plt.title('%s Feature Importances' % mod.__class__.__name__)
-    plt.savefig('../img/%s_feature_importances' % mod.__class__.__name__)
+    plt.savefig('../img/%sfeature_importances_%s' %
+                (fname, mod.__class__.__name__))
     plt.close('all')
 
 
-def check_duplicates(best_pred, X_train, X_test, y_train,
+def check_duplicates(best_pred, \
                      github_train, meetup_train, github_test, meetup_test):
     """"""
 
@@ -248,17 +252,43 @@ def str_eval((key, val)):
                                                 else ('%.1f%%' % (val * 100)))
 
 
-def model(df_clean, write=False, short=False, tune=False):
+def best_transform(best_pipe, df_X):
+    """"""
+
+    data = df_X
+
+    for step in best_pipe.steps:
+        data = step[1].transform(data)
+
+    return data
+
+
+def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard):
+    """"""
+
+    df_train = best_transform(best_pipe, df_X_train)
+    df_test = best_transform(best_pipe, df_X_test)
+    df_train['match'] = y_train
+    df_test['match'] = y_test
+
+    fname = str(int(start - 1470348265)).zfill(7) + '_'
+    if shard:
+        fname = 'shard_' + fname
+
+    scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
+    plt.savefig('../img/%sscatter-matrix_train' % fname)
+    plt.close('all')
+    scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
+    plt.savefig('../img/%sscatter-matrix_test' % fname)
+    plt.close('all')
+
+
+def model(df_clean, short=False, tune=False):
     """"""
 
     start = start_time('Modeling...')
 
     y = df_clean.pop('match').values
-
-    if write:
-        scatter_matrix(df_clean, alpha=0.2, figsize=(15,12))
-        plt.savefig('../img/scatter_matrix_data')
-        plt.close('all')
 
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_clean, y,
                                                 test_size=0.5, random_state=0)
@@ -392,8 +422,9 @@ def model(df_clean, write=False, short=False, tune=False):
                                                 y_test,
                                                 filtered=False)
 
-        y_test_prob = predict_proba_positive(grid, df_X_test_copy)
+        y_test_prob = predict_proba_positive(grid, mod, df_X_test_copy)
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
+        threshold_acc_prec_rec(y_test_prob, mod, start, shard)
 
         evals['Test Accuracy (Filtered)'], \
             evals['Test Precision (Filtered)'], \
@@ -414,6 +445,9 @@ def model(df_clean, write=False, short=False, tune=False):
 
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
                 + mod.__class__.__name__
+
+        if shard:
+            fname = 'shard_' + fname
 
         with open('../output/%s.txt' % fname, 'w') as f:
             f.write('ALGORITHM\n')
@@ -437,18 +471,26 @@ def model(df_clean, write=False, short=False, tune=False):
                 f.write(str(score))
                 f.write('\n')
 
-    """ NEED TO CHECK IF THESE FUNCS WORK """
+        feature_importances(grid.best_estimator_.named_steps['mod'],
+                        grid.best_estimator_.named_steps['df_to_array'].feats,
+                        start, shard)
 
-    #check_duplicates(best_pred, X_train, X_test, y_train,
-                     #github_train, meetup_train, github_test, meetup_test)
-    #check_duplicates(best_filtered_pred, X_train, X_test, y_train,
-                     #github_train, meetup_train, github_test, meetup_test)
-    #save_scatter(df)
-    #threshold_acc_prec_rec(y_test_prob)
 
-    #feature_importances(grid.best_estimator_.named_steps['mod'],
-                        #grid.best_estimator_.named_steps['df_to_array'].feats)
+        if evals['Test Accuracy (Filtered + Train)'] > best_accuracy:
+            best_accuracy = evals['Test Accuracy (Filtered + Train)']
 
+            best_mod = mod
+            best_grid = grid
+            best_params = grid.best_params_
+            best_pipe = grid.best_estimator_
+            best_evals = evals
+
+
+    check_duplicates(best_filtered_pred, github_train, meetup_train, \
+                                         github_test, meetup_test)
+    save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, 
+                 shard)
+    
     end_time(start)
 
 
@@ -467,8 +509,7 @@ if __name__ == '__main__':
     else:
         df_clean = clean(load())
 
-    write = 'write' in argv
     short = 'short' in argv
     tune = 'tune' in argv
 
-    model(df_clean, write, short, tune)
+    model(df_clean, short, tune)
