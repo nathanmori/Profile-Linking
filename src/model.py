@@ -283,7 +283,7 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
     plt.close('all')
 
 
-def model(df_clean, short=False, tune=False):
+def model(df_clean, shard=False, short=False, tune=False):
     """"""
 
     start = start_time('Modeling...')
@@ -496,8 +496,13 @@ def model(df_clean, short=False, tune=False):
 
 if __name__ == '__main__':
 
-    if 'read' in argv:
-        if 'shard' in argv:
+    read = 'read' in argv
+    shard = 'shard' in argv
+    short = 'short' in argv
+    tune = 'tune' in argv
+
+    if read:
+        if shard:
             df_clean = pd.read_csv('../data/clean_shard.csv')
         else:
             ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
@@ -509,7 +514,4 @@ if __name__ == '__main__':
     else:
         df_clean = clean(load())
 
-    short = 'short' in argv
-    tune = 'tune' in argv
-
-    model(df_clean, short, tune)
+    model(df_clean, shard, short, tune)
