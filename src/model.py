@@ -49,6 +49,7 @@ def threshold_acc_prec_rec(y_test, y_test_prob, mod, start, shard):
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
+    plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold')
     plt.legend()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -263,7 +264,7 @@ def best_transform(best_pipe, df_X):
 
     data = df_X
 
-    for step in best_pipe.steps:
+    for step in best_pipe.steps[:-1]:
         data = step[1].transform(data)
 
     return data
@@ -282,9 +283,11 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
         fname = 'shard_' + fname
 
     scatter_matrix(df_X_train_trans, alpha=0.2, figsize=(15,12))
+    plt.title('Train Data')
     plt.savefig('../img/%sscatter-matrix_train' % fname)
     plt.close('all')
     scatter_matrix(df_X_test_trans, alpha=0.2, figsize=(15,12))
+    plt.title('Test Data')
     plt.savefig('../img/%sscatter-matrix_test' % fname)
     plt.close('all')
 
