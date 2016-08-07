@@ -247,7 +247,7 @@ def str_params((key, val)):
 
 def str_feat_imp((feat, imp)):
     """"""
-    
+
     return ('  ' + feat + ':').ljust(40) + str(imp)
 
 
@@ -485,7 +485,7 @@ def model(df_clean, shard=False, short=False, tune=False):
             for score in grid.grid_scores_:
                 f.write(str(score))
                 f.write('\n')
-        
+
         if evals['Test Accuracy (Filtered + Train)'] > best_accuracy:
 
             best_accuracy = evals['Test Accuracy (Filtered + Train)']
@@ -499,12 +499,10 @@ def model(df_clean, shard=False, short=False, tune=False):
                                                   filter_train=True,
                                                   df_X_train=df_X_train,
                                                   y_train=y_train)
-
-    check_duplicates(best_filtered_pred, github_train, meetup_train, \
-                                         github_test, meetup_test)
-    save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, 
+                                                  
+    save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
                  shard)
-    
+
     end_time(start)
 
 
