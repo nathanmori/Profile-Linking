@@ -248,8 +248,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
 
     for ix in np.argsort(probs)[::-1]:
         if (github_test[ix] not in taken_githubs) and \
-           (meetup_test[ix] not in taken_meetups) and \
-           probs[ix] >= 0.5:
+           (meetup_test[ix] not in taken_meetups):
             preds[ix] = 1
             taken_githubs.add(github_test[ix])
             taken_meetups.add(meetup_test[ix])
