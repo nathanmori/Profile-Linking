@@ -226,7 +226,7 @@ def filtered_accuracy(estimator, df_X_input, y):
 
 def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
                  df_X_train=None, y_train=None, plot=True, return_FPRs=False,
-                 return_TPRs=False, return_Ns=False, return_Ps=False):
+                 return_TPRs=False):
     """"""
 
     github_test = df_X_test['github'].values
@@ -271,16 +271,12 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
         plot_label = 'Test - Filtered%s' % (' + Train' if filter_train else '')
         plt.plot(FPRs, TPRs, label=plot_label)
 
-    if return_FPRs or return_TPRs or return_Ns or return_Ps:
+    if return_FPRs or return_TPRs:
         returns = []
         if return_FPRs:
             returns.append(FPRs)
         if return_TPRs:
             returns.append(TPRs)
-        if return_Ns:
-            returns.append(Ns)
-        if return_Ps:
-            returns.append(Ps)
 
         return tuple(returns)
         
@@ -299,13 +295,6 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
         AUC += (TPRs[i + 1] + TPRs[i]) / 2 * (FPRs[i + 1] - FPRs[i])
 
     return AUC
-    
-
-    
-
-
-
-    
 
 
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
@@ -378,6 +367,20 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
     plt.title('Test Data', fontsize=24)
     plt.savefig('../img/%sscatter-matrix_test' % fname)
     plt.close('all')
+
+
+def print_confusion_matrix(y_test, y_test_pred):
+    """"""
+
+    TPs = sum(np.multiply(y_test_pred, y_test))
+    FPs = sum(y_test_pred) - TPs
+    FNs = sum(y_test) - TPs
+    TNs = len(y_test) - TPs - FPs - FNs
+
+    print 'TPs:', TPs
+    print 'FPs:', FPs
+    print 'FNs:', FNs
+    print 'TNs:', TNs
 
 
 def model(df_clean, shard=False, short=False, tune=False, final=False):
@@ -613,6 +616,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
             best_pipe = grid.best_estimator_
             best_evals = evals
             best_prob = y_test_prob
+            best_preds = y_test_pred
 
     save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
                  shard)
@@ -627,8 +631,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
     fpr, tpr, thresholds = roc_curve(y_test, best_prob)
     plt.plot(fpr, tpr, label='Test - Unfiltered')
 
-    filtered_roc(best_grid, df_X_test, y_test, return_FPRs=True,
-                 return_TPRs=True, return_Ns=True, return_Ps=True)
+    filtered_roc(best_grid, df_X_test, y_test)
     filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
                   df_X_train=df_X_train, y_train=y_train)
     plt.legend(fontsize=24)
@@ -642,6 +645,9 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
         fname = 'shard_' + fname
     plt.savefig('../img/%sROCs' % fname)
     plt.close('all')
+
+    """ ADD to .txt write file """
+    print_confusion_matrix(y_test, y_test_pred)
 
     end_time(start)
 
