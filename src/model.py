@@ -222,8 +222,8 @@ def filtered_accuracy(estimator, df_X_input, y):
     return accuracy
 
 
-def plot_filtered_ROCs(estimator, df_X_test, y_test,
-                       filter_train=False, df_X_train=None, y_train=None):
+def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
+                 df_X_train=None, y_train=None, plot=True, return_PRs=False):
     """"""
 
     github_test = df_X_test['github'].values
@@ -242,13 +242,14 @@ def plot_filtered_ROCs(estimator, df_X_test, y_test,
     probs = predict_proba_positive(estimator, df_X_test)
     preds = np.zeros(len(probs))
 
-    TPRs = []
-    FPRs = []
+    TPRs = [0.]
+    FPRs = [0.]
     n_obs = len(y_test)
 
     for ix in np.argsort(probs)[::-1]:
         if (github_test[ix] not in taken_githubs) and \
-           (meetup_test[ix] not in taken_meetups):
+           (meetup_test[ix] not in taken_meetups) and \
+           probs[ix] >= 0.5:
             preds[ix] = 1
             taken_githubs.add(github_test[ix])
             taken_meetups.add(meetup_test[ix])
@@ -261,8 +262,38 @@ def plot_filtered_ROCs(estimator, df_X_test, y_test,
         TPRs.append(TPs / Ps)
         FPRs.append(FPs / Ns)
 
-    plot_label = 'ROC (Filtered%s)' % (' + Train' if filter_train else '')
-    plt.plot(TPRs, FPRs, label=plot_label)
+    TPRs.append(1.)
+    FPRs.append(1.)
+
+    if plot:
+        plot_label = 'ROC (Filtered%s)' % (' + Train' if filter_train else '')
+        plt.plot(FPRs, TPRs, label=plot_label)
+
+    if return_PRs:
+        return FPRs, TPRs
+
+
+def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
+                           df_X_train=None, y_train=None):
+    """"""
+
+    FPRs, TPRs = filtered_roc(estimator, df_X_test, y_test, filter_train,
+                              df_X_train, y_train, plot=False,
+                              return_PRs=True)
+
+    # Cum Trapz
+    AUC = 0
+    for i in xrange(len(TPRs) - 1):
+        AUC += (TPRs[i + 1] + TPRs[i]) / 2 * (FPRs[i + 1] - FPRs[i])
+
+    return AUC
+    
+
+    
+
+
+
+    
 
 
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
@@ -500,14 +531,15 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
 
         y_test_prob = predict_proba_positive(grid, df_X_test_copy)
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
-        plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard)
-
+        
         evals['Test Accuracy (Filtered)'], \
             evals['Test Precision (Filtered)'], \
             evals['Test Recall (Filtered)'] = acc_prec_rec(grid,
                                                            df_X_test_copy,
                                                            y_test,
                                                            filtered=True)
+        evals['Test AUC (Filtered)'] = \
+            filtered_roc_auc_score(grid, df_X_test, y_test)
 
         evals['Test Accuracy (Filtered + Train)'], \
             evals['Test Precision (Filtered + Train)'], \
@@ -515,6 +547,9 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
                 = acc_prec_rec(grid, df_X_test_copy, y_test, filtered=True,
                                filter_train=True, df_X_train=df_X_train,
                                y_train=y_train)
+        evals['Test AUC (Filtered + Train)'] = \
+            filtered_roc_auc_score(grid, df_X_test, y_test, filter_train=True,
+                                   df_X_train=df_X_train, y_train=y_train)
 
         for kvpair in evals.iteritems():
             print str_eval(kvpair)
@@ -570,19 +605,16 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
     save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
                  shard)
 
-    best_filtered_pred = filtered_predict(best_grid, df_X_test, y_test,
-                                          filter_train=True,
-                                          df_X_train=df_X_train,
-                                          y_train=y_train)
+    plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
+    # ADD FILTERED: plot_apr_vs_thresh()
+    # ADD FILTERED + TRAIN: plot_apr_vs_thresh()
 
     fpr, tpr, thresholds = roc_curve(y_test, best_prob)
     plt.plot(fpr, tpr, label='ROC')
 
-    plot_filtered_ROCs(best_grid, df_X_test, y_test)
-    plot_filtered_ROCs(best_grid, df_X_test, y_test,
-                       filter_train=True,
-                       df_X_train=df_X_train,
-                       y_train=y_train)
+    filtered_roc(best_grid, df_X_test, y_test)
+    filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
+                  df_X_train=df_X_train, y_train=y_train)
     plt.legend()
     plt.xlim(0, 1)
     plt.ylim(0, 1)
