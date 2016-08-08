@@ -1,0 +1,59 @@
+ALGORITHM
+XGBClassifier
+
+BEST SCORE
+0.901245869333
+
+BEST PARAMS
+  name_similarity__fullname:            True
+  text_aggregate__drop_missing_bools:   False
+  name_similarity__lastname:            True
+  mod__max_depth:                       3
+  dist_diff__include:                   ignore_min
+  dist_fill_missing__fill_with:         median
+  name_similarity__firstname:           True
+  mod__gamma:                           0
+  name_similarity__calc:                False
+  mod__subsample:                       1
+  text_aggregate__refill_missing:       True
+  text_idf__idf:                        yes
+  mod__min_child_weight:                1
+  text_aggregate__cosine_only:          True
+  mod__reg_alpha:                       0
+  mod__colsample_bytree:                1
+
+
+METRICS
+  Test Accuracy:                                  90.7%
+  Test Precision:                                 86.5%
+  Test Recall:                                    93.0%
+  Test AUC:                                       94.9%
+  Test Accuracy (Filtered):                       91.0%
+  Test Precision (Filtered):                      88.7%
+  Test Recall (Filtered):                         90.9%
+  Test AUC (Filtered):                            94.1%
+  Test Accuracy (Filtered + Train):               91.7%
+  Test Precision (Filtered + Train):              91.6%
+  Test Recall (Filtered + Train):                 89.0%
+  Test AUC (Filtered + Train):                    94.2%
+
+
+FEATURE IMPORTANCES
+  text_sim_tfidf:                       101.0
+  lastname_similarity:                  81.0
+  min_dist_km:                          68.0
+  fullname_similarity:                  67.0
+  DIFF:avg_dist_km-median_dist_km:      48.0
+  meetup_text_missing:                  45.0
+  median_dist_km:                       37.0
+  DIFF:avg_dist_km-max_dist_km:         26.0
+  firstname_similarity:                 22.0
+  DIFF:median_dist_km-max_dist_km:      20.0
+  max_dist_km:                          19.0
+  github_text_missing:                  16.0
+  avg_dist_km:                          14.0
+  text_missing:                         1.0
+
+
+GRID SCORES
+mean: 0.90125, std: 0.00513, params: {'name_similarity__fullname': True, 'text_aggregate__drop_missing_bools': False, 'name_similarity__lastname': True, 'mod__max_depth': 3, 'dist_diff__include': 'ignore_min', 'dist_fill_missing__fill_with': 'median', 'name_similarity__firstname': True, 'mod__gamma': 0, 'name_similarity__calc': False, 'mod__subsample': 1, 'text_aggregate__refill_missing': True, 'text_idf__idf': 'yes', 'mod__min_child_weight': 1, 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'mod__colsample_bytree': 1}
