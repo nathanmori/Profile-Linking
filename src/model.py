@@ -51,8 +51,9 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
-    plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold')
-    plt.legend()
+    plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold',
+              fontsize=24)
+    plt.legend(fontsize=24)
     plt.gcf().tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -91,7 +92,7 @@ def feature_importances(mod, feats, start, shard):
     plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats), align='center')
     plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
     plt.yticks(x_ind, feats[::-1], fontsize=14)
-    plt.title('%s Feature Importances' % mod.__class__.__name__)
+    plt.title('%s Feature Importances' % mod.__class__.__name__, fontsize=24)
     plt.gcf().tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -224,7 +225,8 @@ def filtered_accuracy(estimator, df_X_input, y):
 
 
 def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
-                 df_X_train=None, y_train=None, plot=True, return_PRs=False):
+                 df_X_train=None, y_train=None, plot=True, return_FPRs=False,
+                 return_TPRs=False, return_Ns=False, return_Ps=False):
     """"""
 
     github_test = df_X_test['github'].values
@@ -269,9 +271,19 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
         plot_label = 'Test - Filtered%s' % (' + Train' if filter_train else '')
         plt.plot(FPRs, TPRs, label=plot_label)
 
-    if return_PRs:
-        return FPRs, TPRs
+    if return_FPRs or return_TPRs or return_Ns or return_Ps:
+        returns = []
+        if return_FPRs:
+            returns.append(FPRs)
+        if return_TPRs:
+            returns.append(TPRs)
+        if return_Ns:
+            returns.append(Ns)
+        if return_Ps:
+            returns.append(Ps)
 
+        return tuple(returns)
+        
 
 def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
                            df_X_train=None, y_train=None):
@@ -279,7 +291,7 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
 
     FPRs, TPRs = filtered_roc(estimator, df_X_test, y_test, filter_train,
                               df_X_train, y_train, plot=False,
-                              return_PRs=True)
+                              return_FPRs=True, return_TPRs=True)
 
     # Cum Trapz
     AUC = 0
@@ -359,13 +371,11 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
         fname = 'shard_' + fname
 
     scatter_matrix(df_train, alpha=0.2, figsize=(20, 12))
-    plt.title('Train Data')
-    plt.gcf().tight_layout()
+    plt.title('Train Data', fontsize=24)
     plt.savefig('../img/%sscatter-matrix_train' % fname)
     plt.close('all')
     scatter_matrix(df_test, alpha=0.2, figsize=(20, 12))
-    plt.title('Test Data')
-    plt.gcf().tight_layout()
+    plt.title('Test Data', fontsize=24)
     plt.savefig('../img/%sscatter-matrix_test' % fname)
     plt.close('all')
 
@@ -418,11 +428,11 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
 
         mods = [XGBClassifier(seed=0)]
         gs_param_grid = [{'mod__max_depth': [3],
-                          'mod__min_child_weight': [3],
-                          'mod__gamma': [.25],
-                          'mod__subsample': [.75],
-                          'mod__colsample_bytree': [.6],
-                          'mod__reg_alpha': [0.1],
+                          'mod__min_child_weight': [1],
+                          'mod__gamma': [0],
+                          'mod__subsample': [1],
+                          'mod__colsample_bytree': [1],
+                          'mod__reg_alpha': [0],
                           'dist_fill_missing__fill_with': ['median'],
                           'dist_diff__include': ['ignore_min'],
                           'text_idf__idf': ['yes'],
@@ -617,13 +627,14 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
     fpr, tpr, thresholds = roc_curve(y_test, best_prob)
     plt.plot(fpr, tpr, label='Test - Unfiltered')
 
-    filtered_roc(best_grid, df_X_test, y_test)
+    filtered_roc(best_grid, df_X_test, y_test, return_FPRs=True,
+                 return_TPRs=True, return_Ns=True, return_Ps=True)
     filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
                   df_X_train=df_X_train, y_train=y_train)
-    plt.legend()
+    plt.legend(fontsize=24)
     plt.xlim(0, 1)
     plt.ylim(0, 1)
-    plt.title('Best Model ROCs')
+    plt.title('Best Model ROCs', fontsize=24)
     plt.gcf().tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
