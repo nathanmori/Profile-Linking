@@ -257,8 +257,8 @@ def plot_filtered_ROCs(estimator, df_X_test, y_test,
         TPRs.append(TPs / Ps)
         FPRs.append((len(y_test) - TPs) / Ps)
 
-    plot_label = 'ROC (Filtered%s)' % ' + Train' if filter_train else ''
-    plt.plot(TPRs, FPRs, label='plot_label')
+    plot_label = 'ROC (Filtered%s)' % (' + Train' if filter_train else '')
+    plt.plot(TPRs, FPRs, label=plot_label)
 
 
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
@@ -580,6 +580,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
                        df_X_train=df_X_train,
                        y_train=y_train)
     plt.legend()
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
     plt.title('Best Model ROCs')
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
