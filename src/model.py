@@ -292,7 +292,7 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
     plt.close('all')
 
 
-def model(df_clean, shard=False, short=False, tune=False, final):
+def model(df_clean, shard=False, short=False, tune=False, final=False):
     """"""
 
     start = start_time('Modeling...')
