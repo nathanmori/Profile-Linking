@@ -53,11 +53,11 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     plt.plot(thresholds, thresh_rec, label='recall')
     plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold')
     plt.legend()
+    plt.gcf().tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
         fname = 'shard_' + fname
-
     plt.savefig('../img/%sthresh_acc_prec_rec_%s' % (fname,
                                                      mod.__class__.__name__))
     plt.close('all')
@@ -86,16 +86,17 @@ def feature_importances(mod, feats, start, shard):
     for feat_imp in feats_imps:
         print str_feat_imp(feat_imp)
 
-    fname = str(int(start - 1470348265)).zfill(7) + '_'
-    if shard:
-        fname = 'shard_' + fname
-
-    fig = plt.figure(figsize=(15, 12))
+    fig = plt.figure(figsize=(20, 12))
     x_ind = np.arange(n_feats)
     plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats), align='center')
     plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
     plt.yticks(x_ind, feats[::-1], fontsize=14)
     plt.title('%s Feature Importances' % mod.__class__.__name__)
+    plt.gcf().tight_layout()
+
+    fname = str(int(start - 1470348265)).zfill(7) + '_'
+    if shard:
+        fname = 'shard_' + fname
     plt.savefig('../img/%sfeature_importances_%s' %
                 (fname, mod.__class__.__name__))
     plt.close('all')
@@ -265,7 +266,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
     FPRs.append(1.)
 
     if plot:
-        plot_label = 'ROC (Filtered%s)' % (' + Train' if filter_train else '')
+        plot_label = 'Test - Filtered%s' % (' + Train' if filter_train else '')
         plt.plot(FPRs, TPRs, label=plot_label)
 
     if return_PRs:
@@ -357,12 +358,14 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
     if shard:
         fname = 'shard_' + fname
 
-    scatter_matrix(df_train, alpha=0.2, figsize=(15,12))
+    scatter_matrix(df_train, alpha=0.2, figsize=(20, 12))
     plt.title('Train Data')
+    plt.gcf().tight_layout()
     plt.savefig('../img/%sscatter-matrix_train' % fname)
     plt.close('all')
-    scatter_matrix(df_test, alpha=0.2, figsize=(15,12))
+    scatter_matrix(df_test, alpha=0.2, figsize=(20, 12))
     plt.title('Test Data')
+    plt.gcf().tight_layout()
     plt.savefig('../img/%sscatter-matrix_test' % fname)
     plt.close('all')
 
@@ -608,8 +611,11 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
     # ADD FILTERED: plot_apr_vs_thresh()
     # ADD FILTERED + TRAIN: plot_apr_vs_thresh()
 
+
+    fig = plt.figure(figsize=(20, 12))
+
     fpr, tpr, thresholds = roc_curve(y_test, best_prob)
-    plt.plot(fpr, tpr, label='ROC')
+    plt.plot(fpr, tpr, label='Test - Unfiltered')
 
     filtered_roc(best_grid, df_X_test, y_test)
     filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
@@ -618,11 +624,11 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
     plt.xlim(0, 1)
     plt.ylim(0, 1)
     plt.title('Best Model ROCs')
+    plt.gcf().tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
         fname = 'shard_' + fname
-
     plt.savefig('../img/%sROCs' % fname)
     plt.close('all')
 
