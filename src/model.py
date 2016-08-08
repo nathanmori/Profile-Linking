@@ -32,6 +32,8 @@ import ast
 def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     """"""
 
+    """ ADD filtered and filtered + train """
+
     thresholds = y_test_prob.copy()
     thresholds.sort()
 
@@ -251,11 +253,13 @@ def plot_filtered_ROCs(estimator, df_X_test, y_test,
             taken_githubs.add(github_test[ix])
             taken_meetups.add(meetup_test[ix])
 
-        TPs = np.multiply(preds, y_test)
+        TPs = sum(np.multiply(preds, y_test))
         Ps = float(sum(y_test))
+        FPs = sum(preds) - TPs
+        Ns = float(len(y_test) - sum(y_test))   
 
         TPRs.append(TPs / Ps)
-        FPRs.append((len(y_test) - TPs) / Ps)
+        FPRs.append(FPs / Ns)
 
     plot_label = 'ROC (Filtered%s)' % (' + Train' if filter_train else '')
     plt.plot(TPRs, FPRs, label=plot_label)
