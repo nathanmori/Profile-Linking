@@ -429,6 +429,36 @@ class scaler(UD_transform_class):
         return df_X
 
 
+class drop_feat(UD_transform_class):
+    """"""
+
+    def __init__(self):
+        """"""
+
+        self.params = {}
+        self.defaults = {'num': None}
+        self.valids = {'num': [None] + range(50)}
+
+    def fit(self, df_X, y=None):
+        """"""
+
+        self.fill_params()
+
+        return self
+
+    def transform(self, df_X):
+        """"""
+
+        if (self.params['num'] is not None) and \
+           (self.params['num'] < df_X.shape[1]):
+
+            col = df_X.columns[self.params['num']]
+
+            df_X.drop([col], axis=1, inplace=True)
+
+        return df_X
+
+
 class df_to_array(UD_transform_class):
     """"""
 
