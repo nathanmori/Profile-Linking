@@ -19,7 +19,7 @@ from UD_transforms import *
 from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
-                            roc_auc_score
+                            roc_auc_score, roc_curve
 from copy import deepcopy
 from collections import OrderedDict
 import operator
@@ -29,7 +29,7 @@ from sys import argv
 import ast
 
 
-def threshold_acc_prec_rec(y_test, y_test_prob, mod, start, shard):
+def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     """"""
 
     thresholds = y_test_prob.copy()
@@ -180,7 +180,7 @@ def predict_proba_positive(estimator, df_X):
 
 
 def filtered_predict(estimator, df_X_test, y_test=None,
-                        filter_train=False, df_X_train=None, y_train=None):
+                     filter_train=False, df_X_train=None, y_train=None):
     """"""
 
     github_test = df_X_test['github'].values
@@ -218,6 +218,47 @@ def filtered_accuracy(estimator, df_X_input, y):
     accuracy = accuracy_score(y, preds)
 
     return accuracy
+
+
+def plot_filtered_ROCs(estimator, df_X_test, y_test,
+                       filter_train=False, df_X_train=None, y_train=None):
+    """"""
+
+    github_test = df_X_test['github'].values
+    meetup_test = df_X_test['github'].values
+
+    if filter_train:
+        github_train = df_X_train['github'].values
+        meetup_train = df_X_train['meetup'].values
+
+        taken_githubs = set(github_train[y_train == 1])
+        taken_meetups = set(meetup_train[y_train == 1])
+    else:
+        taken_githubs = set()
+        taken_meetups = set()
+
+    probs = predict_proba_positive(estimator, df_X_test)
+    preds = np.zeros(len(probs))
+
+    TPRs = []
+    FPRs = []
+    n_obs = len(y_test)
+
+    for ix in np.argsort(probs)[::-1]:
+        if (github_test[ix] not in taken_githubs) and \
+           (meetup_test[ix] not in taken_meetups):
+            preds[ix] = 1
+            taken_githubs.add(github_test[ix])
+            taken_meetups.add(meetup_test[ix])
+
+        TPs = np.multiply(preds, y_test)
+        Ps = float(sum(y_test))
+
+        TPRs.append(TPs / Ps)
+        FPRs.append((len(y_test) - TPs) / Ps)
+
+    plot_label = 'ROC (Filtered%s)' % ' + Train' if filter_train else ''
+    plt.plot(TPRs, FPRs, label='plot_label')
 
 
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
@@ -455,7 +496,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
 
         y_test_prob = predict_proba_positive(grid, df_X_test_copy)
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
-        threshold_acc_prec_rec(y_test, y_test_prob, mod, start, shard)
+        plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard)
 
         evals['Test Accuracy (Filtered)'], \
             evals['Test Precision (Filtered)'], \
@@ -520,13 +561,33 @@ def model(df_clean, shard=False, short=False, tune=False, final=False):
             best_params = grid.best_params_
             best_pipe = grid.best_estimator_
             best_evals = evals
-            best_filtered_pred = filtered_predict(grid, df_X_test, y_test,
-                                                  filter_train=True,
-                                                  df_X_train=df_X_train,
-                                                  y_train=y_train)
-                                                  
+            best_prob = y_test_prob
+
     save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
                  shard)
+
+    best_filtered_pred = filtered_predict(best_grid, df_X_test, y_test,
+                                          filter_train=True,
+                                          df_X_train=df_X_train,
+                                          y_train=y_train)
+
+    fpr, tpr, thresholds = roc_curve(y_test, best_prob)
+    plt.plot(fpr, tpr, label='ROC')
+
+    plot_filtered_ROCs(best_grid, df_X_test, y_test)
+    plot_filtered_ROCs(best_grid, df_X_test, y_test,
+                       filter_train=True,
+                       df_X_train=df_X_train,
+                       y_train=y_train)
+    plt.legend()
+    plt.title('Best Model ROCs')
+
+    fname = str(int(start - 1470348265)).zfill(7) + '_'
+    if shard:
+        fname = 'shard_' + fname
+
+    plt.savefig('../img/%sROCs' % fname)
+    plt.close('all')
 
     end_time(start)
 
