@@ -352,7 +352,7 @@ def best_transform(best_pipe, df_X, array=False):
 
     data = df_X
 
-    for step in (best_pipe.steps[:-1] if array else best_pipe.steps[:-2]):
+    for step in (best_pipe.steps[:-1] if array else best_pipe.steps[:-1]):
         data = step[1].transform(data)
 
     return data
@@ -381,7 +381,7 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
 
 
 def model(df_clean, shard=False, short=False, tune=False, final=False,
-          drop_feats=False, write=False):
+          write=False):
     """"""
 
     start = start_time('Modeling...')
@@ -444,28 +444,6 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'name_similarity__firstname': [True],
                           'name_similarity__lastname': [True],
                           'name_similarity__calc': [False]}]
-
-    elif drop_feats:
-        
-        mods = [XGBClassifier(seed=0)]
-        gs_param_grid = [{'mod__max_depth': [3],
-                          'mod__min_child_weight': [1],
-                          'mod__gamma': [0],
-                          'mod__subsample': [1],
-                          'mod__colsample_bytree': [1],
-                          'mod__reg_alpha': [0],
-                          'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__include': ['ignore_min'],
-                          'text_idf__idf': ['yes'],
-                          'text_aggregate__refill_missing': [True],
-                          'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [False],
-                          'name_similarity__fullname': [True],
-                          'name_similarity__firstname': [True],
-                          'name_similarity__lastname': [True],
-                          'name_similarity__calc': [False],
-                          'drop_feat__num': [None] + range(30)}]
-
 
     else:
         mods = [XGBClassifier(seed=0),
@@ -542,8 +520,6 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                                         name_similarity()),
                                       ('scaler',
                                         scaler()),
-                                      ('drop_feat',
-                                        drop_feat()),
                                       ('df_to_array',
                                         df_to_array()),
                                       ('mod',
@@ -679,7 +655,6 @@ if __name__ == '__main__':
     short = 'short' in argv
     tune = 'tune' in argv
     final = 'final' in argv
-    drop_feats = 'drop_feats' in argv
     write = 'write' in argv
 
     if read:
@@ -695,4 +670,4 @@ if __name__ == '__main__':
     else:
         df_clean = clean(load())
 
-    model(df_clean, shard, short, tune, final, drop_feats, write)
+    model(df_clean, shard, short, tune, final, write)
