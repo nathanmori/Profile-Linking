@@ -292,7 +292,7 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard
     plt.close('all')
 
 
-def model(df_clean, shard=False, short=False, tune=False):
+def model(df_clean, shard=False, short=False, tune=False, final):
     """"""
 
     start = start_time('Modeling...')
@@ -323,6 +323,28 @@ def model(df_clean, shard=False, short=False, tune=False):
                           'mod__subsample': [i/10.0 for i in range(6,10)],
                           'mod__colsample_bytree': [i/10.0 for i in range(6,10)],
                           'mod__reg_alpha': [1e-5, 1e-2, 0.1, 1, 100],
+                          'dist_fill_missing__fill_with': ['median'],
+                          'dist_diff__include': ['ignore_min'],
+                          'text_idf__idf': ['yes'],
+                          'text_aggregate__refill_missing': [True],
+                          'text_aggregate__cosine_only': [True],
+                          'text_aggregate__drop_missing_bools': [False],
+                          'name_similarity__fullname': [True],
+                          'name_similarity__firstname': [True],
+                          'name_similarity__lastname': [True],
+                          'name_similarity__calc': [False]}]
+
+    elif final:
+
+        # UPDATE UPDATE UPDATE
+
+        mods = [XGBClassifier(seed=0)]
+        gs_param_grid = [{'mod__max_depth': [3],
+                          'mod__min_child_weight': [3],
+                          'mod__gamma': [.25],
+                          'mod__subsample': [.75],
+                          'mod__colsample_bytree': [.6],
+                          'mod__reg_alpha': [0.1],
                           'dist_fill_missing__fill_with': ['median'],
                           'dist_diff__include': ['ignore_min'],
                           'text_idf__idf': ['yes'],
@@ -515,6 +537,7 @@ if __name__ == '__main__':
     shard = 'shard' in argv
     short = 'short' in argv
     tune = 'tune' in argv
+    final = 'final' in argv
 
     if read:
         if shard:
@@ -529,4 +552,4 @@ if __name__ == '__main__':
     else:
         df_clean = clean(load())
 
-    model(df_clean, shard, short, tune)
+    model(df_clean, shard, short, tune, final)
