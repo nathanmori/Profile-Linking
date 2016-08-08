@@ -299,13 +299,6 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
         AUC += (TPRs[i + 1] + TPRs[i]) / 2 * (FPRs[i + 1] - FPRs[i])
 
     return AUC
-    
-
-    
-
-
-
-    
 
 
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
@@ -352,17 +345,19 @@ def best_transform(best_pipe, df_X, array=False):
 
     data = df_X
 
-    for step in (best_pipe.steps[:-1] if array else best_pipe.steps[:-1]):
+    for step in best_pipe.steps[:-2]:
         data = step[1].transform(data)
 
     return data
 
 
-def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start, shard):
+def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
+                 shard):
     """"""
 
     df_train = best_transform(best_pipe, df_X_train)
     df_test = best_transform(best_pipe, df_X_test)
+
     df_train['match'] = y_train
     df_test['match'] = y_test
 
@@ -395,7 +390,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
     print '# Test Obs: ', len(y_test)
     print '    Counts:', np.unique(y_test, return_counts=True)
 
-    # suppress warning writing on copy warning
+    # suppress warning: writing on copy
     pd.options.mode.chained_assignment = None  # default='warn'
 
     if short:
@@ -615,12 +610,14 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
             best_evals = evals
             best_prob = y_test_prob
 
-    save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
-                 shard)
+    if write:
 
-    plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
-    # ADD FILTERED: plot_apr_vs_thresh()
-    # ADD FILTERED + TRAIN: plot_apr_vs_thresh()
+        pdb.set_trace()
+
+        save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
+                     shard)
+
+        plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
 
     if write:
 
