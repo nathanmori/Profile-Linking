@@ -123,8 +123,9 @@ class dist_diff(UD_transform_class):
         """"""
 
         self.params = {}
-        self.defaults = {'include': 'all'}
-        self.valids = {'include': ['all', 'none', 'ignore_min']}
+        self.defaults = {'include': 'all', 'keep': 'median'}
+        self.valids = {'include': ['all', 'none', 'ignore_min', 'range'],
+                       'keep': ['min', 'avg', 'median', 'max']}
 
     def fit(self, df_X_train, y=None):
         """"""
@@ -139,12 +140,20 @@ class dist_diff(UD_transform_class):
             self.dist_cols = [col for col in df_X_train.columns
                                   if 'dist' in col]
 
+        if self.params['include'] == 'range':
+            self.drop_cols = [col for col in df_X_train.columns
+                                  if ('dist' in col and
+                                      self.params['keep'] not in col)]
+
         return self
 
     def transform(self, df_X):
         """"""
 
-        if self.params['include'] != 'none':
+        if self.params['include'] == 'range':
+            df_X['dist_range_km'] = df_X['max_dist_km'] - df_X['min_dist_km']
+            df_X.drop(self.drop_cols, axis=1, inplace=True)
+        elif self.params['include'] != 'none':
             for i, col1 in enumerate(self.dist_cols, start=1):
                 for col2 in self.dist_cols[i:]:
                     df_X['DIFF:' + col1 + '-' + col2] = df_X[col1] - df_X[col2]
@@ -376,7 +385,8 @@ class name_similarity(UD_transform_class):
         self.valids = {'fullname': [True, False],
                        'firstname': [True, False],
                        'lastname': [True, False],
-                       'calc': [True, False]}
+                       'calc': [True, False],
+                       'use': ['full', 'first_last', 'calc']}
 
     def fit(self, df_X, y=None):
         """"""
@@ -390,14 +400,12 @@ class name_similarity(UD_transform_class):
 
         df_X = df_X_input.copy()
 
-        if not self.params['fullname']:
+        if self.params['use'] != 'first_last':
+            df_X.drop(['firstname_similarity', 'lastname_similarity'],
+                      axis=1, inplace=True)
+
+        if self.params['use'] != 'full':
             df_X.drop(['fullname_similarity'], axis=1, inplace=True)
-
-        if not self.params['firstname']:
-            df_X.drop(['firstname_similarity'], axis=1, inplace=True)
-
-        if not self.params['lastname']:
-            df_X.drop(['lastname_similarity'], axis=1, inplace=True)
 
         if self.params['calc']:
             df_X['name_sim'] = df_X.apply(lambda row: match(row['github_name'],
