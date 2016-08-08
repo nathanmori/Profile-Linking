@@ -32,8 +32,6 @@ import ast
 def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     """"""
 
-    """ ADD filtered and filtered + train """
-
     thresholds = y_test_prob.copy()
     thresholds.sort()
 
@@ -64,7 +62,7 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     plt.close('all')
 
 
-def feature_importances(mod, feats, start, shard):
+def feature_importances(mod, feats, start, shard, write):
     """"""
 
     n_feats = len(feats)
@@ -87,20 +85,24 @@ def feature_importances(mod, feats, start, shard):
     for feat_imp in feats_imps:
         print str_feat_imp(feat_imp)
 
-    fig = plt.figure(figsize=(20, 12))
-    x_ind = np.arange(n_feats)
-    plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats), align='center')
-    plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
-    plt.yticks(x_ind, feats[::-1], fontsize=14)
-    plt.title('%s Feature Importances' % mod.__class__.__name__, fontsize=24)
-    plt.gcf().tight_layout()
+    if write:
 
-    fname = str(int(start - 1470348265)).zfill(7) + '_'
-    if shard:
-        fname = 'shard_' + fname
-    plt.savefig('../img/%sfeature_importances_%s' %
-                (fname, mod.__class__.__name__))
-    plt.close('all')
+        fig = plt.figure(figsize=(20, 12))
+        x_ind = np.arange(n_feats)
+        plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats),
+                 align='center')
+        plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
+        plt.yticks(x_ind, feats[::-1], fontsize=14)
+        plt.title('%s Feature Importances' % mod.__class__.__name__,
+                  fontsize=24)
+        plt.gcf().tight_layout()
+
+        fname = str(int(start - 1470348265)).zfill(7) + '_'
+        if shard:
+            fname = 'shard_' + fname
+        plt.savefig('../img/%sfeature_importances_%s' %
+                    (fname, mod.__class__.__name__))
+        plt.close('all')
 
     return feats_imps
 
@@ -565,7 +567,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         feats_imps = feature_importances(
                         grid.best_estimator_.named_steps['mod'],
                         grid.best_estimator_.named_steps['df_to_array'].feats,
-                        start, shard)
+                        start, shard, write)
 
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
                 + mod.__class__.__name__
@@ -612,14 +614,10 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
     if write:
 
-        pdb.set_trace()
-
         save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
                      shard)
 
         plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
-
-    if write:
 
         fig = plt.figure(figsize=(20, 12))
 
