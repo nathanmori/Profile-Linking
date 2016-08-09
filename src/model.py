@@ -89,10 +89,9 @@ def feature_importances(mod, feats, start, shard, write):
 
         fig = plt.figure(figsize=(20, 12))
         x_ind = np.arange(n_feats)
-        plt.barh(x_ind, imps[::-1]/imps[0], height=(10./n_feats),
-                 align='center')
-        plt.ylim(x_ind.min() + .5, x_ind.max() + .5)
-        plt.yticks(x_ind, feats[::-1], fontsize=14)
+        plt.barh(x_ind, imps[::-1]/imps[0], height=.8, align='center')
+        plt.ylim(x_ind.min() - .5, x_ind.max() + .5)
+        plt.yticks(x_ind, feats[::-1], fontsize=20)
         plt.title('%s Feature Importances' % mod.__class__.__name__,
                   fontsize=24)
         plt.gcf().tight_layout()
@@ -397,7 +396,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
     if short:
         mods = [XGBClassifier(seed=0)]
-        gs_param_grid = [{'name_similarity__use': ['full_name', 'first_last']}]
+        gs_param_grid = [{'name_similarity__use': ['full', 'first_last']}]
 
     elif tune:
 
@@ -406,7 +405,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'mod__min_child_weight': range(1, 6, 2),
                           'mod__gamma': [i / 10.0 for i in range(0, 5)],
                           'mod__subsample': [i/10.0 for i in range(6,10)],
-                          'mod__colsample_bytree': [i/10.0 for i in range(6,10)],
+                          'mod__colsample_bytree': [i/10.0 for i
+                                                           in range(6,10)],
                           'mod__reg_alpha': [1e-5, 1e-2, 0.1, 1, 100],
                           'dist_fill_missing__fill_with': ['median'],
                           'dist_diff__include': ['range'],
@@ -415,7 +415,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
                           'text_aggregate__drop_missing_bools': [False],
-                          'name_similarity__use': ['????????????']}]
+                          'name_similarity__use': ['first_last']}]
 
     elif final:
 
@@ -430,12 +430,12 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'mod__reg_alpha': [0],
                           'dist_fill_missing__fill_with': ['median'],
                           'dist_diff__include': ['range'],
-                          'dist_diff__keep': ['???????????'],
+                          'dist_diff__keep': ['median', 'min', 'avg', 'max'],
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [False],
-                          'name_similarity__use': ['??????????']}]
+                          'text_aggregate__drop_missing_bools': [True],
+                          'name_similarity__use': ['first_last']}]
 
     elif ind:
 
@@ -640,6 +640,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         plt.legend(fontsize=24)
         plt.xlim(0, 1)
         plt.ylim(0, 1)
+        plt.xlabel('False Positive Rate', fontsize=20)
+        plt.ylabel('True Positive Rate', fontsize=20)
         plt.title('Best Model ROCs', fontsize=24)
         plt.gcf().tight_layout()
 
