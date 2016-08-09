@@ -352,30 +352,20 @@ def pipe_transform(best_pipe, df_X, return_array=False):
     return data
 
 
-def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
-                 shard):
+def save_scatter(best_pipe, df_X, y, start, shard):
     """"""
 
-    df_train = pipe_transform(best_pipe, df_X_train)
-    df_test = pipe_transform(best_pipe, df_X_test)
+    df = pipe_transform(best_pipe, df_X)
+    df['match'] = y
 
-    df_train['match'] = y_train
-    df_test['match'] = y_test
+    colors = ['red', 'green']
+    scatter_matrix(df, alpha=0.2, figsize=(20, 12),
+                   c=df.match.apply(lambda x: colors[x]))
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
         fname = 'shard_' + fname
-
-    colors = ['red', 'green']
-    scatter_matrix(df_train, alpha=0.2, figsize=(20, 12),
-                   c=df_train.match.apply(lambda x: colors[x]))
-    plt.gcf().title('Train Data', fontsize=24)
-    plt.savefig('../img/%sscatter-matrix_train' % fname)
-    plt.close('all')
-    scatter_matrix(df_test, alpha=0.2, figsize=(20, 12),
-                   c=df_test.match.apply(lambda x: colors[x]))
-    plt.gcf().title('Test Data', fontsize=24)
-    plt.savefig('../img/%sscatter-matrix_test' % fname)
+    plt.savefig('../img/%sscatter-matrix' % fname)
     plt.close('all')
 
 
@@ -613,8 +603,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
     if write:
 
-        save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
-                     shard)
+        save_scatter(best_pipe, df_clean, y, start, shard)
 
         plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
 
