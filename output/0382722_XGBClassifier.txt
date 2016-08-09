@@ -1,0 +1,71 @@
+ALGORITHM
+XGBClassifier
+
+BEST SCORE
+0.893576862648
+
+BEST PARAMS
+  text_aggregate__drop_missing_bools:   True
+  mod__max_depth:                       3
+  dist_diff__include:                   none
+  dist_fill_missing__fill_with:         median
+  text_aggregate__refill_missing:       True
+  mod__gamma:                           0
+  name_similarity__use:                 first_last
+  mod__subsample:                       1
+  mod__min_child_weight:                1
+  text_idf__idf:                        yes
+  text_aggregate__cosine_only:          True
+  mod__reg_alpha:                       0
+  dist_diff__keep:                      median
+  mod__colsample_bytree:                1
+
+
+METRICS
+  Test Accuracy:                                  89.6%
+  Test Precision:                                 86.6%
+  Test Recall:                                    89.9%
+  Test AUC:                                       93.7%
+  Test Accuracy (Filtered):                       89.7%
+  Test Precision (Filtered):                      88.3%
+  Test Recall (Filtered):                         87.7%
+  Test AUC (Filtered):                            93.0%
+  Test Accuracy (Filtered + Train):               90.2%
+  Test Precision (Filtered + Train):              91.1%
+  Test Recall (Filtered + Train):                 85.8%
+  Test AUC (Filtered + Train):                    93.3%
+
+
+FEATURE IMPORTANCES
+  text_sim_tfidf:                       156.0
+  median_dist_km:                       95.0
+  min_dist_km:                          79.0
+  lastname_similarity:                  79.0
+  max_dist_km:                          68.0
+  avg_dist_km:                          57.0
+  firstname_similarity:                 37.0
+
+
+CORRELATION MATRIX
+shape = (7, 7)
+[[ 1.          0.92298461  0.921332    0.70781699  0.01562948  0.00191039
+  -0.01622377]
+ [ 0.92298461  1.          0.994307    0.89777477  0.0125921   0.00267475
+  -0.01145148]
+ [ 0.921332    0.994307    1.          0.86167407  0.01483483  0.00150164
+  -0.0088242 ]
+ [ 0.70781699  0.89777477  0.86167407  1.          0.00150546  0.00499619
+  -0.00951137]
+ [ 0.01562948  0.0125921   0.01483483  0.00150546  1.          0.13487217
+   0.0377336 ]
+ [ 0.00191039  0.00267475  0.00150164  0.00499619  0.13487217  1.
+   0.32087249]
+ [-0.01622377 -0.01145148 -0.0088242  -0.00951137  0.0377336   0.32087249
+   1.        ]]
+
+
+GRID SCORES
+mean: 0.89358, std: 0.00111, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_diff__include': 'none', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'median', 'mod__colsample_bytree': 1}
+mean: 0.89358, std: 0.00111, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_diff__include': 'none', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'min', 'mod__colsample_bytree': 1}
+mean: 0.89358, std: 0.00111, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_diff__include': 'none', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'avg', 'mod__colsample_bytree': 1}
+mean: 0.89358, std: 0.00111, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_diff__include': 'none', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'max', 'mod__colsample_bytree': 1}
