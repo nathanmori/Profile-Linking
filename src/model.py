@@ -366,11 +366,14 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
     if shard:
         fname = 'shard_' + fname
 
-    scatter_matrix(df_train, alpha=0.2, figsize=(20, 12))
+    colors = ['red', 'green']
+    scatter_matrix(df_train, alpha=0.2, figsize=(20, 12),
+                   c=df_train.match.apply(lambda x: colors[x]))
     plt.title('Train Data', fontsize=24)
     plt.savefig('../img/%sscatter-matrix_train' % fname)
     plt.close('all')
-    scatter_matrix(df_test, alpha=0.2, figsize=(20, 12))
+    scatter_matrix(df_test, alpha=0.2, figsize=(20, 12),
+                   c=df_test.match.apply(lambda x: colors[x]))
     plt.title('Test Data', fontsize=24)
     plt.savefig('../img/%sscatter-matrix_test' % fname)
     plt.close('all')
