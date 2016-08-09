@@ -123,8 +123,9 @@ class dist_diff(UD_transform_class):
         """"""
 
         self.params = {}
-        self.defaults = {'include': 'all', 'keep': 'median'}
-        self.valids = {'include': ['all', 'none', 'ignore_min', 'range'],
+        self.defaults = {'diffs': 'range',
+                         'keep': 'median'}
+        self.valids = {'diffs': ['none', 'range'],
                        'keep': ['min', 'avg', 'median', 'max']}
 
     def fit(self, df_X_train, y=None):
@@ -132,31 +133,19 @@ class dist_diff(UD_transform_class):
 
         self.fill_params()
 
-        if self.params['include'] == 'ignore_min':
-            self.dist_cols = [col for col in df_X_train.columns
-                                  if ('dist' in col and
-                                      'min' not in col)]
-        else:
-            self.dist_cols = [col for col in df_X_train.columns
-                                  if 'dist' in col]
-
-        if self.params['include'] == 'range':
-            self.drop_cols = [col for col in df_X_train.columns
-                                  if ('dist' in col and
-                                      self.params['keep'] not in col)]
+        self.drop_cols = [col for col in df_X_train.columns
+                              if ('dist' in col and
+                                  self.params['keep'] not in col)]
 
         return self
 
     def transform(self, df_X):
         """"""
 
-        if self.params['include'] == 'range':
+        if self.params['diffs'] == 'range':
             df_X['dist_range_km'] = df_X['max_dist_km'] - df_X['min_dist_km']
-            df_X.drop(self.drop_cols, axis=1, inplace=True)
-        elif self.params['include'] != 'none':
-            for i, col1 in enumerate(self.dist_cols, start=1):
-                for col2 in self.dist_cols[i:]:
-                    df_X['DIFF:' + col1 + '-' + col2] = df_X[col1] - df_X[col2]
+
+        df_X.drop(self.drop_cols, axis=1, inplace=True)
 
         return df_X
 
