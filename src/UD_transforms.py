@@ -580,9 +580,6 @@ class text_aggregate(UD_transform_class):
 
         if X_github_tfidf is not None:
 
-            df_X['euclid'] = [np.linalg.norm(x1 - x2) for x1, x2
-                              in zip(X_github_tfidf.toarray(), X_meetup_tfidf.toarray())]
-
             df_X['text_sim_tfidf'] = [cosine_similarity(x1, x2)[0,0] for x1, x2
                                       in zip(X_github_tfidf, X_meetup_tfidf)]
 

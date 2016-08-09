@@ -60,11 +60,11 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
-    plt.xticks(np.arange(0, 1.1, 0.1), fontsize=20)
-    plt.yticks(np.arange(0, 1.1, 0.1), fontsize=20)
+    plt.xticks(np.arange(0, 1.1, 0.1), fontsize=32)
+    plt.yticks(np.arange(0, 1.1, 0.1), fontsize=32)
     plt.title('%s Accuracy, Precision, Recall (Unfiltered) vs. Threshold' %
-              mod.__class__.__name__, fontsize=24)
-    plt.legend(fontsize=20, loc='lower left')
+              mod.__class__.__name__, fontsize=40)
+    plt.legend(fontsize=32, loc='lower left')
     fig.tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -114,10 +114,10 @@ def feature_importances(mod, feats, start, shard, write):
         x_ind = np.arange(n_feats)
         plt.barh(x_ind, imps[::-1]/imps[0], height=.8, align='center')
         plt.ylim(x_ind.min() - .5, x_ind.max() + .5)
-        plt.yticks(x_ind, feats[::-1], fontsize=20)
-        plt.xticks(np.arange(0, 1.1, 0.2), fontsize=20)
+        plt.yticks(x_ind, feats[::-1], fontsize=32)
+        plt.xticks(np.arange(0, 1.1, 0.2), fontsize=32)
         plt.title('%s Feature Importances' % mod.__class__.__name__,
-                  fontsize=24)
+                  fontsize=40)
         plt.gcf().tight_layout()
 
         fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -559,65 +559,75 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                 AdaBoostClassifier(random_state=0),
                 SVC(random_state=0, probability=True)]
 
-
-    if short:
-        mods = [all_mods[0]]
-        gs_param_grid = [{'name_similarity__use': ['full', 'first_last']}]
-
-    elif tune:
-
-        mods = [all_mods[0]]
-        gs_param_grid = [{'mod__max_depth': range(3, 10, 2),
-                          'mod__min_child_weight': range(1, 6, 2),
-                          'mod__gamma': [i / 10.0 for i in range(0, 5)],
-                          'mod__subsample': [i/10.0 for i in range(6,10)],
-                          'mod__colsample_bytree': [i/10.0 for i
-                                                           in range(6,10)],
-                          'mod__reg_alpha': [1e-5, 1e-2, 0.1, 1, 100],
-                          'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__diffs': ['range'],
-                          'dist_diff__keep': ['?????????'],
-                          'text_idf__idf': ['yes'],
-                          'text_aggregate__refill_missing': [True],
-                          'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [False],
-                          'name_similarity__use': ['first_last']}]
-
-    elif final:
-
-        # UPDATE UPDATE UPDATE
-
-        mods = all_mods
-        gs_param_grid = [{#'mod__max_depth': [3],
-                          #'mod__min_child_weight': [1],
-                          #'mod__gamma': [0],
-                          #'mod__subsample': [1],
-                          #'mod__colsample_bytree': [1],
-                          #'mod__reg_alpha': [0],
-                          'dist_fill_missing__fill_with': ['median'],
+    
+    best_feats = {'dist_fill_missing__fill_with': ['median'],
                           'dist_diff__diffs': ['none'],
                           'dist_diff__keep': ['median'],
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
                           'text_aggregate__drop_missing_bools': [True],
-                          'name_similarity__use': ['first_last']}]
+                          'name_similarity__use': ['first_last']}
+    all_feats = {'dist_fill_missing__fill_with': ['mean', 'median', 'min',
+                                                  'max'],
+                 'dist_diff__diffs': ['none', 'range'],
+                 'dist_diff__keep': ['min', 'avg', 'median', 'max'],
+                 'text_idf__idf': ['yes', 'no', 'both'],
+                 'text_aggregate__refill_missing': [True, False],
+                 'text_aggregate__cosine_only': [True, False],
+                 'text_aggregate__drop_missing_bools': [True, False],
+                 'name_similarity__use': ['full', 'first_last', 'calc']}
 
+    if short:
+        mods = [all_mods[0]]
+        gs_param_grid = [{'name_similarity__use': ['full', 'first_last']}]
+
+    elif tune:
+        mods = [all_mods[4], all_mods[2], all_mods[0]]
+        mod_tune = {XGBClassifier: [{'mod__max_depth': [2, 3, 5],
+                                     #default = 3
+                                     'mod__min_child_weight': [1, 3],
+                                     #default = 1
+                                     'mod__gamma': [0, 0.25],
+                                     #default = 0
+                                     'mod__subsample': [0.75, 1],
+                                     #default = 1
+                                     'mod__colsample_bytree': [0.75, 1],
+                                     #default = 1
+                                     'mod__reg_alpha': [0, .01]}],
+                                     #default = 0
+
+                    LogisticRegression: [{'mod__penalty': ['l2', 'l1'],
+                                          'mod__C': [0.1, 0.5, 1],
+                                          'mod__solver': ['liblinear']},
+                                         {'mod__penalty': ['l2'],
+                                          'mod__C': [0.1, 0.5, 1],
+                                          'mod__solver': ['sag']}],
+
+                    AdaBoostClassifier: [{'mod__learning_rate':
+                                            [0.01, 0.1, 0.5, 1]}]}
+
+        for key, val in mod_tune.iteritems():
+            mod_tune[key] = []
+            for vd in val:
+                vd.update(best_feats)
+                mod_tune[key].append(vd)
+                          
+    elif final:
+        # UPDATE UPDATE UPDATE
+        mods = [all_mods[0]]
+        #best_tunes = TBD
+        gs_param_grid = best_feats.update(best_tunes)
+        pass
     else:
         mods = all_mods
-        gs_param_grid = [{'dist_fill_missing__fill_with': ['mean', 'median',
-                                                           'min', 'max'],
-                         'dist_diff__diffs': ['none', 'range'],
-                         'dist_diff__keep': ['min', 'avg', 'median', 'max'],
-                         'text_idf__idf': ['yes', 'no', 'both'],
-                         'text_aggregate__refill_missing': [True, False],
-                         'text_aggregate__cosine_only': [True, False],
-                         'text_aggregate__drop_missing_bools': [True, False],
-                         'name_similarity__use': ['full', 'first_last',
-                                                  'calc']}]
+        gs_param_grid = all_feats
 
     best_accuracy = 0.
     for mod in mods:
+
+        if tune:
+            gs_param_grid = mod_tune[mod.__class__]
 
         print '\n'
         print mod.__class__.__name__
@@ -649,7 +659,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                             scoring=filtered_accuracy,
                             n_jobs=-1,
                             iid=False,
-                            cv=3) # UPDATE TO 5 FOR FINAL
+                            cv=3)
 
         grid.fit(df_X_train_copy, y_train)
 
@@ -782,15 +792,15 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                      return_TPRs=True, return_Ns=True, return_Ps=True)
         filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
                       df_X_train=df_X_train, y_train=y_train)
-        plt.legend(fontsize=20, loc='lower right')
+        plt.legend(fontsize=32, loc='lower right')
         plt.xlim(0, 1)
         plt.ylim(0, 1)
-        plt.xticks(np.arange(0, 1.1, 0.2), fontsize=20)
-        plt.yticks(np.arange(0, 1.1, 0.2), fontsize=20)
-        plt.xlabel('False Positive Rate', fontsize=20)
-        plt.ylabel('True Positive Rate', fontsize=20)
+        plt.xticks(np.arange(0, 1.1, 0.2), fontsize=32)
+        plt.yticks(np.arange(0, 1.1, 0.2), fontsize=32)
+        plt.xlabel('False Positive Rate', fontsize=32)
+        plt.ylabel('True Positive Rate', fontsize=32)
         plt.title('Best Model (%s) ROCs' % best_mod.__class__.__name__,
-                  fontsize=24)
+                  fontsize=40)
         plt.gcf().tight_layout()
 
         fname = str(int(start - 1470348265)).zfill(7) + '_'
