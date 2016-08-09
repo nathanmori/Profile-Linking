@@ -1,0 +1,61 @@
+ALGORITHM
+XGBClassifier
+
+BEST SCORE
+0.892619697346
+
+BEST PARAMS
+  text_aggregate__drop_missing_bools:   True
+  mod__max_depth:                       3
+  dist_fill_missing__fill_with:         median
+  text_aggregate__refill_missing:       True
+  name_similarity__use:                 first_last
+  mod__gamma:                           0
+  dist_diff__diffs:                     none
+  mod__subsample:                       1
+  mod__min_child_weight:                1
+  text_idf__idf:                        yes
+  text_aggregate__cosine_only:          True
+  mod__reg_alpha:                       0
+  dist_diff__keep:                      median
+  mod__colsample_bytree:                1
+
+
+METRICS
+  Test Accuracy:                                  89.1%
+  Test Precision:                                 84.4%
+  Test Recall:                                    91.9%
+  Test AUC:                                       93.5%
+  Test Accuracy (Filtered):                       90.0%
+  Test Precision (Filtered):                      87.5%
+  Test Recall (Filtered):                         89.7%
+  Test AUC (Filtered):                            93.2%
+  Test Accuracy (Filtered + Train):               90.9%
+  Test Precision (Filtered + Train):              90.8%
+  Test Recall (Filtered + Train):                 87.8%
+  Test AUC (Filtered + Train):                    93.5%
+
+
+FEATURE IMPORTANCES
+  text_sim_tfidf:                       229.0
+  median_dist_km:                       225.0
+  lastname_similarity:                  79.0
+  firstname_similarity:                 43.0
+
+
+CORRELATION MATRIX
+shape = (4, 4)
+Index([u'median_dist_km', u'firstname_similarity', u'lastname_similarity',
+       u'text_sim_tfidf'],
+      dtype='object')
+[[ 1.          0.01483483  0.00150164 -0.0088242 ]
+ [ 0.01483483  1.          0.13487217  0.0377336 ]
+ [ 0.00150164  0.13487217  1.          0.32087249]
+ [-0.0088242   0.0377336   0.32087249  1.        ]]
+
+
+GRID SCORES
+mean: 0.89262, std: 0.00332, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'name_similarity__use': 'first_last', 'mod__gamma': 0, 'dist_diff__diffs': 'none', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'median', 'mod__colsample_bytree': 1}
+mean: 0.88782, std: 0.00515, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'name_similarity__use': 'first_last', 'mod__gamma': 0, 'dist_diff__diffs': 'none', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'min', 'mod__colsample_bytree': 1}
+mean: 0.88543, std: 0.00597, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'name_similarity__use': 'first_last', 'mod__gamma': 0, 'dist_diff__diffs': 'none', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'avg', 'mod__colsample_bytree': 1}
+mean: 0.88399, std: 0.00178, params: {'text_aggregate__drop_missing_bools': True, 'mod__max_depth': 3, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'name_similarity__use': 'first_last', 'mod__gamma': 0, 'dist_diff__diffs': 'none', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'max', 'mod__colsample_bytree': 1}
