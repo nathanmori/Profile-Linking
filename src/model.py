@@ -397,8 +397,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
     if short:
         mods = [XGBClassifier(seed=0)]
-        gs_param_grid = [{'name_similarity__fullname': [True, False],
-                          'name_similarity__lastname': [True, False]}]
+        gs_param_grid = [{'name_similarity__use': ['full_name', 'first_last']}]
 
     elif tune:
 
@@ -410,15 +409,13 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'mod__colsample_bytree': [i/10.0 for i in range(6,10)],
                           'mod__reg_alpha': [1e-5, 1e-2, 0.1, 1, 100],
                           'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__include': ['ignore_min'],
+                          'dist_diff__include': ['range'],
+                          'dist_diff__keep': ['?????????'],
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
                           'text_aggregate__drop_missing_bools': [False],
-                          'name_similarity__fullname': [True],
-                          'name_similarity__firstname': [True],
-                          'name_similarity__lastname': [True],
-                          'name_similarity__calc': [False]}]
+                          'name_similarity__use': ['????????????']}]
 
     elif final:
 
@@ -432,15 +429,13 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'mod__colsample_bytree': [1],
                           'mod__reg_alpha': [0],
                           'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__include': ['ignore_min'],
+                          'dist_diff__include': ['range'],
+                          'dist_diff__keep': ['???????????'],
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
                           'text_aggregate__drop_missing_bools': [False],
-                          'name_similarity__fullname': [True],
-                          'name_similarity__firstname': [True],
-                          'name_similarity__lastname': [True],
-                          'name_similarity__calc': [False]}]
+                          'name_similarity__use': ['??????????']}]
 
     elif ind:
 
@@ -459,7 +454,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [False],
+                          'text_aggregate__drop_missing_bools': [True, False],
                           'name_similarity__use': ['full',
                                                    'first_last',
                                                    'calc']}]
@@ -487,7 +482,9 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                          'dist_diff__include':
                             ['all',
                              'none',
-                             'ignore_min'],
+                             'ignore_min',
+                             'range'],
+                         'dist_diff__keep': ['min', 'avg', 'median', 'max'],
                          'text_idf__idf':
                             ['yes',
                              'no',
@@ -501,18 +498,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                          'text_aggregate__drop_missing_bools':
                             [True,
                              False],
-                         'name_similarity__fullname':
-                            [True,
-                             False],
-                         'name_similarity__firstname':
-                            [True,
-                             False],
-                         'name_similarity__lastname':
-                            [True,
-                             False],
-                         'name_similarity__calc':
-                            [True,
-                             False]}]
+                         'name_similarity__use':
+                            ['full', 'first_last', 'calc']}]
 
     best_accuracy = 0.
     for mod in mods:
