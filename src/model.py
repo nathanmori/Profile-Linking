@@ -432,7 +432,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'mod__colsample_bytree': [1],
                           'mod__reg_alpha': [0],
                           'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__include': ['range'],
+                          'dist_diff__include': ['none'],
                           'dist_diff__keep': ['median', 'min', 'avg', 'max'],
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
@@ -558,8 +558,9 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                         grid.best_estimator_.named_steps['df_to_array'].feats,
                         start, shard, write)
 
-        corr_matrix = np.corrcoef(pipe_transform(grid.best_estimator_,
-                                                 df_X_test, return_array=True))
+        corr_matrix = np.corrcoef(
+                        pipe_transform(grid.best_estimator_,
+                                       df_X_test, return_array=True).T)
 
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
                 + mod.__class__.__name__
@@ -589,7 +590,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                 f.write('\n')
 
             f.write('\n\nCORRELATION MATRIX\n')
-            f.write(corr_matrix)
+            f.write('shape = ' + str(corr_matrix.shape) + '\n')
+            f.write(str(corr_matrix))
             f.write('\n')
 
             f.write('\n\nGRID SCORES\n')
