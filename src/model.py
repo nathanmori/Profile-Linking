@@ -30,7 +30,17 @@ import ast
 
 
 def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     thresholds = y_test_prob.copy()
     thresholds.sort()
@@ -52,8 +62,8 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     plt.plot(thresholds, thresh_rec, label='recall')
     plt.xticks(np.arange(0, 1.1, 0.1), fontsize=20)
     plt.yticks(np.arange(0, 1.1, 0.1), fontsize=20)
-    plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold',
-              fontsize=24)
+    plt.title('%s Accuracy, Precision, Recall (Unfiltered) vs. Threshold' %
+              mod.__class__.__name__, fontsize=24)
     plt.legend(fontsize=20, loc='lower left')
     fig.tight_layout()
 
@@ -66,7 +76,17 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
 
 
 def feature_importances(mod, feats, start, shard, write):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     n_feats = len(feats)
 
@@ -110,9 +130,37 @@ def feature_importances(mod, feats, start, shard, write):
     return feats_imps
 
 
+def count_duplicates(matches, set_name):
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
+
+    unique_counts = np.unique(matches, return_counts=True)[1]
+    duplicates = sum(unique_counts) - len(unique_counts)
+    print 'There are %d duplicates in %s' % (duplicates, set_name)
+
+
 def check_duplicates(best_pred, \
                      github_train, meetup_train, github_test, meetup_test):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     print 'There are %d train observations' % len(y_train)
     print 'There are %d test observations' % len(best_pred)
@@ -130,13 +178,6 @@ def check_duplicates(best_pred, \
                                               github_pred_matches)
     meetup_train_and_pred_matches = np.append(meetup_train_matches,
                                               meetup_pred_matches)
-
-    def count_duplicates(matches, set_name):
-
-        unique_counts = np.unique(matches, return_counts=True)[1]
-        duplicates = sum(unique_counts) - len(unique_counts)
-        print 'There are %d duplicates in %s' % (duplicates, set_name)
-
 
     count_duplicates(github_train_matches, 'github_train_matches')
     count_duplicates(meetup_train_matches, 'meetup_train_matches')
@@ -175,7 +216,17 @@ def check_duplicates(best_pred, \
 
 
 def predict_proba_positive(estimator, df_X):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     if hasattr(estimator, 'classes_'):
         class_arr = np.array(estimator.classes_)
@@ -190,7 +241,17 @@ def predict_proba_positive(estimator, df_X):
 
 def filtered_predict(estimator, df_X_test, y_test=None,
                      filter_train=False, df_X_train=None, y_train=None):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     github_test = df_X_test['github'].values
     meetup_test = df_X_test['github'].values
@@ -221,7 +282,17 @@ def filtered_predict(estimator, df_X_test, y_test=None,
 
 
 def filtered_accuracy(estimator, df_X_input, y):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     preds = filtered_predict(estimator, df_X_input)
     accuracy = accuracy_score(y, preds)
@@ -232,7 +303,17 @@ def filtered_accuracy(estimator, df_X_input, y):
 def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
                  df_X_train=None, y_train=None, plot=True, return_FPRs=False,
                  return_TPRs=False, return_Ns=False, return_Ps=False):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     github_test = df_X_test['github'].values
     meetup_test = df_X_test['github'].values
@@ -292,7 +373,17 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
 
 def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
                            df_X_train=None, y_train=None):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     FPRs, TPRs = filtered_roc(estimator, df_X_test, y_test, filter_train,
                               df_X_train, y_train, plot=False,
@@ -308,7 +399,17 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
 
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
                  filter_train=False, df_X_train=None, y_train=None):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     if filtered:
         preds = filtered_predict(estimator,
@@ -327,26 +428,66 @@ def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
 
 
 def str_params((key, val)):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     return ('  ' + key + ':').ljust(40) + str(val)
 
 
 def str_feat_imp((feat, imp)):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     return ('  ' + feat + ':').ljust(40) + str(imp)
 
 
 def str_eval((key, val)):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     return ('  ' + key + ':').ljust(50) + (str(val) if type(val) == int \
                                                 else ('%.1f%%' % (val * 100)))
 
 
 def pipe_transform(best_pipe, df_X, return_array=False):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     data = df_X
 
@@ -357,7 +498,17 @@ def pipe_transform(best_pipe, df_X, return_array=False):
 
 
 def save_scatter(best_pipe, df_X, y, start, shard):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     df = pipe_transform(best_pipe, df_X)
     df['match'] = y
@@ -375,7 +526,17 @@ def save_scatter(best_pipe, df_X, y, start, shard):
 
 def model(df_clean, shard=False, short=False, tune=False, final=False,
           write=False):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     start = start_time('Modeling...')
 
@@ -606,6 +767,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
             best_evals = evals
             best_prob = y_test_prob
 
+    print 'Best Model: %s\n' % best_mod.__class__.__name__
+
     if write:
 
         save_scatter(best_pipe, df_clean, y, start, shard)
@@ -628,7 +791,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         plt.yticks(np.arange(0, 1.1, 0.2), fontsize=20)
         plt.xlabel('False Positive Rate', fontsize=20)
         plt.ylabel('True Positive Rate', fontsize=20)
-        plt.title('Best Model ROCs', fontsize=24)
+        plt.title('Best Model (%s) ROCs' % best_mod.__class__.__name__,
+                  fontsize=24)
         plt.gcf().tight_layout()
 
         fname = str(int(start - 1470348265)).zfill(7) + '_'

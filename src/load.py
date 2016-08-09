@@ -13,37 +13,22 @@ from sys import argv
 
 def open_conn():
     """
-    Compute cosine similarity between samples in X and Y.
+    Open psycopg2 connection.
 
-    Cosine similarity, or the cosine kernel, computes similarity as the
-    normalized dot product of X and Y:
-
-        K(X, Y) = <X, Y> / (||X||*||Y||)
-
-    On L2-normalized data, this function is equivalent to linear_kernel.
-
-    Read more in the :ref:`User Guide <cosine_similarity>`.
+    Reads credentials from os environment variables.
 
     Parameters
     ----------
-    X : ndarray or sparse array, shape: (n_samples_X, n_features)
-        Input data.
-
-    Y : ndarray or sparse array, shape: (n_samples_Y, n_features)
-        Input data. If ``None``, the output will be the pairwise
-        similarities between all samples in ``X``.
-
-    dense_output : boolean (optional), default True
-        Whether to return dense output even when the input is sparse. If
-        ``False``, the output is sparse if both input arrays are sparse.
-
-        .. versionadded:: 0.17
-           parameter *dense_output* for sparse output.
+    None
 
     Returns
     -------
-    kernel matrix : array
-        An array with shape (n_samples_X, n_samples_Y)."""
+    conn : connection object
+        Opened psycopg2 connection.
+
+    c : cursor object
+        Cursor in opened connection.
+    """
 
     params = {
       'database': os.environ['TALENTFUL_PG_DATABASE'],
@@ -58,12 +43,37 @@ def open_conn():
 
 
 def close_conn(conn):
+    """
+    Close psycopg2 connection.
 
+    Parameters
+    ----------
+    conn : connection object
+        psycopg2 connection to be closed.
+
+    Returns
+    -------
+    None
+    """
+    
     conn.commit()
     conn.close()
 
 
 def start_time(text):
+    """
+    Reports action and time at start of run.
+
+    Parameters
+    ----------
+    text : string
+        Description of action started, to be reported.
+
+    Returns
+    -------
+    time : float
+        Time at start of run.
+    """
 
     sys.stdout.write(text.ljust(25))
 
@@ -71,11 +81,33 @@ def start_time(text):
 
 
 def end_time(start):
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     print 'DONE (%.2f seconds).' % (time() - start)
 
 
 def query_to_df(query):
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     #print '\nExecuting query:'
     #print ' '.join(query.split())
@@ -90,6 +122,17 @@ def query_to_df(query):
 
 
 def query_columns(table):
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     query = 'select * from %s limit 0' % table
     conn, c = open_conn()
@@ -101,6 +144,17 @@ def query_columns(table):
 
 
 def load():
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     start = start_time('Loading data...')
 

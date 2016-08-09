@@ -10,20 +10,50 @@ from load import *
 
 
 def check_nulls(df):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     for col in df.columns:
         print df[col].isnull().value_counts()
 
 
 def ix_nulls(df):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     print np.argwhere(df.isnull().values)
 
 
 def clean(df):
-    """"""
+    """
+    
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
 
     start = start_time('Cleaning...')
 
