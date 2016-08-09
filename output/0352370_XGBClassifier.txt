@@ -1,0 +1,62 @@
+ALGORITHM
+XGBClassifier
+
+BEST SCORE
+0.896932109485
+
+BEST PARAMS
+  text_aggregate__drop_missing_bools:   False
+  mod__max_depth:                       3
+  dist_diff__include:                   range
+  dist_fill_missing__fill_with:         median
+  text_aggregate__refill_missing:       True
+  mod__gamma:                           0
+  name_similarity__use:                 first_last
+  mod__subsample:                       1
+  mod__min_child_weight:                1
+  text_idf__idf:                        yes
+  text_aggregate__cosine_only:          True
+  mod__reg_alpha:                       0
+  dist_diff__keep:                      min
+  mod__colsample_bytree:                1
+
+
+METRICS
+  Test Accuracy:                                  90.0%
+  Test Precision:                                 86.1%
+  Test Recall:                                    91.7%
+  Test AUC:                                       94.4%
+  Test Accuracy (Filtered):                       90.7%
+  Test Precision (Filtered):                      88.8%
+  Test Recall (Filtered):                         89.9%
+  Test AUC (Filtered):                            94.3%
+  Test Accuracy (Filtered + Train):               91.4%
+  Test Precision (Filtered + Train):              91.7%
+  Test Recall (Filtered + Train):                 88.1%
+  Test AUC (Filtered + Train):                    94.4%
+
+
+FEATURE IMPORTANCES
+  text_sim_tfidf:                       140.0
+  dist_range_km:                        111.0
+  min_dist_km:                          83.0
+  lastname_similarity:                  80.0
+  meetup_text_missing:                  59.0
+  firstname_similarity:                 37.0
+  github_text_missing:                  24.0
+  text_missing:                         0.0
+
+
+GRID SCORES
+mean: 0.78093, std: 0.01337, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'full', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'min', 'mod__colsample_bytree': 1}
+mean: 0.89693, std: 0.00178, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'min', 'mod__colsample_bytree': 1}
+mean: 0.72052, std: 0.00512, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'calc', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'min', 'mod__colsample_bytree': 1}
+mean: 0.77901, std: 0.00821, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'full', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'avg', 'mod__colsample_bytree': 1}
+mean: 0.89406, std: 0.00178, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'avg', 'mod__colsample_bytree': 1}
+mean: 0.72579, std: 0.00426, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'calc', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'avg', 'mod__colsample_bytree': 1}
+mean: 0.78141, std: 0.01105, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'full', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'median', 'mod__colsample_bytree': 1}
+mean: 0.89550, std: 0.00352, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'median', 'mod__colsample_bytree': 1}
+mean: 0.72435, std: 0.00290, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'calc', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'median', 'mod__colsample_bytree': 1}
+mean: 0.78908, std: 0.00851, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'full', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'max', 'mod__colsample_bytree': 1}
+mean: 0.89501, std: 0.00353, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'first_last', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'max', 'mod__colsample_bytree': 1}
+mean: 0.72915, std: 0.00345, params: {'text_aggregate__drop_missing_bools': False, 'mod__max_depth': 3, 'dist_diff__include': 'range', 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'mod__gamma': 0, 'name_similarity__use': 'calc', 'mod__subsample': 1, 'mod__min_child_weight': 1, 'text_idf__idf': 'yes', 'text_aggregate__cosine_only': True, 'mod__reg_alpha': 0, 'dist_diff__keep': 'max', 'mod__colsample_bytree': 1}
