@@ -776,10 +776,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
 
         fig = plt.figure(figsize=(20, 12))
-
         fpr, tpr, thresholds = roc_curve(y_test, best_prob)
         plt.plot(fpr, tpr, label='Test - Unfiltered')
-
         filtered_roc(best_grid, df_X_test, y_test, return_FPRs=True,
                      return_TPRs=True, return_Ns=True, return_Ps=True)
         filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
