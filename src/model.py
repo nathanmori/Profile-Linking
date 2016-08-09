@@ -455,51 +455,28 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
                           'text_aggregate__drop_missing_bools': [True],
-                          'name_similarity__use': ['full',
-                                                   'first_last',
+                          'name_similarity__use': ['full', 'first_last',
                                                    'calc']}]
 
     else:
         mods = [XGBClassifier(seed=0),
-                RandomForestClassifier(oob_score=True,
-                                       n_jobs=-1,
-                                       random_state=0,
-                                       n_estimators=250),
-                LogisticRegression(random_state=0,
-                                   n_jobs=-1),
-                GradientBoostingClassifier(n_estimators=250,
-                                           random_state=0),
+                RandomForestClassifier(oob_score=True, n_jobs=-1,
+                                       random_state=0, n_estimators=250),
+                LogisticRegression(random_state=0, n_jobs=-1),
+                GradientBoostingClassifier(n_estimators=250, random_state=0),
                 AdaBoostClassifier(random_state=0),
-                SVC(random_state=0,
-                    probability=True),
-                ]
-        gs_param_grid = [{'dist_fill_missing__fill_with':
-                            [#'mean',
-                             'median',
-                             #'min',
-                             #'max'
-                             ],
-                         'dist_diff__include':
-                            ['all',
-                             'none',
-                             'ignore_min',
-                             'range'],
+                SVC(random_state=0, probability=True)]
+        gs_param_grid = [{'dist_fill_missing__fill_with': ['mean', 'median',
+                                                           'min', 'max'],
+                         'dist_diff__include': ['all', 'none', 'ignore_min',
+                                                'range'],
                          'dist_diff__keep': ['min', 'avg', 'median', 'max'],
-                         'text_idf__idf':
-                            ['yes',
-                             'no',
-                             'both'],
-                         'text_aggregate__refill_missing':
-                            [True,
-                             False],
-                         'text_aggregate__cosine_only':
-                            [True,
-                             False],
-                         'text_aggregate__drop_missing_bools':
-                            [True,
-                             False],
-                         'name_similarity__use':
-                            ['full', 'first_last', 'calc']}]
+                         'text_idf__idf': ['yes', 'no', 'both'],
+                         'text_aggregate__refill_missing': [True, False],
+                         'text_aggregate__cosine_only': [True, False],
+                         'text_aggregate__drop_missing_bools': [True, False],
+                         'name_similarity__use': ['full', 'first_last',
+                                                  'calc']}]
 
     best_accuracy = 0.
     for mod in mods:
