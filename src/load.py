@@ -109,7 +109,7 @@ def query_to_df(query):
 
     Returns
     -------
-    df : DataFrame
+    df : pandas.DataFrame
         Contains results of query.
     """
 
@@ -126,15 +126,17 @@ def query_to_df(query):
 
 def query_columns(table):
     """
-    
+    Gets column names of a table.
 
     Parameters
     ----------
-
+    table : string
+        Name of table from which to get column names.
 
     Returns
     -------
-
+    cols : list
+        Column names from table.
     """
 
     query = 'select * from %s limit 0' % table
@@ -148,15 +150,16 @@ def query_columns(table):
 
 def load():
     """
-    
+    Loads the data needed for this project from Talentful's postgreSQL server.
 
     Parameters
     ----------
-
+    None
 
     Returns
     -------
-
+    df : pandas.DataFrame
+        Contains data for the project - name-similarity pairs and profile data
     """
 
     start = start_time('Loading data...')

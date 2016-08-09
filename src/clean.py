@@ -11,11 +11,12 @@ from load import *
 
 def check_nulls(df):
     """
-    
+    Report number of nulls in each column of data.
 
     Parameters
     ----------
-
+    df : pandas.DataFrame
+        Data to be checked
 
     Returns
     -------

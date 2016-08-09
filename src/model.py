@@ -586,18 +586,16 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
     elif tune:
         mods = [all_mods[4], all_mods[2], all_mods[0]]
-        mod_tune = {XGBClassifier: [{'mod__max_depth': [2, 3, 5],
+        mod_tune = {XGBClassifier: [{'mod__max_depth': [3, 4],
                                      #default = 3
-                                     'mod__min_child_weight': [1, 3],
+                                     'mod__min_child_weight': [1, 2],
                                      #default = 1
-                                     'mod__gamma': [0, 0.25],
+                                     'mod__gamma': [0, 0.1],
                                      #default = 0
                                      'mod__subsample': [0.75, 1],
                                      #default = 1
-                                     'mod__colsample_bytree': [0.75, 1],
-                                     #default = 1
-                                     'mod__reg_alpha': [0, .01]}],
-                                     #default = 0
+                                     'mod__colsample_bytree': [0.75, 1]
+                                     #default = 1}],
 
                     LogisticRegression: [{'mod__penalty': ['l2', 'l1'],
                                           'mod__C': [0.1, 0.5, 1],
