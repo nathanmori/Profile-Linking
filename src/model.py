@@ -19,7 +19,7 @@ from UD_transforms import *
 from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
-                            roc_auc_score, roc_curve
+                            roc_auc_score, roc_curve, confusion_matrix
 from copy import deepcopy
 from collections import OrderedDict
 import operator
@@ -51,7 +51,7 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     plt.plot(thresholds, thresh_rec, label='recall')
     plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold',
               fontsize=24)
-    plt.legend(fontsize=24)
+    plt.legend(fontsize=20, loc='lower left')
     plt.gcf().tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -370,7 +370,7 @@ def save_scatter(best_pipe, df_X, y, start, shard):
 
 
 def model(df_clean, shard=False, short=False, tune=False, final=False,
-          ind=False, write=False):
+          write=False):
     """"""
 
     start = start_time('Modeling...')
@@ -422,34 +422,13 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'mod__colsample_bytree': [1],
                           'mod__reg_alpha': [0],
                           'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__diffs': ['range', 'none'],
-                          'dist_diff__keep': ['median', 'min', 'avg', 'max'],
+                          'dist_diff__diffs': ['none'],
+                          'dist_diff__keep': ['median'],
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
                           'text_aggregate__drop_missing_bools': [True],
                           'name_similarity__use': ['first_last']}]
-
-    elif ind:
-
-        #ensures independent features
-
-        mods = [XGBClassifier(seed=0)]
-        gs_param_grid = [{'mod__max_depth': [3],
-                          'mod__min_child_weight': [1],
-                          'mod__gamma': [0],
-                          'mod__subsample': [1],
-                          'mod__colsample_bytree': [1],
-                          'mod__reg_alpha': [0],
-                          'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__diffs': ['range'],
-                          'dist_diff__keep': ['min', 'avg', 'median', 'max'],
-                          'text_idf__idf': ['yes'],
-                          'text_aggregate__refill_missing': [True],
-                          'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [True],
-                          'name_similarity__use': ['full', 'first_last',
-                                                   'calc']}]
 
     else:
         mods = [XGBClassifier(seed=0),
@@ -547,16 +526,29 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                         grid.best_estimator_.named_steps['df_to_array'].feats,
                         start, shard, write)
 
-        corr_matrix = np.corrcoef(
-                        pipe_transform(grid.best_estimator_,
-                                       df_X_test, return_array=True).T)
+        df_trans = pipe_transform(grid.best_estimator_, df_clean)
+        df_trans['match'] = y
+        arr_corrcoef = np.corrcoef(df_trans.values.T)
+        df_corrcoef = pd.DataFrame(arr_corrcoef, columns=df_trans.columns)
+        df_corrcoef.index = df_corrcoef.columns
+
+        # sklearn: / known i, predicted j
+        y_pred = filtered_predict(grid, df_X_test)
+        arr_confusion_matrix = confusion_matrix(y_test, y_pred, labels=[1, 0])
+        df_confusion_matrix = pd.DataFrame(arr_confusion_matrix,
+                                           columns=['Predicted Positive',
+                                                    'Predicted Negative'])
+        df_confusion_matrix.index = ['Actual Positive',
+                                     'Actual Negative']
 
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
                 + mod.__class__.__name__
         if shard:
             fname = 'shard_' + fname
+        fname = '../output/' + fname + '.txt'
+        print '\nSee %s for output.\n' % fname
 
-        with open('../output/%s.txt' % fname, 'w') as f:
+        with open(fname, 'w') as f:
             f.write('ALGORITHM\n')
             f.write(mod.__class__.__name__)
 
@@ -573,16 +565,17 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                 f.write(str_eval(kvpair))
                 f.write('\n')
 
+            f.write('\n\nCONFUSION MATRIX\n')
+            f.write(str(df_confusion_matrix))
+            f.write('\n')
+
             f.write('\n\nFEATURE IMPORTANCES\n')
             for feat_imp in feats_imps:
                 f.write(str_feat_imp(feat_imp))
                 f.write('\n')
 
             f.write('\n\nCORRELATION MATRIX\n')
-            f.write('shape = ' + str(corr_matrix.shape) + '\n')
-            f.write(str(grid.best_estimator_.named_steps['df_to_array'].feats)
-                    + '\n')
-            f.write(str(corr_matrix))
+            f.write(str(df_corrcoef))
             f.write('\n')
 
             f.write('\n\nGRID SCORES\n')
@@ -616,7 +609,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                      return_TPRs=True, return_Ns=True, return_Ps=True)
         filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
                       df_X_train=df_X_train, y_train=y_train)
-        plt.legend(fontsize=24)
+        plt.legend(fontsize=20, loc='lower right')
         plt.xlim(0, 1)
         plt.ylim(0, 1)
         plt.xlabel('False Positive Rate', fontsize=20)
@@ -640,7 +633,6 @@ if __name__ == '__main__':
     short = 'short' in argv
     tune = 'tune' in argv
     final = 'final' in argv
-    ind = 'ind' in argv
     write = 'write' in argv
 
     if read:
@@ -656,4 +648,4 @@ if __name__ == '__main__':
     else:
         df_clean = clean(load())
 
-    model(df_clean, shard, short, tune, final, ind, write)
+    model(df_clean, shard, short, tune, final, write)

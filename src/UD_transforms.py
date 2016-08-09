@@ -21,8 +21,6 @@ def validate(key, val, alts):
 
     if val not in alts:
         raise ValueError("%s=%s must be in %s" % (key, val, alts))
-    else:
-        print 'REPORT   validate: %s=%s OK' % (key, val)
 
 
 class UD_transform_class(object):
