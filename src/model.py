@@ -363,7 +363,7 @@ def save_scatter(best_pipe, df_X, y, start, shard):
     df['match'] = y
 
     colors = ['red', 'green']
-    scatter_matrix(df, alpha=0.2, figsize=(20, 12),
+    scatter_matrix(df, alpha=0.25, figsize=(20, 12),
                    c=df.match.apply(lambda x: colors[x]))
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
@@ -527,8 +527,9 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         for kvpair in evals.iteritems():
             print str_eval(kvpair)
 
-        feat_imp_exists = hasattr(grid.best_estimator_.named_steps['mod'],
+        feat_imp_exists = (hasattr(grid.best_estimator_.named_steps['mod'],
                                   'feature_importances_')
+                           or mod.__class__ == XGBClassifier)
         if feat_imp_exists:
             feats_imps = \
                 feature_importances(
