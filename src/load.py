@@ -71,26 +71,28 @@ def start_time(text):
 
     Returns
     -------
-    time : float
+    start : float
         Time at start of run.
     """
 
+    start = time()
     sys.stdout.write(text.ljust(25))
 
-    return time()
+    return start
 
 
 def end_time(start):
     """
-    
+    Reports time elapsed since start of run.
 
     Parameters
     ----------
-
+    start : float
+        Time at start of run.
 
     Returns
     -------
-
+    None
     """
 
     print 'DONE (%.2f seconds).' % (time() - start)
@@ -98,19 +100,18 @@ def end_time(start):
 
 def query_to_df(query):
     """
-    
+    Writes result set of a PostgreSQL query to a DataFrame.
 
     Parameters
     ----------
-
+    query : string
+        Query to execute.
 
     Returns
     -------
-
+    df : DataFrame
+        Contains results of query.
     """
-
-    #print '\nExecuting query:'
-    #print ' '.join(query.split())
 
     conn, c = open_conn()
     c.execute(query)
@@ -118,7 +119,9 @@ def query_to_df(query):
     cols = [desc[0] for desc in c.description]
     close_conn(conn)
 
-    return pd.DataFrame(data, columns=cols)
+    df = pd.DataFrame(data, columns=cols)
+
+    return df
 
 
 def query_columns(table):
@@ -165,7 +168,6 @@ def load():
     # NOTE: ignore face_pics
     # NOTE: profile_pics_matched === verified === correct_match
     # NOTE: github_meetup_combined is missing values
-    # NOTE: ADDING github, meetup back in to check duplicates
     # NOTE: github_meetup_combined is not significant
     drop_cols = ['id',
                  'name_similar',
@@ -210,11 +212,6 @@ def load():
 
     return df
 
-"""
-NEED TO ADDRESS DUPLICATE github, meetup IN matches
-- same person? consider a match OR label for multi-profiles?
-- different person? drop rows OR create separate label for non-match matches
-"""
 
 if __name__ == '__main__':
 

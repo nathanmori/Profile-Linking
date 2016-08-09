@@ -7,6 +7,8 @@ from clean import *
 import numpy as np
 import pandas as pd
 from pandas.tools.plotting import scatter_matrix
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
