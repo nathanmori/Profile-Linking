@@ -594,8 +594,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                                      #default = 0
                                      'mod__subsample': [0.75, 1],
                                      #default = 1
-                                     'mod__colsample_bytree': [0.75, 1]
-                                     #default = 1}],
+                                     'mod__colsample_bytree': [0.75, 1]}],
+                                     #default = 1
 
                     LogisticRegression: [{'mod__penalty': ['l2', 'l1'],
                                           'mod__C': [0.1, 0.5, 1],
