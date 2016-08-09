@@ -46,13 +46,16 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
         thresh_prec.append(precision_score(y_test, y_pred))
         thresh_rec.append(recall_score(y_test, y_pred))
 
+    fig = plt.figure(figsize=(20, 12))
     plt.plot(thresholds, thresh_acc, label='accuracy')
     plt.plot(thresholds, thresh_prec, label='precision')
     plt.plot(thresholds, thresh_rec, label='recall')
+    plt.xticks(np.arange(0, 1.1, 0.1), fontsize=20)
+    plt.yticks(np.arange(0, 1.1, 0.1), fontsize=20)
     plt.title('Accuracy, Precision, Recall (Unfiltered) vs. Threshold',
               fontsize=24)
     plt.legend(fontsize=20, loc='lower left')
-    plt.gcf().tight_layout()
+    fig.tight_layout()
 
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
@@ -92,6 +95,7 @@ def feature_importances(mod, feats, start, shard, write):
         plt.barh(x_ind, imps[::-1]/imps[0], height=.8, align='center')
         plt.ylim(x_ind.min() - .5, x_ind.max() + .5)
         plt.yticks(x_ind, feats[::-1], fontsize=20)
+        plt.xticks(np.arange(0, 1.1, 0.2), fontsize=20)
         plt.title('%s Feature Importances' % mod.__class__.__name__,
                   fontsize=24)
         plt.gcf().tight_layout()
@@ -271,7 +275,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
     if plot:
         plot_label = 'Test - Filtered%s' % (' + Train' if filter_train else '')
         plt.plot(FPRs, TPRs, label=plot_label)
-
+        
     if return_FPRs or return_TPRs or return_Ns or return_Ps:
         returns = []
         if return_FPRs:
@@ -387,13 +391,21 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
     # suppress warning: writing on copy
     pd.options.mode.chained_assignment = None  # default='warn'
 
+    all_mods = [XGBClassifier(seed=0),
+                RandomForestClassifier(n_jobs=-1, random_state=0),
+                LogisticRegression(random_state=0, n_jobs=-1),
+                GradientBoostingClassifier(n_estimators=250, random_state=0),
+                AdaBoostClassifier(random_state=0),
+                SVC(random_state=0, probability=True)]
+
+
     if short:
-        mods = [XGBClassifier(seed=0)]
+        mods = [all_mods[0]]
         gs_param_grid = [{'name_similarity__use': ['full', 'first_last']}]
 
     elif tune:
 
-        mods = [XGBClassifier(seed=0)]
+        mods = [all_mods[0]]
         gs_param_grid = [{'mod__max_depth': range(3, 10, 2),
                           'mod__min_child_weight': range(1, 6, 2),
                           'mod__gamma': [i / 10.0 for i in range(0, 5)],
@@ -414,13 +426,13 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
         # UPDATE UPDATE UPDATE
 
-        mods = [XGBClassifier(seed=0)]
-        gs_param_grid = [{'mod__max_depth': [3],
-                          'mod__min_child_weight': [1],
-                          'mod__gamma': [0],
-                          'mod__subsample': [1],
-                          'mod__colsample_bytree': [1],
-                          'mod__reg_alpha': [0],
+        mods = all_mods
+        gs_param_grid = [{#'mod__max_depth': [3],
+                          #'mod__min_child_weight': [1],
+                          #'mod__gamma': [0],
+                          #'mod__subsample': [1],
+                          #'mod__colsample_bytree': [1],
+                          #'mod__reg_alpha': [0],
                           'dist_fill_missing__fill_with': ['median'],
                           'dist_diff__diffs': ['none'],
                           'dist_diff__keep': ['median'],
@@ -431,13 +443,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'name_similarity__use': ['first_last']}]
 
     else:
-        mods = [XGBClassifier(seed=0),
-                RandomForestClassifier(oob_score=True, n_jobs=-1,
-                                       random_state=0, n_estimators=250),
-                LogisticRegression(random_state=0, n_jobs=-1),
-                GradientBoostingClassifier(n_estimators=250, random_state=0),
-                AdaBoostClassifier(random_state=0),
-                SVC(random_state=0, probability=True)]
+        mods = all_mods
         gs_param_grid = [{'dist_fill_missing__fill_with': ['mean', 'median',
                                                            'min', 'max'],
                          'dist_diff__diffs': ['none', 'range'],
@@ -521,10 +527,14 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         for kvpair in evals.iteritems():
             print str_eval(kvpair)
 
-        feats_imps = feature_importances(
-                        grid.best_estimator_.named_steps['mod'],
-                        grid.best_estimator_.named_steps['df_to_array'].feats,
-                        start, shard, write)
+        feat_imp_exists = hasattr(grid.best_estimator_.named_steps['mod'],
+                                  'feature_importances_')
+        if feat_imp_exists:
+            feats_imps = \
+                feature_importances(
+                    grid.best_estimator_.named_steps['mod'],
+                    grid.best_estimator_.named_steps['df_to_array'].feats,
+                    start, shard, write)
 
         df_trans = pipe_transform(grid.best_estimator_, df_clean)
         df_trans['match'] = y
@@ -569,10 +579,11 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
             f.write(str(df_confusion_matrix))
             f.write('\n')
 
-            f.write('\n\nFEATURE IMPORTANCES\n')
-            for feat_imp in feats_imps:
-                f.write(str_feat_imp(feat_imp))
-                f.write('\n')
+            if feat_imp_exists:
+                f.write('\n\nFEATURE IMPORTANCES\n')
+                for feat_imp in feats_imps:
+                    f.write(str_feat_imp(feat_imp))
+                    f.write('\n')
 
             f.write('\n\nCORRELATION MATRIX\n')
             f.write(str(df_corrcoef))
@@ -612,6 +623,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         plt.legend(fontsize=20, loc='lower right')
         plt.xlim(0, 1)
         plt.ylim(0, 1)
+        plt.xticks(np.arange(0, 1.1, 0.2), fontsize=20)
+        plt.yticks(np.arange(0, 1.1, 0.2), fontsize=20)
         plt.xlabel('False Positive Rate', fontsize=20)
         plt.ylabel('True Positive Rate', fontsize=20)
         plt.title('Best Model ROCs', fontsize=24)
