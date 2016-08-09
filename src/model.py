@@ -454,7 +454,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                           'text_idf__idf': ['yes'],
                           'text_aggregate__refill_missing': [True],
                           'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [True, False],
+                          'text_aggregate__drop_missing_bools': [True],
                           'name_similarity__use': ['full',
                                                    'first_last',
                                                    'calc']}]
