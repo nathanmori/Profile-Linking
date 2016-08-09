@@ -341,12 +341,12 @@ def str_eval((key, val)):
                                                 else ('%.1f%%' % (val * 100)))
 
 
-def best_transform(best_pipe, df_X, array=False):
+def pipe_transform(best_pipe, df_X, return_array=False):
     """"""
 
     data = df_X
 
-    for step in best_pipe.steps[:-2]:
+    for step in best_pipe.steps[:(-1 if return_array else -2)]:
         data = step[1].transform(data)
 
     return data
@@ -356,8 +356,8 @@ def save_scatter(best_pipe, df_X_train, df_X_test, y_train, y_test, start,
                  shard):
     """"""
 
-    df_train = best_transform(best_pipe, df_X_train)
-    df_test = best_transform(best_pipe, df_X_test)
+    df_train = pipe_transform(best_pipe, df_X_train)
+    df_test = pipe_transform(best_pipe, df_X_test)
 
     df_train['match'] = y_train
     df_test['match'] = y_test
@@ -555,6 +555,9 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                         grid.best_estimator_.named_steps['df_to_array'].feats,
                         start, shard, write)
 
+        corr_matrix = np.corrcoef(pipe_transform(grid.best_estimator_,
+                                                 df_X_test, return_array=True))
+
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
                 + mod.__class__.__name__
         if shard:
@@ -581,6 +584,10 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
             for feat_imp in feats_imps:
                 f.write(str_feat_imp(feat_imp))
                 f.write('\n')
+
+            f.write('\n\nCORRELATION MATRIX\n')
+            f.write(corr_matrix)
+            f.write('\n')
 
             f.write('\n\nGRID SCORES\n')
             for score in grid.grid_scores_:
