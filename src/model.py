@@ -783,7 +783,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
         save_scatter(best_pipe, df_clean, y, start, shard)
 
-        plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
+        #plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
 
         fig = plt.figure(figsize=(20, 12))
         fpr, tpr, thresholds = roc_curve(y_test, best_prob)

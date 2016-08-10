@@ -62,7 +62,7 @@ def close_conn(conn):
 
 def start_time(text):
     """
-    Reports action and time at start of run.
+    Report action and time at start of run.
 
     Parameters
     ----------
@@ -83,7 +83,7 @@ def start_time(text):
 
 def end_time(start):
     """
-    Reports time elapsed since start of run.
+    Report time elapsed since start of run.
 
     Parameters
     ----------
@@ -100,7 +100,7 @@ def end_time(start):
 
 def query_to_df(query):
     """
-    Writes result set of a PostgreSQL query to a DataFrame.
+    Write result set of a PostgreSQL query to a DataFrame.
 
     Parameters
     ----------
@@ -159,7 +159,7 @@ def load():
     Returns
     -------
     df : pandas.DataFrame
-        Contains data for the project - name-similarity pairs and profile data
+        Data for the project - name-similarity pairs and profile data.
     """
 
     start = start_time('Loading data...')
@@ -226,7 +226,8 @@ if __name__ == '__main__':
             
             ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
             rows = ints_in_argv[0] if ints_in_argv else 100
-            df.head(rows).to_csv('../data/similars_shard.csv', encoding='utf-8')
+            df.head(rows).to_csv('../data/similars_shard.csv',
+                                 encoding='utf-8')
 
         else:
             df.to_csv('../data/similars.csv', index=False, encoding='utf-8')

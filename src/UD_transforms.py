@@ -16,95 +16,92 @@ from time import time
 import pdb
 
 
-def validate(key, val, alts):
+def validate(key, val, valids):
     """
-    
+    Validate arguments.
+
+    Check against list of valids for the parameter.
 
     Parameters
     ----------
+    key : string
+        Parameter being validated.
 
+    val : any
+        Argument passed in for parameter key.
 
     Returns
     -------
-
+    None
     """
 
-    if val not in alts:
+    if val not in valids:
         raise ValueError("%s=%s must be in %s" % (key, val, alts))
 
 
 class UD_transform_class(object):
     """
+    User-defined scikit-learn style fit/transform class.
 
+    Skeleton parent class for all transforms used, including filling missing
+    values and feature engineering.
 
     Parameters
     ----------
-
-
-    Attributes
-    ----------
-
+    None
     """
 
     def __init__(self):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-        """
 
         self.params = {}
 
     def fit(self, *args):
         """
-        
+        Empty scikit-learn style fit method for child classes requiring no fit
+        operations. Used for Pipeline compatibility.
 
         Parameters
         ----------
-
+        *args : args
+            Additional parameters passed to the fit function of the estimator.
 
         Returns
         -------
-
+        self : object
+            Returns self.
         """
 
         return self
 
     def get_params(self, deep=True):
         """
-        
+        Get parameters of the estimator.
 
         Parameters
         ----------
-
+        deep : bool, optional
+            For compatibility with scikit-learn classes.
 
         Returns
         -------
-
+        self.params : mapping of string to any
+            Parameter names mapped to their values.
         """
-
-        if deep:
-            return deepcopy(self.params)
 
         return self.params
 
     def set_params(self, **params):
         """
-        
+        Validate and set the parameters of the estimator.
 
         Parameters
         ----------
-
+        **params : kwargs
+            Parameter names mapped to the values to be set.
 
         Returns
         -------
-
+        None
         """
 
         for key, value in params.iteritems():
@@ -114,74 +111,65 @@ class UD_transform_class(object):
 
 class drop_github_meetup(UD_transform_class):
     """
+    Drops github and meetup id #s from data.
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
-
-
-    Attributes
-    ----------
-
+    None
     """
 
-    def transform(self, df_X_input):
+    def transform(self, df_X):
         """
-        
+        Drops github and meetup ids from data.
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
-
+        df_X_new : pandas.DataFrame
+            Transformed data.
         """
 
-        df_X = df_X_input.drop(['github', 'meetup'], axis=1, inplace=False)
+        df_X_new = df_X.drop(['github', 'meetup'], axis=1, inplace=False)
 
-        return df_X
+        return df_X_new
 
 
 class dist_fill_missing(UD_transform_class):
     """
+    Fills missing distance values.
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
-
-
-    Attributes
-    ----------
-
+    fill_with : str
+        Aggregation to be used to fill missing values.
     """
 
     def __init__(self, fill_with='median'):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-        """
 
         self.params = {'fill_with': fill_with}
         self.valids = {'fill_with': ['mean', 'median', 'min', 'max']}
 
     def fit(self, df_X_train, y=None):
         """
-        
+        Compute aggregations to be used to fill missing distances.
 
         Parameters
         ----------
-
+        df_X_train : pandas.DataFrame
+            Train data used to calculate fill values.
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -207,7 +195,7 @@ class dist_fill_missing(UD_transform_class):
 
     def transform(self, df_X):
         """
-        
+        Fills missing distance values.
 
         Parameters
         ----------
@@ -227,6 +215,7 @@ class dist_fill_missing(UD_transform_class):
 class dist_diff(UD_transform_class):
     """
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
@@ -238,17 +227,6 @@ class dist_diff(UD_transform_class):
     """
 
     def __init__(self, diffs='range', keep='median'):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-        """
 
         self.params = {'diffs': diffs,
                        'keep': keep}
@@ -265,6 +243,8 @@ class dist_diff(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -299,6 +279,7 @@ class text_fill_missing(UD_transform_class):
     """
 
 
+    User-defined scikit-learn style fit/transform class.
     Parameters
     ----------
 
@@ -318,6 +299,8 @@ class text_fill_missing(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -371,6 +354,7 @@ class text_fill_missing(UD_transform_class):
 class text_idf(UD_transform_class):
     """
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
@@ -383,17 +367,6 @@ class text_idf(UD_transform_class):
 
 
     def __init__(self, idf='yes'):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-        """
 
         self.params = {'idf': idf}
         self.valids = {'idf': ['yes', 'no', 'both']}
@@ -408,6 +381,8 @@ class text_idf(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -447,6 +422,7 @@ class text_idf(UD_transform_class):
 class text_aggregate(UD_transform_class):
     """
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
@@ -460,17 +436,6 @@ class text_aggregate(UD_transform_class):
 
     def __init__(self, refill_missing=False, cosine_only=True,
                  drop_missing_bools=True):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-        """
 
         self.params = {'refill_missing': refill_missing,
                        'cosine_only': cosine_only,
@@ -490,6 +455,8 @@ class text_aggregate(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -615,6 +582,7 @@ class text_aggregate(UD_transform_class):
 class name_similarity(UD_transform_class):
     """
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
@@ -627,17 +595,6 @@ class name_similarity(UD_transform_class):
 
 
     def __init__(self, use='first_last'):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-
-        """
 
         self.params = {'use': use}
         self.valids = {'use': ['full', 'first_last', 'calc']}
@@ -652,6 +609,8 @@ class name_similarity(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -693,6 +652,7 @@ class name_similarity(UD_transform_class):
 class scaler(UD_transform_class):
     """
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
@@ -714,6 +674,8 @@ class scaler(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
@@ -743,6 +705,7 @@ class scaler(UD_transform_class):
 class df_to_array(UD_transform_class):
     """
 
+    User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
@@ -764,6 +727,8 @@ class df_to_array(UD_transform_class):
 
         Returns
         -------
+        self : object
+            Returns self.
 
         """
 
