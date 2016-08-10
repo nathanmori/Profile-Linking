@@ -391,7 +391,6 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
                               df_X_train, y_train, plot=False,
                               return_FPRs=True, return_TPRs=True)
 
-    # Cum Trapz
     AUC = 0
     for i in xrange(len(TPRs) - 1):
         AUC += (TPRs[i + 1] + TPRs[i]) / 2 * (FPRs[i + 1] - FPRs[i])
@@ -557,11 +556,11 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
     # suppress warning: writing on copy
     pd.options.mode.chained_assignment = None  # default='warn'
 
-    all_mods = [XGBClassifier(seed=0),
+    all_mods = [XGBClassifier(seed=0, gamma=0.1, colsample_bytree=0.75),
                 RandomForestClassifier(n_jobs=-1, random_state=0),
-                LogisticRegression(random_state=0, n_jobs=-1),
+                LogisticRegression(random_state=0, n_jobs=-1, C=0.5),
                 GradientBoostingClassifier(n_estimators=250, random_state=0),
-                AdaBoostClassifier(random_state=0),
+                AdaBoostClassifier(random_state=0, learning_rate=0.1),
                 SVC(random_state=0, probability=True)]
 
     
@@ -584,32 +583,44 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                  'name_similarity__use': ['full', 'first_last', 'calc']}
 
     if short:
-        mods = [all_mods[0]]
-        gs_param_grid = [{'name_similarity__use': ['full', 'first_last']}]
+        mods = all_mods
+        gs_param_grid = best_feats
 
     elif tune:
         mods = [all_mods[4], all_mods[2], all_mods[0]]
         mod_tune = {XGBClassifier: [{'mod__max_depth': [3, 4],
                                      #default = 3
+                                     #best = 3
                                      'mod__min_child_weight': [1, 2],
                                      #default = 1
+                                     #best = 1
                                      'mod__gamma': [0, 0.1],
                                      #default = 0
+                                     #best = 0.1
                                      'mod__subsample': [0.75, 1],
                                      #default = 1
+                                     #best = 1
                                      'mod__colsample_bytree': [0.75, 1]}],
                                      #default = 1
+                                     #best = 0.75
 
                     LogisticRegression: [{'mod__penalty': ['l2', 'l1'],
+                                          #default = 'l2'
+                                          #best = 'l2'
                                           'mod__C': [0.1, 0.5, 1],
+                                          #default = 1.0
+                                          #best = 0.5
                                           'mod__solver': ['liblinear']},
+                                          #default = 'liblinear'
+                                          #best = 'liblinear'
                                          {'mod__penalty': ['l2'],
                                           'mod__C': [0.1, 0.5, 1],
                                           'mod__solver': ['sag']}],
 
                     AdaBoostClassifier: [{'mod__learning_rate':
                                             [0.01, 0.1, 0.5, 1]}]}
-
+                                          #default = 1.0
+                                          #best = 0.1
         for key, val in mod_tune.iteritems():
             mod_tune[key] = []
             for vd in val:
@@ -617,11 +628,10 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                 mod_tune[key].append(vd)
                           
     elif final:
-        # UPDATE UPDATE UPDATE
-        mods = [all_mods[0]]
-        #best_tunes = TBD
-        gs_param_grid = best_feats.update(best_tunes)
-        pass
+        mods = [all_mods[4]]
+        gs_param_grid = {'mod__learning_rate': [0.1]}
+        gs_param_grid.update(best_feats)
+
     else:
         mods = all_mods
         gs_param_grid = all_feats
@@ -714,7 +724,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         df_corrcoef = pd.DataFrame(arr_corrcoef, columns=df_trans.columns)
         df_corrcoef.index = df_corrcoef.columns
 
-        # sklearn: / known i, predicted j
+        # sklearn: known i, predicted j
         y_pred = filtered_predict(grid, df_X_test)
         arr_confusion_matrix = confusion_matrix(y_test, y_pred, labels=[1, 0])
         df_confusion_matrix = pd.DataFrame(arr_confusion_matrix,
