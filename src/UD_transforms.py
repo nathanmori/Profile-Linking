@@ -474,13 +474,13 @@ class text_aggregate(UD_transform_class):
     Parameters
     ----------
     refill_missing : bool
-        Refills similarities with mean of similarities if True.
+        Indicates if similarities are refilled where text vectors were missing.
 
     cosine_only : bool
-        Computes cosine only if True.
+        Indicates if only cosine is used.
 
     drop_missing_bools : bool
-        Drops missing values booleans if True.
+        Indicates if missing value dummies are dropped.
     """
 
 

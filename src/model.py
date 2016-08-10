@@ -114,7 +114,8 @@ def feature_importances(mod, feats, start, shard, write):
 
     Returns
     -------
-
+    feats_imps : list of tuples
+        Features and importances.
     """
 
     n_feats = len(feats)
@@ -161,15 +162,20 @@ def feature_importances(mod, feats, start, shard, write):
 
 def count_duplicates(matches, set_name):
     """
-    
+    Count and report number of duplicates (i.e. githubs linked to multiple
+    meetups and vice versa).
 
     Parameters
     ----------
+    matches : numpy.array
+        Set of ids associated with matches.
 
+    set_name : str
+        Name of set.
 
     Returns
     -------
-
+    None
     """
 
     unique_counts = np.unique(matches, return_counts=True)[1]
@@ -180,15 +186,29 @@ def count_duplicates(matches, set_name):
 def check_duplicates(best_pred, \
                      github_train, meetup_train, github_test, meetup_test):
     """
-    
+    Check predictions for duplicate githubs and meetups linked to the same
+    individual and report.
 
     Parameters
     ----------
+    best_pred : list
+        Predicted classes.
 
+    github_train : numpy.array
+        Train dataset github ids.
+
+    meetup_train : numpy.array
+        Train dataset meetup ids.
+
+    github_test : numpy.array
+        Test dataset github ids.
+
+    meetup_test : numpy.array
+        Test dataset meetup ids.
 
     Returns
     -------
-
+    None
     """
 
     print 'There are %d train observations' % len(y_train)
@@ -246,15 +266,20 @@ def check_duplicates(best_pred, \
 
 def predict_proba_positive(estimator, df_X):
     """
-    
+    Extract predicted probabilities of positive class from estimator.
 
     Parameters
     ----------
+    estimator : object
+        Estimator used.
 
+    df_X : pandas.DataFrame
+        Input data.
 
     Returns
     -------
-
+    probs : numpy.array
+        Predicted probabilities of positive class.
     """
 
     if hasattr(estimator, 'classes_'):
@@ -271,15 +296,32 @@ def predict_proba_positive(estimator, df_X):
 def filtered_predict(estimator, df_X_test, y_test=None,
                      filter_train=False, df_X_train=None, y_train=None):
     """
-    
+    Predict class labels with filtering.
 
     Parameters
     ----------
+    estimator : object
+        Estimator used.
 
+    df_X_test : pandas.DataFrame
+        Input test data.
+
+    y_test : list, optional
+        Test target labels.
+
+    filter_train : bool, default=False
+        Indicates if train data is included in filtering.
+
+    df_X_train : pandas.DataFrame
+        Input train data, not used if filter_train=False.
+
+    y_train : list, optional
+        Train target labels, not used if filter_train=False.
 
     Returns
     -------
-
+    preds : numpy.array
+        Filtered class predictions.
     """
 
     github_test = df_X_test['github'].values
@@ -312,15 +354,23 @@ def filtered_predict(estimator, df_X_test, y_test=None,
 
 def filtered_accuracy(estimator, df_X_input, y):
     """
-    
+    Compute filtered accuracy.
 
     Parameters
     ----------
+    estimator : object
+        Estimator used.
 
+    df_X_input : pandas.DataFrame
+        Input data.
+
+    y : list
+        Target labels.
 
     Returns
     -------
-
+    accuracy : float
+        Filtered accuracy.
     """
 
     preds = filtered_predict(estimator, df_X_input)
@@ -331,17 +381,46 @@ def filtered_accuracy(estimator, df_X_input, y):
 
 def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
                  df_X_train=None, y_train=None, plot=True, return_FPRs=False,
-                 return_TPRs=False, return_Ns=False, return_Ps=False):
+                 return_TPRs=False):
     """
-    
+    Compute and plot ROC curve.
 
     Parameters
     ----------
+    estimator : object
+        Estimator used.
+    
+    df_X_test : pandas.DataFrame
+        Input test data.
 
+    y_test : list
+        Test target labels.
+
+    filter_train : bool, default=False
+        Indicates if train data is included in filtering.
+
+    df_X_train : pandas.DataFrame
+        Input train data, not used if filter_train=False.
+
+    y_train : list
+        Train target labels, not used if filter_train=False.
+
+    plot : bool, default=True
+        Indicates if ROC is plotted.
+
+    return_FPRs : bool, default=False
+        Indicates if false positive rates are returned.
+
+    return_TPRs : bool, default=False
+        Indicates if true positive rates are returned.
 
     Returns
     -------
+    FPRs : list
+        False positive rates, returned if return_FPRs=True.
 
+    TPRs : list
+        True positive rates, returned if return_TPRs=True.
     """
 
     github_test = df_X_test['github'].values
@@ -386,16 +465,12 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
         plot_label = 'Test - Filtered%s' % (' + Train' if filter_train else '')
         plt.plot(FPRs, TPRs, label=plot_label)
         
-    if return_FPRs or return_TPRs or return_Ns or return_Ps:
+    if return_FPRs or return_TPRs:
         returns = []
         if return_FPRs:
             returns.append(FPRs)
         if return_TPRs:
             returns.append(TPRs)
-        if return_Ns:
-            returns.append(Ns)
-        if return_Ps:
-            returns.append(Ps)
 
         return tuple(returns)
         
@@ -403,22 +478,39 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
 def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
                            df_X_train=None, y_train=None):
     """
-    
+    Compute filtered AUC.
 
     Parameters
     ----------
+    estimator : object
+        Estimator used.
 
+    df_X_test : pandas.DataFrame
+        Input test data.
+
+    y_test : list
+        Test target labels.
+
+    filter_train : bool, default=False
+        Indicates if train data is included in filtering.
+
+    df_X_train : pandas.DataFrame
+        Input train data, not used if filter_train=False.
+
+    y_train : list
+        Train target labels, not used if filter_train=False.
 
     Returns
     -------
-
+    AUC : float
+        Area under ROC curve using filtered predictions.
     """
 
     FPRs, TPRs = filtered_roc(estimator, df_X_test, y_test, filter_train,
                               df_X_train, y_train, plot=False,
                               return_FPRs=True, return_TPRs=True)
 
-    AUC = 0
+    AUC = 0.
     for i in xrange(len(TPRs) - 1):
         AUC += (TPRs[i + 1] + TPRs[i]) / 2 * (FPRs[i + 1] - FPRs[i])
 
@@ -428,15 +520,42 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
 def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
                  filter_train=False, df_X_train=None, y_train=None):
     """
-    
+    Compute accuracy, precision, and recall.
 
     Parameters
     ----------
+    estimator : object
+        Estimator used.
 
+    df_X_test : pandas.DataFrame
+        Input test data.
+
+    y_test : list
+        Test target labels.
+
+    filtered : bool, default=True
+        Indicates if filtering is used.
+
+    filter_train : bool, default=False
+        Indicates if train data is included in filtering, not used if
+        filtered=False.
+
+    df_X_train : pandas.DataFrame
+        Input train data, not used if filtered=False or filter_train=False.
+
+    y_train : list
+        Train target labels, not used if filtered=False or filter_train=False.
 
     Returns
     -------
+    accuracy : float
+        Test accuracy of estimator.
 
+    precision : float
+        Test precision of estimator.
+
+    recall : float
+        Test recall of estimator.
     """
 
     if filtered:
@@ -460,64 +579,94 @@ def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
 
 def str_params((key, val)):
     """
-    
+    Convert parameter name and value to string with consistent spacing.
 
     Parameters
     ----------
+    key : str
+        Name of parameter.
 
+    val : any
+        Value of parameter
 
     Returns
     -------
-
+    param_line : str
+        String of key: val with consistent spacing.
     """
 
-    return ('  ' + key + ':').ljust(40) + str(val)
+    param_line = ('  ' + key + ':').ljust(40) + str(val)
+
+    return param_line
 
 
 def str_feat_imp((feat, imp)):
     """
-    
+    Convert feature and importance to string with consistent spacing.
 
     Parameters
     ----------
+    feat : str
+        Name of feature.
 
+    imp : float
+        Importance of feature.
 
     Returns
     -------
-
+    feat_imp_line : str
+        String of feat: imp with consistent spacing.
     """
 
-    return ('  ' + feat + ':').ljust(40) + str(imp)
+    feat_imp_line = ('  ' + feat + ':').ljust(40) + str(imp)
+
+    return feat_imp_line
 
 
 def str_eval((key, val)):
     """
-    
+    Convert evaluation metric name and value to string with consistent spacing.
 
     Parameters
     ----------
+    key : str
+        Name of metric.
 
+    val : float
+        Value of metric.
 
     Returns
     -------
-
+    eval_line : str
+        String of key: val with consistent spacing.
     """
 
-    return ('  ' + key + ':').ljust(50) + (str(val) if type(val) == int \
-                                                else ('%.1f%%' % (val * 100)))
+    eval_line = (('  ' + key + ':').ljust(50) + 
+                 (str(val) if type(val) == int else ('%.1f%%' % (val * 100))))
+
+    return eval_line
 
 
 def pipe_transform(best_pipe, df_X, return_array=False):
     """
-    
+    Perform pipeline transformations except for final estimator's predict.
 
     Parameters
     ----------
+    best_pipe : object
+        Pipeline used.
 
+    df_X : pandas.DataFrame
+        Input data.
+
+    return_array : bool, default=False
+        Indicates if data is returned as an array (else DataFrame).
 
     Returns
     -------
 
+    data : pandas.DataFrame or numpy.array
+        Transformed data.
     """
 
     data = df_X
@@ -530,15 +679,28 @@ def pipe_transform(best_pipe, df_X, return_array=False):
 
 def save_scatter(best_pipe, df_X, y, start, shard):
     """
-    
+    Plots and saves scatter_matrix of data.
 
     Parameters
     ----------
+    best_pipe : object
+        Pipeline used.
 
+    df_X : pandas.DataFrame
+        Input data.
+
+    y : list
+        Target labels.
+
+    start : float
+        Time at start of run.
+
+    shard : bool
+        Indicates if shard of data is used.
 
     Returns
     -------
-
+    None
     """
 
     df = pipe_transform(best_pipe, df_X)
@@ -558,15 +720,34 @@ def save_scatter(best_pipe, df_X, y, start, shard):
 def model(df_clean, shard=False, short=False, tune=False, final=False,
           write=False):
     """
-    
+    Perform core modeling tasks, referencing other functions and classes.
 
     Parameters
     ----------
+    df_clean : pandas.DataFrame
+        Input data.
 
+    shard : bool, default=False
+        Indicates if shard of data is used.
+
+    short : bool, default=False
+        Indicates if 'short' list of algorithms, features, and tuning
+        parameters is used.
+
+    tune : bool, default=False
+        Indicates if 'tune' list of algorithms, features, and tuning
+        parameters is used.
+
+    final : bool, default=False
+        Indicates if 'final' list of algorithms, features, and tuning
+        parameters is used.
+
+    write : bool, default=False
+        Indicates if plots are to be written.
 
     Returns
     -------
-
+    None
     """
 
     start = start_time('Modeling...')
@@ -825,8 +1006,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         fig = plt.figure(figsize=(20, 12))
         fpr, tpr, thresholds = roc_curve(y_test, best_prob)
         plt.plot(fpr, tpr, label='Test - Unfiltered')
-        filtered_roc(best_grid, df_X_test, y_test, return_FPRs=True,
-                     return_TPRs=True, return_Ns=True, return_Ps=True)
+        filtered_roc(best_grid, df_X_test, y_test)
         filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
                       df_X_train=df_X_train.copy(), y_train=y_train)
         plt.legend(fontsize=32, loc='lower right')
@@ -858,17 +1038,23 @@ if __name__ == '__main__':
     final = 'final' in argv
     write = 'write' in argv
 
-    if read:
-        if shard:
-            df_clean = pd.read_csv('../data/clean_shard.csv')
-        else:
-            ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
-            if ints_in_argv:
-                rows = ints_in_argv[0]
-                df_clean = pd.read_csv('../data/clean.csv', nrows=rows)
-            else:
-                df_clean = pd.read_csv('../data/clean.csv')
-    else:
-        df_clean = clean(load())
+    if (short + tune + final) > 1:
+        print 'COULD NOT RUN'
+        print 'short, tune, and final are incompatible arguments'
 
-    model(df_clean, shard, short, tune, final, write)
+    else:
+
+        if read:
+            if shard:
+                df_clean = pd.read_csv('../data/clean_shard.csv')
+            else:
+                ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
+                if ints_in_argv:
+                    rows = ints_in_argv[0]
+                    df_clean = pd.read_csv('../data/clean.csv', nrows=rows)
+                else:
+                    df_clean = pd.read_csv('../data/clean.csv')
+        else:
+            df_clean = clean(load())
+
+        model(df_clean, shard, short, tune, final, write)
