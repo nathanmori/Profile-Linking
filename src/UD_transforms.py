@@ -11,7 +11,6 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 from name_tools import match
-from copy import deepcopy
 from time import time
 import pdb
 
@@ -122,7 +121,7 @@ class drop_github_meetup(UD_transform_class):
 
     def transform(self, df_X):
         """
-        Drops github and meetup ids from data.
+        Drop github and meetup ids from data.
 
         Parameters
         ----------
@@ -148,7 +147,7 @@ class dist_fill_missing(UD_transform_class):
 
     Parameters
     ----------
-    fill_with : str
+    fill_with : str, default='median'
         Aggregation to be used to fill missing values.
     """
 
@@ -164,13 +163,15 @@ class dist_fill_missing(UD_transform_class):
         Parameters
         ----------
         df_X_train : pandas.DataFrame
-            Train data used to calculate fill values.
+            Input train data.
+
+        y : list, optional
+            Target labels.
 
         Returns
         -------
         self : object
             Returns self.
-
         """
 
         self.dist_cols = [col for col in df_X_train.columns if 'dist' in col]
@@ -195,7 +196,7 @@ class dist_fill_missing(UD_transform_class):
 
     def transform(self, df_X):
         """
-        Fills missing distance values.
+        Fill missing distance values.
 
         Parameters
         ----------
@@ -206,7 +207,6 @@ class dist_fill_missing(UD_transform_class):
         -------
         df_X : pandas.DataFrame
             Transformed data.
-
         """
 
         df_X[self.dist_cols] = df_X[self.dist_cols].fillna(self.fill_vals) \
@@ -217,12 +217,18 @@ class dist_fill_missing(UD_transform_class):
 
 class dist_diff(UD_transform_class):
     """
+    Calculates difference between max and min distances, and removes unkept
+    distance columns.
 
     User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
+    diffs : str
+        Includes difference between max and min distances if 'range'.
 
+    keep : str
+        Distance column to use as a feature.
     """
 
     def __init__(self, diffs='range', keep='median'):
@@ -234,11 +240,15 @@ class dist_diff(UD_transform_class):
 
     def fit(self, df_X_train, y=None):
         """
-        
+        Store distance columns to drop.
 
         Parameters
         ----------
+        df_X_train : pandas.DataFrame
+            Input train data.
 
+        y : list, optional
+            Target labels.
 
         Returns
         -------
@@ -255,7 +265,8 @@ class dist_diff(UD_transform_class):
 
     def transform(self, df_X):
         """
-        
+        Calculate difference between max and min distances, and removes unkept
+        distance columns.
 
         Parameters
         ----------
@@ -279,7 +290,7 @@ class dist_diff(UD_transform_class):
 
 class text_fill_missing(UD_transform_class):
     """
-
+    Fills missing text values. Adds columns to track missing values.
 
     User-defined scikit-learn style fit/transform class.
     Parameters
@@ -289,17 +300,20 @@ class text_fill_missing(UD_transform_class):
 
     def fit(self, df_X_train, y=None):
         """
-        
+        Store length of text vectors.
 
         Parameters
         ----------
+        df_X_train : pandas.DataFrame
+            Input train data.
 
+        y : list, optional
+            Target labels.
 
         Returns
         -------
         self : object
             Returns self.
-
         """
 
         i = 0
@@ -309,9 +323,9 @@ class text_fill_missing(UD_transform_class):
 
         return self
 
-    def transform(self, df_X_input):
+    def transform(self, df_X):
         """
-        
+        Fill missing text values. Adds columns to track missing values.
 
         Parameters
         ----------
@@ -329,8 +343,6 @@ class text_fill_missing(UD_transform_class):
         X_meetup : numpy.array
             Meetup text vectors as array.
         """
-
-        df_X = df_X_input.copy()
 
         df_X['github_text_missing'] = df_X['github_text'].apply(
                                         lambda x: type(x) != str)
@@ -359,6 +371,7 @@ class text_fill_missing(UD_transform_class):
 
 class text_idf(UD_transform_class):
     """
+    Transforms text vectors by inverse document frequency.
 
     User-defined scikit-learn style fit/transform class.
 
@@ -375,17 +388,26 @@ class text_idf(UD_transform_class):
 
     def fit(self, (df_X_train, X_train_github, X_train_meetup), y=None):
         """
-        
+        Fit TfidfTransformers to train data.
 
         Parameters
         ----------
+        df_X_train : pandas.DataFrame
+            Input train data.
 
+        X_train_github : numpy.array
+            Github text vectors as array.
+
+        X_train_meetup : numpy.array
+            Meetup text vectors as array.
+
+        y : list, optional
+            Target labels.
 
         Returns
         -------
         self : object
             Returns self.
-
         """
 
         if self.params['idf'] in ['yes', 'both']:
@@ -396,7 +418,7 @@ class text_idf(UD_transform_class):
 
     def transform(self, (df_X, X_github, X_meetup)):
         """
-        
+        Transform text vectors by inverse document frequency.
 
         Parameters
         ----------
@@ -427,7 +449,6 @@ class text_idf(UD_transform_class):
         X_meetup_tfidf : scipy.sparse.csr_matrix, None
             Meetup text vectors with idf transform applied as sparse array,
             if idf = yes or both else None.
-
         """
 
         if self.params['idf'] == 'no':
@@ -446,12 +467,20 @@ class text_idf(UD_transform_class):
 
 class text_aggregate(UD_transform_class):
     """
+    Aggregates github and meetup text vectors into similarity metrics.
 
     User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
+    refill_missing : Bool
+        Refills similarities with mean of similarities if True.
 
+    cosine_only : Bool
+        Computes cosine only if True.
+
+    drop_missing_bools : Bool
+        Drops missing values booleans if True.
     """
 
 
@@ -465,25 +494,40 @@ class text_aggregate(UD_transform_class):
                        'cosine_only': [True, False],
                        'drop_missing_bools': [True, False]}
 
-    def fit(self, (df_X_input, X_github, X_meetup,
+    def fit(self, (df_X, X_github, X_meetup,
                    X_github_tfidf, X_meetup_tfidf), y=None):
         """
-        
+        Compute refill values if refill_missing = True.
 
         Parameters
         ----------
+        df_X : pandas.DataFrame
+            Input train data.
 
+        X_github : scipy.sparse.csr_matrix, None
+            Github text vectors as sparse array, if idf = no or both else None.
+
+        X_meetup : scipy.sparse.csr_matrix, None
+            Meetup text vectors as sparse array, if idf = no or both else None.
+
+        X_github_tfidf : scipy.sparse.csr_matrix, None
+            Github text vectors with idf transform applied as sparse array,
+            if idf = yes or both else None.
+
+        X_meetup_tfidf : scipy.sparse.csr_matrix, None
+            Meetup text vectors with idf transform applied as sparse array,
+            if idf = yes or both else None.
+
+        y : list, optional
+            Target labels.
 
         Returns
         -------
         self : object
             Returns self.
-
         """
 
         if self.params['refill_missing']:
-
-            df_X = df_X_input.copy()
 
             if X_github is not None:
 
@@ -540,7 +584,7 @@ class text_aggregate(UD_transform_class):
     def transform(self, (df_X, X_github, X_meetup, X_github_tfidf,
                          X_meetup_tfidf)):
         """
-        
+        Aggregate github and meetup text vectors into similarity metrics.
 
         Parameters
         ----------
@@ -565,7 +609,6 @@ class text_aggregate(UD_transform_class):
         -------
         df_X : pandas.DataFrame
             Transformed data.
-
         """
 
         if X_github is not None:
@@ -617,40 +660,25 @@ class text_aggregate(UD_transform_class):
 
 class name_similarity(UD_transform_class):
     """
+    Computes similarity between github and meetup profile names.
 
     User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
-
+    use : str
+        Indicates which of fullname, firstname and lastname, or calculated
+        similarity to use.
     """
-
 
     def __init__(self, use='first_last'):
 
         self.params = {'use': use}
         self.valids = {'use': ['full', 'first_last', 'calc']}
 
-    def fit(self, df_X, y=None):
-        """
-        
-
-        Parameters
-        ----------
-
-
-        Returns
-        -------
-        self : object
-            Returns self.
-
-        """
-
-        return self
-
     def transform(self, df_X):
         """
-        
+        Compute similarity between github and meetup profile names.
 
         Parameters
         ----------
@@ -661,7 +689,6 @@ class name_similarity(UD_transform_class):
         -------
         df_X : pandas.DataFrame
             Transformed data.
-
         """
 
         if self.params['use'] != 'first_last':
@@ -684,28 +711,32 @@ class name_similarity(UD_transform_class):
 
 class scaler(UD_transform_class):
     """
+    Standardizes data by mean and standard deviation of respective features.
 
     User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
-
+    None
     """
 
 
     def fit(self, df_X_train, y=None):
         """
-        
+        Fit StandardScaler to train data.
 
         Parameters
         ----------
+        df_X_train : pandas.DataFrame
+            Input train data.
 
+        y : list, optional
+            Target labels.
 
         Returns
         -------
         self : object
             Returns self.
-
         """
 
         self.ss = StandardScaler().fit(df_X_train.values)
@@ -714,7 +745,7 @@ class scaler(UD_transform_class):
 
     def transform(self, df_X):
         """
-        
+        Standardize data by mean and standard deviation of respective features.
 
         Parameters
         ----------
@@ -725,7 +756,6 @@ class scaler(UD_transform_class):
         -------
         df_X : pandas.DataFrame
             Transformed data.
-
         """
 
         scaled_arr = self.ss.transform(df_X.values)
@@ -736,37 +766,41 @@ class scaler(UD_transform_class):
 
 class df_to_array(UD_transform_class):
     """
+    Converts DataFrame to array.
 
     User-defined scikit-learn style fit/transform class.
 
     Parameters
     ----------
-
+    None
     """
 
 
-    def fit(self, df_X, y=None):
+    def fit(self, df_X_train, y=None):
         """
-        
+        Store columns of DataFrame as feature labels.
 
         Parameters
         ----------
+        df_X_train : pandas.DataFrame
+            Input train data.
 
+        y : list, optional
+            Target labels.
 
         Returns
         -------
         self : object
             Returns self.
-
         """
 
-        self.feats = df_X.columns
+        self.feats = df_X_train.columns
 
         return self
 
     def transform(self, df_X):
         """
-        
+        Convert DataFrame to array.
 
         Parameters
         ----------
@@ -777,7 +811,6 @@ class df_to_array(UD_transform_class):
         -------
         X : numpy.array
             Transformed data.
-
         """
 
         X = df_X.values
