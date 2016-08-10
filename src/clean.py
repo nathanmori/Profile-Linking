@@ -13,14 +13,16 @@ def check_nulls(df):
     """
     Report number of nulls in each column of data.
 
+    Used for EDA.
+
     Parameters
     ----------
     df : pandas.DataFrame
-        Data to be checked
+        Data to be checked for nulls.
 
     Returns
     -------
-
+    None
     """
 
     for col in df.columns:
@@ -29,15 +31,18 @@ def check_nulls(df):
 
 def ix_nulls(df):
     """
-    
+    Report index of null values in data.
+
+    Used for EDA.
 
     Parameters
     ----------
-
+    df : pandas.DataFrame
+        Data to be checked for nulls.
 
     Returns
     -------
-
+    None
     """
 
     print np.argwhere(df.isnull().values)
@@ -45,15 +50,18 @@ def ix_nulls(df):
 
 def clean(df):
     """
-    
+    Perform data-cleaning operations needed for the project, prior to feature
+    engineering.
 
     Parameters
     ----------
-
+    df : pandas.DataFrame
+        Data to be cleaned.
 
     Returns
     -------
-
+    df_clean : pandas.DataFrame
+        Cleaned data.
     """
 
     start = start_time('Cleaning...')
