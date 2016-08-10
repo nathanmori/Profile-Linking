@@ -473,13 +473,13 @@ class text_aggregate(UD_transform_class):
 
     Parameters
     ----------
-    refill_missing : Bool
+    refill_missing : bool
         Refills similarities with mean of similarities if True.
 
-    cosine_only : Bool
+    cosine_only : bool
         Computes cosine only if True.
 
-    drop_missing_bools : Bool
+    drop_missing_bools : bool
         Drops missing values booleans if True.
     """
 

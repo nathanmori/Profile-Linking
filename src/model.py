@@ -33,15 +33,29 @@ import ast
 
 def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     """
-    
+    Plot accuracy, precision, and recall vs. probability threshold for positive
+    class.
 
     Parameters
     ----------
+    y_test : list
+        Target labels of test data.
 
+    y_test_prob : list
+        Predicted probabilities of positive class for test data.
+
+    mod : object
+        Estimator used.
+
+    start : float
+        Time at start of run.
+
+    shard : bool
+        Indicates if shard of data is used.
 
     Returns
     -------
-
+    None
     """
 
     thresholds = y_test_prob.copy()
@@ -79,11 +93,24 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
 
 def feature_importances(mod, feats, start, shard, write):
     """
-    
+    Extract and plot feature importances.
 
     Parameters
     ----------
+    mod : object
+        Estimator used.
 
+    feats : list
+        Features used.
+
+    start : float
+        Time at start of run.
+
+    shard : bool
+        Indicates if shard of data is used.
+
+    write : bool
+        Indicates if plots are to be written.
 
     Returns
     -------
