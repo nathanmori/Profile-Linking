@@ -199,10 +199,13 @@ class dist_fill_missing(UD_transform_class):
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
 
         """
 
@@ -218,10 +221,6 @@ class dist_diff(UD_transform_class):
     User-defined scikit-learn style fit/transform class.
 
     Parameters
-    ----------
-
-
-    Attributes
     ----------
 
     """
@@ -260,10 +259,13 @@ class dist_diff(UD_transform_class):
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
 
         """
 
@@ -281,10 +283,6 @@ class text_fill_missing(UD_transform_class):
 
     User-defined scikit-learn style fit/transform class.
     Parameters
-    ----------
-
-
-    Attributes
     ----------
 
     """
@@ -317,11 +315,19 @@ class text_fill_missing(UD_transform_class):
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
 
+        X_github : numpy.array
+            Github text vectors as array.
+
+        X_meetup : numpy.array
+            Meetup text vectors as array.
         """
 
         df_X = df_X_input.copy()
@@ -359,10 +365,6 @@ class text_idf(UD_transform_class):
     Parameters
     ----------
 
-
-    Attributes
-    ----------
-
     """
 
 
@@ -398,10 +400,33 @@ class text_idf(UD_transform_class):
 
         Parameters
         ----------
+        df_X : pandas.DataFrame
+            Input data.
 
+        X_github : numpy.array
+            Github text vectors as array.
+
+        X_meetup : numpy.array
+            Meetup text vectors as array.
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
+
+        X_github : scipy.sparse.csr_matrix, None
+            Github text vectors as sparse array, if idf = no or both else None.
+
+        X_meetup : scipy.sparse.csr_matrix, None
+            Meetup text vectors as sparse array, if idf = no or both else None.
+
+        X_github_tfidf : scipy.sparse.csr_matrix, None
+            Github text vectors with idf transform applied as sparse array,
+            if idf = yes or both else None.
+
+        X_meetup_tfidf : scipy.sparse.csr_matrix, None
+            Meetup text vectors with idf transform applied as sparse array,
+            if idf = yes or both else None.
 
         """
 
@@ -425,10 +450,6 @@ class text_aggregate(UD_transform_class):
     User-defined scikit-learn style fit/transform class.
 
     Parameters
-    ----------
-
-
-    Attributes
     ----------
 
     """
@@ -516,21 +537,36 @@ class text_aggregate(UD_transform_class):
 
         return self
 
-    def transform(self, (df_X_input, X_github, X_meetup, X_github_tfidf,
+    def transform(self, (df_X, X_github, X_meetup, X_github_tfidf,
                          X_meetup_tfidf)):
         """
         
 
         Parameters
         ----------
+        df_X : pandas.DataFrame
+            Input data.
 
+        X_github : scipy.sparse.csr_matrix, None
+            Github text vectors as sparse array, if included.
+
+        X_meetup : scipy.sparse.csr_matrix, None
+            Meetup text vectors as sparse array, if included.
+
+        X_github_tfidf : scipy.sparse.csr_matrix, None
+            Github text vectors with idf transform applied as sparse array,
+            if included.
+
+        X_meetup_tfidf : scipy.sparse.csr_matrix, None
+            Meetup text vectors with idf transform applied as sparse array,
+            if included
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
 
         """
-
-        df_X = df_X_input.copy()
 
         if X_github is not None:
 
@@ -587,10 +623,6 @@ class name_similarity(UD_transform_class):
     Parameters
     ----------
 
-
-    Attributes
-    ----------
-
     """
 
 
@@ -616,20 +648,21 @@ class name_similarity(UD_transform_class):
 
         return self
 
-    def transform(self, df_X_input):
+    def transform(self, df_X):
         """
         
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
 
         """
-
-        df_X = df_X_input.copy()
 
         if self.params['use'] != 'first_last':
             df_X.drop(['firstname_similarity', 'lastname_similarity'],
@@ -655,10 +688,6 @@ class scaler(UD_transform_class):
     User-defined scikit-learn style fit/transform class.
 
     Parameters
-    ----------
-
-
-    Attributes
     ----------
 
     """
@@ -689,10 +718,13 @@ class scaler(UD_transform_class):
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
+        df_X : pandas.DataFrame
+            Transformed data.
 
         """
 
@@ -708,10 +740,6 @@ class df_to_array(UD_transform_class):
     User-defined scikit-learn style fit/transform class.
 
     Parameters
-    ----------
-
-
-    Attributes
     ----------
 
     """
@@ -742,10 +770,13 @@ class df_to_array(UD_transform_class):
 
         Parameters
         ----------
-
+        df_X : pandas.DataFrame
+            Input data.
 
         Returns
         -------
+        X : numpy.array
+            Transformed data.
 
         """
 

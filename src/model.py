@@ -414,11 +414,14 @@ def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
     """
 
     if filtered:
-        preds = filtered_predict(estimator,
-                                 df_X_test,
-                                 filter_train=filter_train,
-                                 df_X_train=df_X_train,
-                                 y_train=y_train)
+        if filter_train:
+            preds = filtered_predict(estimator,
+                                     df_X_test,
+                                     filter_train=filter_train,
+                                     df_X_train=df_X_train.copy(),
+                                     y_train=y_train)
+        else:
+                preds = filtered_predict(estimator, df_X_test, y_test)
     else:
         preds = estimator.predict(df_X_test)
 
@@ -632,9 +635,6 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         print '\n'
         print mod.__class__.__name__
 
-        df_X_train_copy = df_X_train.copy()
-        df_X_test_copy = df_X_test.copy()
-
         grid = GridSearchCV(Pipeline([('drop_github_meetup',
                                         drop_github_meetup()),
                                       ('dist_fill_missing',
@@ -661,25 +661,25 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                             iid=False,
                             cv=3)
 
-        grid.fit(df_X_train_copy, y_train)
+        grid.fit(df_X_train.copy(), y_train)
 
-        y_test_pred = grid.predict(df_X_test_copy)
+        y_test_pred = grid.predict(df_X_test.copy())
 
         evals = OrderedDict()
         evals['Test Accuracy'], \
             evals['Test Precision'], \
             evals['Test Recall'] = acc_prec_rec(grid,
-                                                df_X_test_copy,
+                                                df_X_test.copy(),
                                                 y_test,
                                                 filtered=False)
 
-        y_test_prob = predict_proba_positive(grid, df_X_test_copy)
+        y_test_prob = predict_proba_positive(grid, df_X_test.copy())
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
         
         evals['Test Accuracy (Filtered)'], \
             evals['Test Precision (Filtered)'], \
             evals['Test Recall (Filtered)'] = acc_prec_rec(grid,
-                                                           df_X_test_copy,
+                                                           df_X_test.copy(),
                                                            y_test,
                                                            filtered=True)
         evals['Test AUC (Filtered)'] = \
@@ -688,12 +688,12 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         evals['Test Accuracy (Filtered + Train)'], \
             evals['Test Precision (Filtered + Train)'], \
             evals['Test Recall (Filtered + Train)'] \
-                = acc_prec_rec(grid, df_X_test_copy, y_test, filtered=True,
-                               filter_train=True, df_X_train=df_X_train,
+                = acc_prec_rec(grid, df_X_test.copy(), y_test, filtered=True,
+                               filter_train=True, df_X_train=df_X_train.copy(),
                                y_train=y_train)
         evals['Test AUC (Filtered + Train)'] = \
             filtered_roc_auc_score(grid, df_X_test, y_test, filter_train=True,
-                                   df_X_train=df_X_train, y_train=y_train)
+                                   df_X_train=df_X_train.copy(), y_train=y_train)
 
         for kvpair in evals.iteritems():
             print str_eval(kvpair)
@@ -791,7 +791,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         filtered_roc(best_grid, df_X_test, y_test, return_FPRs=True,
                      return_TPRs=True, return_Ns=True, return_Ps=True)
         filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
-                      df_X_train=df_X_train, y_train=y_train)
+                      df_X_train=df_X_train.copy(), y_train=y_train)
         plt.legend(fontsize=32, loc='lower right')
         plt.xlim(0, 1)
         plt.ylim(0, 1)
