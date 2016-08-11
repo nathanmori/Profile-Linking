@@ -42,7 +42,7 @@ There was also a high degree of correlation between the four distances. To avoid
 
 To handle the many options for how to use each column of the raw data, all of the feature engineering was developed in scikit-learn style classes with the alternatives as parameters. These could then all be combined in a Pipeline, and GridSearchCV used to find the best features.
 
-Ultimately, this resulted in using the following features, in descending order of importance:
+Ultimately, this resulted in using the following four features, in descending order of importance:
 - Last name similarity
 - Cosine similarity between the github and meetup text vectors
 - Median distance between locations listed on the github and meetup profiles
@@ -50,8 +50,35 @@ Ultimately, this resulted in using the following features, in descending order o
 
 <img src="./img/0469716_feature_importances_AdaBoostClassifier.png" alt="Feature Importances" width="500">
 
+The resulting feature and target data is shown in the scatter matrix below.
+
+<img src="./img/0469716_scatter-matrix.png" alt="Scatter Matrix" width="500">
+
 #### Modeling
+
+Six classification algorithms were used:
+- scikit-learn: LogisticRegression
+- scikit-learn: SVC
+- scikit-learn: RandomForestClassifier
+- scikit-learn: GradientBoostingClassifier
+- scikit-learn: AdaBoostClassifier
+- eXtreme Gradient Boosting: XGBClassifier
 
 #### Evaluation
 
+Accuracy Scores:
+
+| Algorithm | Unfiltered | Test Filtered | Train + Test Filtered |
+|---|---|---|---|
+| LogisticRegression | 89.5% | 90.0% | 91.0% |
+| SVC | 89.3% | 89.9% | 90.9% |
+| RandomForestClassifier | 85.5% | 86.6% | 88.0% |
+| GradientBoostingClassifier | 88.0% | 88.4% | 89.3% |
+| AdaBoostClassifier | 89.6% | 90.3% | 91.2% |
+| XGBClassifier | 89.4% | 90.1% | 91.1% |
+
+<img src="./img/0469716_ROCs.png" alt="ROC" width="500">
+
 #### Deployment
+
+The model's predictive power can now be used to classify the 41,000 unknown name-similarity pairs.
