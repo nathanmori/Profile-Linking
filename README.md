@@ -56,7 +56,8 @@ The resulting feature and target data is shown in the scatter matrix below.
 
 #### Modeling
 
-Six classification algorithms were used:
+The data was split 50/50 into train and test sets. Six classification algorithms were fit to the train data:
+
 - scikit-learn: LogisticRegression
 - scikit-learn: SVC
 - scikit-learn: RandomForestClassifier
@@ -64,9 +65,17 @@ Six classification algorithms were used:
 - scikit-learn: AdaBoostClassifier
 - eXtreme Gradient Boosting: XGBClassifier
 
+There is one problem with the predictions from these algorithms. That is that each name-similarity pair is classified independently of the others. The result is that some profiles are matched with more than one on the other site. This violates the initial assumption that users have at most one profile per site.
+
+So, the predictions were filtered to address the issue of duplicate matches. The approach consisted of sorting the predicted positives in order of descending probability. Then the list was looped over, adding each github and meetup used in a positive pair to a list of "taken" profiles. If another pair re-used a "taken" github or meetup, the prediction for that pair was changed to negative.
+
+That gives us "Test Filtered" results. In other words, all of the duplicates within the test set have been filtered. This does not, however, prevent against profiles from the test set appearing in predicted positives. So, the same algorithm was rerun on the original predictions, except starting with "taken" lists that inlcuded all githubs and meetups from known positives in the train set. This produces "Train + Test Filtered" results.
+
+Filtering both the train and the test duplicates is the best approach, and will be used for final predictions. The "Test Filtered" results are included to evaluate the performance of the model. The better "Train + Test Filtered" scores are not scalable. At this point, the ratio of the train and test sample sizes is 1:1. However, when the model is actually used to make predictions, it will be trained on the 4,000 known pairs and be classifying 41,000 unknown pairs. So, the ratio is about 1:10. In other words, the train data cannot share duplicates with as many of the test observations. So the focus is on the more scalable "Test Filtered" metrics.
+
 #### Evaluation
 
-Accuracy Scores:
+The Unfiltered, Test Filtered, and Train + Test Filtered accuracy scores are listed in the table below. The six algorithms all had comparable performance. The Random Forest was the worst, and AdaBoost was slightly better than the rest.
 
 | Algorithm | Unfiltered | Test Filtered | Train + Test Filtered |
 |---|---|---|---|
@@ -76,6 +85,16 @@ Accuracy Scores:
 | GradientBoostingClassifier | 88.0% | 88.4% | 89.3% |
 | AdaBoostClassifier | 89.6% | 90.3% | 91.2% |
 | XGBClassifier | 89.4% | 90.1% | 91.1% |
+
+In addition to the accuracies, the following table includes the Precision, Recall, and AUC of the AdaBoost algorithm. Talentful's original goal was an accuracy of 85%, so it is great to see the model exceeding expectations and getting over 90%.
+
+| AdaBoost Performance | Accuracy | Precision | Recall | AUC |
+|---|---|---|---|---|
+|Unfiltered| *89.6%* | 84.8% | 92.6% | 0.931 |
+|**Test Filtered**| ***90.3%*** | **87.7%** | **90.4%** | **0.930** |
+|Train + Test Filtered| *91.2%* | 91.0% | 88.5% | 0.934 |
+
+The ROC plot from the AdaBoost results is shown below. It can be seen that model is performing very well. It also shows that the filtering applied reduces the false positive rate as expected, without drastically decreasing the true positive rate.
 
 <img src="./img/0469716_ROCs.png" alt="ROC" width="500">
 
