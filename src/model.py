@@ -86,7 +86,7 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
         fname = 'shard_' + fname
-    plt.savefig('../img/%sthresh_acc_prec_rec_%s' % (fname,
+    plt.savefig('../output/%sthresh_acc_prec_rec_%s' % (fname,
                                                      mod.__class__.__name__))
     plt.close('all')
 
@@ -153,7 +153,7 @@ def feature_importances(mod, feats, start, shard, write):
         fname = str(int(start - 1470348265)).zfill(7) + '_'
         if shard:
             fname = 'shard_' + fname
-        plt.savefig('../img/%sfeature_importances_%s' %
+        plt.savefig('../output/%sfeature_importances_%s' %
                     (fname, mod.__class__.__name__))
         plt.close('all')
 
@@ -713,7 +713,7 @@ def save_scatter(best_pipe, df_X, y, start, shard):
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
         fname = 'shard_' + fname
-    plt.savefig('../img/%sscatter-matrix' % fname)
+    plt.savefig('../output/%sscatter-matrix' % fname)
     plt.close('all')
 
 
@@ -1023,7 +1023,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         fname = str(int(start - 1470348265)).zfill(7) + '_'
         if shard:
             fname = 'shard_' + fname
-        plt.savefig('../img/%sROCs' % fname)
+        plt.savefig('../output/%sROCs' % fname)
         plt.close('all')
 
     end_time(start)
