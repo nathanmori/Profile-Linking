@@ -1,7 +1,7 @@
 # Profile Linking
 ## Linking Profiles Across Social Media Sites By User
 
-By Nathan Mori: nathanmori@gmail.com
+Author: Nathan Mori <nathanmori@gmail.com>
 
 ### CRISP-DM Workflow
 <img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
