@@ -48,7 +48,7 @@ Ultimately, this resulted in using the following features, in descending order o
 - Median distance between locations listed on the github and meetup profiles
 - First name similarity
 
-<img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
+<img src="./img/0469716_feature_importances_AdaBoostClassifier.png" alt="Feature Importances" width="500">
 
 #### Modeling
 
