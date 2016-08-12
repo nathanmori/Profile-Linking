@@ -97,9 +97,9 @@ if __name__ == '__main__':
 
             ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
             rows = ints_in_argv[0] if ints_in_argv else 100
-            df_clean.head(rows).to_csv('../data/clean_shard.csv', index=False,\
+            df_clean.head(rows).to_csv('../data/clean_shard.csv', index=False,
                                        encoding='utf-8')
-                                       
+
         else:
 
             df_clean.to_csv('../data/clean.csv', index=False, encoding='utf-8')

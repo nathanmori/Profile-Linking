@@ -1,0 +1,56 @@
+ALGORITHM
+SVC
+
+BEST SCORE
+0.88494514733
+
+BEST PARAMS
+  text_aggregate__drop_missing_bools:   True
+  text_aggregate__cosine_only:          True
+  dist_fill_missing__fill_with:         median
+  text_aggregate__refill_missing:       True
+  dist_diff__diffs:                     none
+  name_similarity__use:                 first_last
+  text_idf__idf:                        yes
+  dist_diff__keep:                      median
+
+
+METRICS
+  Test Accuracy:                                  89.3%
+  Test Precision:                                 84.1%
+  Test Recall:                                    92.8%
+  Test AUC:                                       92.3%
+  Test Accuracy (Filtered):                       90.1%
+  Test Precision (Filtered):                      88.3%
+  Test Recall (Filtered):                         89.0%
+  Test AUC (Filtered):                            92.2%
+  Test Accuracy (Filtered + Train):               92.6%
+  Test Precision (Filtered + Train):              95.5%
+  Test Recall (Filtered + Train):                 86.9%
+  Test AUC (Filtered + Train):                    92.8%
+
+
+CONFUSION MATRIX
+                 Predicted Positive  Predicted Negative
+Actual Positive                 805                  99
+Actual Negative                 107                1076
+
+
+CORRELATION MATRIX
+                      median_dist_km  firstname_similarity  \
+median_dist_km              1.000000              0.017560   
+firstname_similarity        0.017560              1.000000   
+lastname_similarity         0.016950              0.153978   
+text_sim_tfidf             -0.000145              0.024934   
+match                       0.023274             -0.001385   
+
+                      lastname_similarity  text_sim_tfidf     match  
+median_dist_km                   0.016950       -0.000145  0.023274  
+firstname_similarity             0.153978        0.024934 -0.001385  
+lastname_similarity              1.000000        0.318861  0.753258  
+text_sim_tfidf                   0.318861        1.000000  0.359231  
+match                            0.753258        0.359231  1.000000  
+
+
+GRID SCORES
+mean: 0.88495, std: 0.00935, params: {'text_aggregate__drop_missing_bools': True, 'text_aggregate__cosine_only': True, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'dist_diff__diffs': 'none', 'name_similarity__use': 'first_last', 'text_idf__idf': 'yes', 'dist_diff__keep': 'median'}

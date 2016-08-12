@@ -55,7 +55,7 @@ def close_conn(conn):
     -------
     None
     """
-    
+
     conn.commit()
     conn.close()
 
@@ -223,7 +223,7 @@ if __name__ == '__main__':
     if 'write' in argv:
 
         if 'shard' in argv:
-            
+
             ints_in_argv = [int(arg) for arg in argv if arg.isdigit()]
             rows = ints_in_argv[0] if ints_in_argv else 100
             df.head(rows).to_csv('../data/similars_shard.csv',

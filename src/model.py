@@ -7,9 +7,6 @@ from clean import *
 import numpy as np
 import pandas as pd
 from pandas.tools.plotting import scatter_matrix
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 from sklearn.cross_validation import KFold
 from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -29,6 +26,9 @@ import seaborn
 import pdb
 from sys import argv
 import ast
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 
 def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
@@ -86,8 +86,8 @@ def plot_apr_vs_thresh(y_test, y_test_prob, mod, start, shard):
     fname = str(int(start - 1470348265)).zfill(7) + '_'
     if shard:
         fname = 'shard_' + fname
-    plt.savefig('../output/%sthresh_acc_prec_rec_%s' % (fname,
-                                                     mod.__class__.__name__))
+    plt.savefig('../output/%sthresh_acc_prec_rec_%s' %
+                (fname, mod.__class__.__name__))
     plt.close('all')
 
 
@@ -183,8 +183,8 @@ def count_duplicates(matches, set_name):
     print 'There are %d duplicates in %s' % (duplicates, set_name)
 
 
-def check_duplicates(best_pred, \
-                     github_train, meetup_train, github_test, meetup_test):
+def check_duplicates(best_pred, github_train, meetup_train, github_test,
+                     meetup_test):
     """
     Check predictions for duplicate githubs and meetups linked to the same
     individual and report.
@@ -287,7 +287,7 @@ def predict_proba_positive(estimator, df_X):
     else:
         class_arr = np.array(estimator.best_estimator_.classes_)
 
-    positive_class_ix = np.argwhere(class_arr == 1)[0,0]
+    positive_class_ix = np.argwhere(class_arr == 1)[0, 0]
     probs = estimator.predict_proba(df_X)[:, positive_class_ix]
 
     return probs
@@ -325,7 +325,7 @@ def filtered_predict(estimator, df_X_test, y_test=None,
     """
 
     github_test = df_X_test['github'].values
-    meetup_test = df_X_test['github'].values
+    meetup_test = df_X_test['meetup'].values
 
     if filter_train:
         github_train = df_X_train['github'].values
@@ -348,6 +348,195 @@ def filtered_predict(estimator, df_X_test, y_test=None,
             preds[ix] = 1
             taken_githubs.add(github_test[ix])
             taken_meetups.add(meetup_test[ix])
+
+    return preds
+
+
+def prob_predict(unfiltered_probs, github_test, meetup_test, duplicate_ixs,
+                 taken_githubs, taken_meetups):
+    """
+    Calculates probabilities of alternatives for a profile with duplicate
+    usage. Functions recursively, calling self for following duplicates.
+
+    Parameters
+    ----------
+    unfiltered_probs : list-like
+        Probabilities of test observations being positive as calculated by the
+        estimator before filtering is applied.
+
+    github_test : list-like
+        Github ids of test observations.
+
+    meetup_test : list-like
+        Meetup ids of test observations.
+
+    duplicate_ixs : list of lists
+        Contains one sublist for each github or meetup profile used
+        more than once. Each sublist contains indexes of all pairs in which
+        the profile is used.
+
+    taken_githubs : set
+        Contains github profile ids that have been used so far.
+
+    taken_meetups : set
+        Contains meetup profile ids that have been used so far.
+
+    Returns
+    -------
+    probability : float
+        Probability of predictions being correct.
+
+    predictions : list of lists
+        List of lists corresponding to duplicate_ixs. Each sublist contains one
+        1 (the positive) and all other values 0 (negatives).
+    """
+
+    if not duplicate_ixs:
+        return None, None
+
+    pair_ixs = duplicate_ixs[0]
+    pair_probs = []
+    pair_preds = []
+
+    if len(duplicate_ixs) == 1:
+
+        for pair_ix in pair_ixs:
+            if (github_test[pair_ix] in taken_githubs) and \
+                    (meetup_test[pair_ix] in taken_meetups):
+
+                pair_probs.append(1)
+                pair_preds.append([])
+
+            elif (github_test[pair_ix] in taken_githubs) or \
+                    (meetup_test[pair_ix] in taken_meetups):
+
+                pair_probs.append(0)
+                pair_preds.append(None)
+
+            else:
+
+                pair_probs.append(unfiltered_probs[pair_ix])
+                pair_preds.append([])
+
+    else:
+
+        for pair_ix in pair_ixs:
+            taken_githubs_copy = deepcopy(taken_githubs)
+            taken_githubs_copy.add(github_test[pair_ix])
+            taken_meetups_copy = deepcopy(taken_meetups)
+            taken_meetups_copy.add(meetup_test[pair_ix])
+            pair_prob, pair_pred = \
+                prob_predict(unfiltered_probs, github_test, meetup_test,
+                             duplicate_ixs[1:], taken_githubs_copy,
+                             taken_meetups_copy)
+            pair_preds.append(pair_pred)
+
+            if (github_test[pair_ix] in taken_githubs) and \
+                    (meetup_test[pair_ix] in taken_meetups):
+
+                pair_probs.append(1)
+
+            elif (github_test[pair_ix] in taken_githubs) or \
+                    (meetup_test[pair_ix] in taken_meetups):
+
+                pair_probs.append(0)
+
+            else:
+
+                pair_probs.append(pair_prob * unfiltered_probs[pair_ix])
+
+    best_pair_arg = np.argmax(pair_probs)
+    best_pair_ix = pair_ixs[best_pair_arg]
+
+    probability = pair_probs[best_pair_arg]
+
+    predictions = pair_preds[best_pair_arg]
+    predictions.insert(0, [0] * len(pair_ixs))
+    predictions[0][best_pair_arg] = 1
+
+    return probability, predictions
+
+
+def recursive_filtered_predict(estimator, df_X_test, y_test=None,
+                               filter_train=False, df_X_train=None,
+                               y_train=None):
+    """
+    Predict class labels with filtering, accounting for overall probability.
+    Calls recursive prob_predict to evaluate all possible predictions.
+
+    Parameters
+    ----------
+    estimator : object
+        Estimator used.
+
+    df_X_test : pandas.DataFrame
+        Input test data.
+
+    y_test : list, optional
+        Test target labels.
+
+    filter_train : bool, default=False
+        Indicates if train data is included in filtering.
+
+    df_X_train : pandas.DataFrame
+        Input train data, not used if filter_train=False.
+
+    y_train : list, optional
+        Train target labels, not used if filter_train=False.
+
+    Returns
+    -------
+    preds : numpy.array
+        Filtered class predictions.
+    """
+
+    github_test = df_X_test['github'].values
+    meetup_test = df_X_test['meetup'].values
+
+    if filter_train:
+        github_train = df_X_train['github'].values
+        meetup_train = df_X_train['meetup'].values
+
+        taken_githubs = set(github_train[y_train == 1])
+        taken_meetups = set(meetup_train[y_train == 1])
+    else:
+        taken_githubs = set()
+        taken_meetups = set()
+
+    unfiltered_probs = predict_proba_positive(estimator, df_X_test)
+    positive_githubs = github_test[unfiltered_probs >= 0.5]
+    positive_meetups = meetup_test[unfiltered_probs >= 0.5]
+
+    unique_githubs, count_githubs = np.unique(positive_githubs,
+                                              return_counts=True)
+    unique_meetups, count_meetups = np.unique(positive_meetups,
+                                              return_counts=True)
+
+    duplicate_githubs = unique_githubs[count_githubs > 1]
+    duplicate_meetups = unique_meetups[count_meetups > 1]
+
+    duplicate_ixs = []
+    for github in duplicate_githubs:
+        duplicate_ixs.append(np.argwhere([(x[0] == github) and (x[1] >= 0.5)
+                                          for x in
+                                          zip(github_test.tolist(),
+                                              unfiltered_probs.tolist())]
+                                         ).flatten().tolist())
+    for meetup in duplicate_meetups:
+        duplicate_ixs.append(np.argwhere([(x[0] == meetup) and (x[1] >= 0.5)
+                                          for x in
+                                          zip(meetup_test.tolist(),
+                                              unfiltered_probs.tolist())]
+                                         ).flatten().tolist())
+
+    prob, duplicate_preds = prob_predict(unfiltered_probs, github_test,
+                                         meetup_test, duplicate_ixs,
+                                         taken_githubs, taken_meetups)
+
+    preds = [round(x) for x in unfiltered_probs]
+    for i, pair_ixs in enumerate(duplicate_ixs):
+        for j, pair_ix in enumerate(pair_ixs):
+            preds[pair_ix] = duplicate_preds[i][j]
 
     return preds
 
@@ -389,7 +578,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
     ----------
     estimator : object
         Estimator used.
-    
+
     df_X_test : pandas.DataFrame
         Input test data.
 
@@ -453,7 +642,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
         TPs = sum(np.multiply(preds, y_test))
         Ps = float(sum(y_test))
         FPs = sum(preds) - TPs
-        Ns = float(len(y_test) - sum(y_test))   
+        Ns = float(len(y_test) - sum(y_test))
 
         TPRs.append(TPs / Ps)
         FPRs.append(FPs / Ns)
@@ -464,7 +653,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
     if plot:
         plot_label = 'Test - Filtered%s' % (' + Train' if filter_train else '')
         plt.plot(FPRs, TPRs, label=plot_label)
-        
+
     if return_FPRs or return_TPRs:
         returns = []
         if return_FPRs:
@@ -473,7 +662,7 @@ def filtered_roc(estimator, df_X_test, y_test, filter_train=False,
             returns.append(TPRs)
 
         return tuple(returns)
-        
+
 
 def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
                            df_X_train=None, y_train=None):
@@ -517,7 +706,7 @@ def filtered_roc_auc_score(estimator, df_X_test, y_test, filter_train=False,
     return AUC
 
 
-def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
+def acc_prec_rec(estimator, df_X_test, y_test, filtered=True,
                  filter_train=False, df_X_train=None, y_train=None):
     """
     Compute accuracy, precision, and recall.
@@ -566,7 +755,7 @@ def acc_prec_rec(estimator, df_X_test, y_test, filtered=True, \
                                      df_X_train=df_X_train.copy(),
                                      y_train=y_train)
         else:
-                preds = filtered_predict(estimator, df_X_test, y_test)
+            preds = filtered_predict(estimator, df_X_test, y_test)
     else:
         preds = estimator.predict(df_X_test)
 
@@ -641,7 +830,7 @@ def str_eval((key, val)):
         String of key: val with consistent spacing.
     """
 
-    eval_line = (('  ' + key + ':').ljust(50) + 
+    eval_line = (('  ' + key + ':').ljust(50) +
                  (str(val) if type(val) == int else ('%.1f%%' % (val * 100))))
 
     return eval_line
@@ -755,7 +944,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
     y = df_clean.pop('match').values
 
     df_X_train, df_X_test, y_train, y_test = train_test_split(df_clean, y,
-                                                test_size=0.5, random_state=0)
+                                                              test_size=0.5,
+                                                              random_state=0)
     print '\n# Train Obs:', len(y_train)
     print '    Counts:', np.unique(y_train, return_counts=True)
     print '# Test Obs: ', len(y_test)
@@ -771,15 +961,14 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                 AdaBoostClassifier(random_state=0, learning_rate=0.1),
                 SVC(random_state=0, probability=True)]
 
-    
     best_feats = {'dist_fill_missing__fill_with': ['median'],
-                          'dist_diff__diffs': ['none'],
-                          'dist_diff__keep': ['median'],
-                          'text_idf__idf': ['yes'],
-                          'text_aggregate__refill_missing': [True],
-                          'text_aggregate__cosine_only': [True],
-                          'text_aggregate__drop_missing_bools': [True],
-                          'name_similarity__use': ['first_last']}
+                  'dist_diff__diffs': ['none'],
+                  'dist_diff__keep': ['median'],
+                  'text_idf__idf': ['yes'],
+                  'text_aggregate__refill_missing': [True],
+                  'text_aggregate__cosine_only': [True],
+                  'text_aggregate__drop_missing_bools': [True],
+                  'name_similarity__use': ['first_last']}
     all_feats = {'dist_fill_missing__fill_with': ['mean', 'median', 'min',
                                                   'max'],
                  'dist_diff__diffs': ['none', 'range'],
@@ -797,44 +986,47 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
     elif tune:
         mods = [all_mods[4], all_mods[2], all_mods[0]]
         mod_tune = {XGBClassifier: [{'mod__max_depth': [3, 4],
-                                     #default = 3
-                                     #best = 3
+                                     # default = 3
+                                     # best = 3
                                      'mod__min_child_weight': [1, 2],
-                                     #default = 1
-                                     #best = 1
+                                     # default = 1
+                                     # best = 1
                                      'mod__gamma': [0, 0.1],
-                                     #default = 0
-                                     #best = 0.1
+                                     # default = 0
+                                     # best = 0.1
                                      'mod__subsample': [0.75, 1],
-                                     #default = 1
-                                     #best = 1
-                                     'mod__colsample_bytree': [0.75, 1]}],
-                                     #default = 1
-                                     #best = 0.75
+                                     # default = 1
+                                     # best = 1
+                                     'mod__colsample_bytree': [0.75, 1]
+                                     # default = 1
+                                     # best = 0.75
+                                     }],
 
                     LogisticRegression: [{'mod__penalty': ['l2', 'l1'],
-                                          #default = 'l2'
-                                          #best = 'l2'
+                                          # default = 'l2'
+                                          # best = 'l2'
                                           'mod__C': [0.1, 0.5, 1],
-                                          #default = 1.0
-                                          #best = 0.5
-                                          'mod__solver': ['liblinear']},
-                                          #default = 'liblinear'
-                                          #best = 'liblinear'
+                                          # default = 1.0
+                                          # best = 0.5
+                                          'mod__solver': ['liblinear']
+                                          # default = 'liblinear'
+                                          # best = 'liblinear'
+                                          },
                                          {'mod__penalty': ['l2'],
                                           'mod__C': [0.1, 0.5, 1],
                                           'mod__solver': ['sag']}],
 
                     AdaBoostClassifier: [{'mod__learning_rate':
-                                            [0.01, 0.1, 0.5, 1]}]}
-                                          #default = 1.0
-                                          #best = 0.1
+                                          [0.01, 0.1, 0.5, 1]
+                                          # default = 1.0
+                                          # best = 0.1
+                                          }]}
         for key, val in mod_tune.iteritems():
             mod_tune[key] = []
             for vd in val:
                 vd.update(best_feats)
                 mod_tune[key].append(vd)
-                          
+
     elif final:
         mods = [all_mods[4]]
         gs_param_grid = {'mod__learning_rate': [0.1]}
@@ -854,25 +1046,25 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         print mod.__class__.__name__
 
         grid = GridSearchCV(Pipeline([('drop_github_meetup',
-                                        drop_github_meetup()),
+                                       drop_github_meetup()),
                                       ('dist_fill_missing',
-                                        dist_fill_missing()),
+                                       dist_fill_missing()),
                                       ('dist_diff',
-                                        dist_diff()),
+                                       dist_diff()),
                                       ('text_fill_missing',
-                                        text_fill_missing()),
+                                       text_fill_missing()),
                                       ('text_idf',
-                                        text_idf()),
+                                       text_idf()),
                                       ('text_aggregate',
-                                        text_aggregate()),
+                                       text_aggregate()),
                                       ('name_similarity',
-                                        name_similarity()),
+                                       name_similarity()),
                                       ('scaler',
-                                        scaler()),
+                                       scaler()),
                                       ('df_to_array',
-                                        df_to_array()),
+                                       df_to_array()),
                                       ('mod',
-                                        mod)]),
+                                       mod)]),
                             param_grid=gs_param_grid,
                             scoring=filtered_accuracy,
                             n_jobs=-1,
@@ -893,7 +1085,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
         y_test_prob = predict_proba_positive(grid, df_X_test.copy())
         evals['Test AUC'] = roc_auc_score(y_test, y_test_prob)
-        
+
         evals['Test Accuracy (Filtered)'], \
             evals['Test Precision (Filtered)'], \
             evals['Test Recall (Filtered)'] = acc_prec_rec(grid,
@@ -906,19 +1098,20 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
         evals['Test Accuracy (Filtered + Train)'], \
             evals['Test Precision (Filtered + Train)'], \
             evals['Test Recall (Filtered + Train)'] \
-                = acc_prec_rec(grid, df_X_test.copy(), y_test, filtered=True,
-                               filter_train=True, df_X_train=df_X_train.copy(),
-                               y_train=y_train)
+            = acc_prec_rec(grid, df_X_test.copy(), y_test, filtered=True,
+                           filter_train=True, df_X_train=df_X_train.copy(),
+                           y_train=y_train)
         evals['Test AUC (Filtered + Train)'] = \
             filtered_roc_auc_score(grid, df_X_test, y_test, filter_train=True,
-                                   df_X_train=df_X_train.copy(), y_train=y_train)
+                                   df_X_train=df_X_train.copy(),
+                                   y_train=y_train)
 
         for kvpair in evals.iteritems():
             print str_eval(kvpair)
 
         feat_imp_exists = (hasattr(grid.best_estimator_.named_steps['mod'],
-                                  'feature_importances_')
-                           or mod.__class__ == XGBClassifier)
+                                   'feature_importances_') or
+                           mod.__class__ == XGBClassifier)
         if feat_imp_exists:
             feats_imps = \
                 feature_importances(
@@ -942,7 +1135,7 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
                                      'Actual Negative']
 
         fname = str(int(start - 1470348265)).zfill(7) + '_' \
-                + mod.__class__.__name__
+            + mod.__class__.__name__
         if shard:
             fname = 'shard_' + fname
         fname = '../output/' + fname + '.txt'
@@ -1001,14 +1194,14 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
         save_scatter(best_pipe, df_clean, y, start, shard)
 
-        #plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
+        # plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
 
         fig = plt.figure(figsize=(20, 12))
         fpr, tpr, thresholds = roc_curve(y_test, best_prob)
         plt.plot(fpr, tpr, label='Test - Unfiltered')
         filtered_roc(best_grid, df_X_test, y_test)
         filtered_roc(best_grid, df_X_test, y_test, filter_train=True,
-                      df_X_train=df_X_train.copy(), y_train=y_train)
+                     df_X_train=df_X_train.copy(), y_train=y_train)
         plt.legend(fontsize=32, loc='lower right')
         plt.xlim(0, 1)
         plt.ylim(0, 1)

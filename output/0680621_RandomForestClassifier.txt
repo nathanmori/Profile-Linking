@@ -1,0 +1,63 @@
+ALGORITHM
+RandomForestClassifier
+
+BEST SCORE
+0.863378262907
+
+BEST PARAMS
+  text_aggregate__drop_missing_bools:   True
+  text_aggregate__cosine_only:          True
+  dist_fill_missing__fill_with:         median
+  text_aggregate__refill_missing:       True
+  dist_diff__diffs:                     none
+  name_similarity__use:                 first_last
+  text_idf__idf:                        yes
+  dist_diff__keep:                      median
+
+
+METRICS
+  Test Accuracy:                                  85.5%
+  Test Precision:                                 84.0%
+  Test Recall:                                    82.1%
+  Test AUC:                                       90.6%
+  Test Accuracy (Filtered):                       87.0%
+  Test Precision (Filtered):                      87.2%
+  Test Recall (Filtered):                         82.0%
+  Test AUC (Filtered):                            91.1%
+  Test Accuracy (Filtered + Train):               89.7%
+  Test Precision (Filtered + Train):              95.0%
+  Test Recall (Filtered + Train):                 80.3%
+  Test AUC (Filtered + Train):                    92.4%
+
+
+CONFUSION MATRIX
+                 Predicted Positive  Predicted Negative
+Actual Positive                 741                 163
+Actual Negative                 109                1074
+
+
+FEATURE IMPORTANCES
+  lastname_similarity:                  0.500112391437
+  text_sim_tfidf:                       0.273793102386
+  median_dist_km:                       0.206162936434
+  firstname_similarity:                 0.0199315697425
+
+
+CORRELATION MATRIX
+                      median_dist_km  firstname_similarity  \
+median_dist_km              1.000000              0.017560   
+firstname_similarity        0.017560              1.000000   
+lastname_similarity         0.016950              0.153978   
+text_sim_tfidf             -0.000145              0.024934   
+match                       0.023274             -0.001385   
+
+                      lastname_similarity  text_sim_tfidf     match  
+median_dist_km                   0.016950       -0.000145  0.023274  
+firstname_similarity             0.153978        0.024934 -0.001385  
+lastname_similarity              1.000000        0.318861  0.753258  
+text_sim_tfidf                   0.318861        1.000000  0.359231  
+match                            0.753258        0.359231  1.000000  
+
+
+GRID SCORES
+mean: 0.86338, std: 0.00647, params: {'text_aggregate__drop_missing_bools': True, 'text_aggregate__cosine_only': True, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'dist_diff__diffs': 'none', 'name_similarity__use': 'first_last', 'text_idf__idf': 'yes', 'dist_diff__keep': 'median'}

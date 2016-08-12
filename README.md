@@ -4,7 +4,7 @@
 Author: Nathan Mori <nathanmori@gmail.com>
 
 ### Workflow: CRISP-DM
-The workflow of the project followed the steps of CRISP-DM, as visualised below.
+The workflow of the project followed the steps of CRISP-DM, as visualized below.
 
 <img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
 
@@ -69,7 +69,7 @@ There is one problem with the predictions from these algorithms. That is that ea
 
 So, the predictions were filtered to address the issue of duplicate matches. The approach consisted of sorting the predicted positives in order of descending probability. Then the list was looped over, adding each github and meetup used in a positive pair to a list of "taken" profiles. If another pair re-used a "taken" github or meetup, the prediction for that pair was changed to negative.
 
-That gives us "Test Filtered" results. In other words, all of the duplicates within the test set have been filtered. This does not, however, prevent against profiles from the test set appearing in predicted positives. So, the same algorithm was rerun on the original predictions, except starting with "taken" lists that inlcuded all githubs and meetups from known positives in the train set. This produces "Train + Test Filtered" results.
+That gives us "Test Filtered" results. In other words, all of the duplicates within the test set have been filtered. This does not, however, prevent against profiles from the test set appearing in predicted positives. So, the same algorithm was rerun on the original predictions, except starting with "taken" lists that included all githubs and meetups from known positives in the train set. This produces "Train + Test Filtered" results.
 
 Filtering both the train and the test duplicates is the best approach, and will be used for final predictions. The "Test Filtered" results are included to evaluate the performance of the model. The better "Train + Test Filtered" scores are not scalable. At this point, the ratio of the train and test sample sizes is 1:1. However, when the model is actually used to make predictions, it will be trained on the 4,000 known pairs and be classifying 41,000 unknown pairs. So, the ratio is about 1:10. In other words, the train data cannot share duplicates with as many of the test observations. So the focus is on the more scalable "Test Filtered" metrics.
 
