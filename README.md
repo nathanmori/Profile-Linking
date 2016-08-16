@@ -4,7 +4,7 @@
 Author: Nathan Mori <nathanmori@gmail.com>
 
 ### Workflow: CRISP-DM
-The workflow of the project followed the steps of CRISP-DM, as visualized below.
+The workflow for this project followed the steps of CRISP-DM, as visualized below.
 
 <img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
 
