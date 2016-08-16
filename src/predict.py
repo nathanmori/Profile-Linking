@@ -4,6 +4,7 @@
 
 from load import *
 from clean import *
+from model import *
 import numpy as np
 import pandas as pd
 from pandas.tools.plotting import scatter_matrix
@@ -27,13 +28,12 @@ import pdb
 from sys import argv
 import ast
 import matplotlib
+import cPickle
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from model import *
-import cPickle
 
 
-def predict(df_knowns, df_unknowns)
+def predict(df_knowns, df_unknowns):
     """
     Perform core modeling tasks, referencing other functions and classes.
 
@@ -103,8 +103,10 @@ def predict(df_knowns, df_unknowns)
 
     grid.fit(df_X_known.copy(), y_known)
 
-    unknown_predictions = filtered_predict(grid, df_unknowns, filter_train=True,
-                          df_X_train=df_knowns, y_train=y_knowns)
+    unknown_predictions = filtered_predict(grid, df_unknowns,
+                                           filter_train=True,
+                                           df_X_train=df_knowns,
+                                           y_train=y_knowns)
 
     end_time(start)
 
