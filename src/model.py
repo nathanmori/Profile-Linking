@@ -1073,6 +1073,8 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
         grid.fit(df_X_train.copy(), y_train)
 
+        # filtered_predict(grid, df_X_unknowns, filter_train=True, df_X_train=df_X_knowns, y_train=y_knowns)
+
         y_test_pred = grid.predict(df_X_test.copy())
 
         evals = OrderedDict()
@@ -1194,8 +1196,6 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 
         save_scatter(best_pipe, df_clean, y, start, shard)
 
-        # plot_apr_vs_thresh(y_test, best_prob, best_mod, start, shard)
-
         fig = plt.figure(figsize=(20, 12))
         fpr, tpr, thresholds = roc_curve(y_test, best_prob)
         plt.plot(fpr, tpr, label='Test - Unfiltered')
@@ -1225,15 +1225,23 @@ def model(df_clean, shard=False, short=False, tune=False, final=False,
 if __name__ == '__main__':
 
     read = 'read' in argv
+    # reads data from .csv
     shard = 'shard' in argv
+    # uses a shard of the data only
     short = 'short' in argv
+    # runs all 6 algorithms
     tune = 'tune' in argv
+    # attempt multiple runs with different tuning parameters
     final = 'final' in argv
+    # use best algorithm, tuning parameters, and features
     write = 'write' in argv
+    # write plots
 
     if (short + tune + final) > 1:
         print 'COULD NOT RUN'
         print 'short, tune, and final are incompatible arguments'
+    elif (short + tune + final) == 0:
+        final = True
 
     else:
 
