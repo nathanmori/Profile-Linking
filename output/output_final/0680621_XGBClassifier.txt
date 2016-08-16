@@ -2,7 +2,7 @@ ALGORITHM
 XGBClassifier
 
 BEST SCORE
-0.890701232118
+0.894056478955
 
 BEST PARAMS
   text_aggregate__drop_missing_bools:   True
@@ -16,31 +16,31 @@ BEST PARAMS
 
 
 METRICS
-  Test Accuracy:                                  89.4%
-  Test Precision:                                 84.7%
+  Test Accuracy:                                  89.3%
+  Test Precision:                                 84.5%
   Test Recall:                                    92.1%
   Test AUC:                                       93.5%
-  Test Accuracy (Filtered):                       90.1%
-  Test Precision (Filtered):                      87.6%
-  Test Recall (Filtered):                         89.9%
-  Test AUC (Filtered):                            93.1%
-  Test Accuracy (Filtered + Train):               91.1%
-  Test Precision (Filtered + Train):              91.1%
-  Test Recall (Filtered + Train):                 88.1%
+  Test Accuracy (Filtered):                       90.8%
+  Test Precision (Filtered):                      89.4%
+  Test Recall (Filtered):                         89.3%
+  Test AUC (Filtered):                            93.2%
+  Test Accuracy (Filtered + Train):               93.1%
+  Test Precision (Filtered + Train):              96.5%
+  Test Recall (Filtered + Train):                 87.3%
   Test AUC (Filtered + Train):                    93.5%
 
 
 CONFUSION MATRIX
                  Predicted Positive  Predicted Negative
-Actual Positive                 813                  91
-Actual Negative                 115                1068
+Actual Positive                 807                  97
+Actual Negative                  96                1087
 
 
 FEATURE IMPORTANCES
-  median_dist_km:                       243.0
-  text_sim_tfidf:                       207.0
-  lastname_similarity:                  89.0
-  firstname_similarity:                 41.0
+  median_dist_km:                       239.0
+  text_sim_tfidf:                       215.0
+  lastname_similarity:                  94.0
+  firstname_similarity:                 42.0
 
 
 CORRELATION MATRIX
@@ -60,4 +60,4 @@ match                            0.753258        0.359231  1.000000
 
 
 GRID SCORES
-mean: 0.89070, std: 0.00306, params: {'text_aggregate__drop_missing_bools': True, 'text_aggregate__cosine_only': True, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'dist_diff__diffs': 'none', 'name_similarity__use': 'first_last', 'text_idf__idf': 'yes', 'dist_diff__keep': 'median'}
+mean: 0.89406, std: 0.00174, params: {'text_aggregate__drop_missing_bools': True, 'text_aggregate__cosine_only': True, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'dist_diff__diffs': 'none', 'name_similarity__use': 'first_last', 'text_idf__idf': 'yes', 'dist_diff__keep': 'median'}

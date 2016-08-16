@@ -48,11 +48,11 @@ Ultimately, this resulted in using the following four features, in descending or
 - Median distance between locations listed on the github and meetup profiles
 - First name similarity
 
-<img src="./img/0469716_feature_importances_AdaBoostClassifier.png" alt="Feature Importances" width="500">
+<img src="./output/output_final/0680621_feature_importances_AdaBoostClassifier.png" alt="Feature Importances" width="500">
 
 The resulting feature and target data is shown in the scatter matrix below.
 
-<img src="./img/0469716_scatter-matrix.png" alt="Scatter Matrix" width="500">
+<img src="./output/output_final/0680621_scatter-matrix.png" alt="Scatter Matrix" width="1000">
 
 #### Modeling
 
@@ -79,24 +79,24 @@ The Unfiltered, Test Filtered, and Train + Test Filtered accuracy scores are lis
 
 | Algorithm | Unfiltered | Test Filtered | Train + Test Filtered |
 |---|---|---|---|
-| LogisticRegression | 89.5% | 90.0% | 91.0% |
-| SVC | 89.3% | 89.9% | 90.9% |
-| RandomForestClassifier | 85.5% | 86.6% | 88.0% |
-| GradientBoostingClassifier | 88.0% | 88.4% | 89.3% |
-| AdaBoostClassifier | 89.6% | 90.3% | 91.2% |
-| XGBClassifier | 89.4% | 90.1% | 91.1% |
+| LogisticRegression | 89.5% | 90.7% | 93.1% |
+| SVC | 89.3% | 90.1% | 92.6% |
+| RandomForestClassifier | 85.5% | 87.0% | 89.7% |
+| GradientBoostingClassifier | 88.1% | 88.8% | 91.3% |
+| AdaBoostClassifier | 89.6% | 91.0% | 93.3% |
+| XGBClassifier | 89.3% | 90.8% | 93.1% |
 
 In addition to the accuracies, the following table includes the Precision, Recall, and AUC of the AdaBoost algorithm. Talentful's original goal was an accuracy of 85%, so it is great to see the model exceeding expectations and getting over 90%.
 
 | AdaBoost Performance | Accuracy | Precision | Recall | AUC |
 |---|---|---|---|---|
 |Unfiltered| *89.6%* | 84.8% | 92.6% | 0.931 |
-|**Test Filtered**| ***90.3%*** | **87.7%** | **90.4%** | **0.930** |
-|Train + Test Filtered| *91.2%* | 91.0% | 88.5% | 0.934 |
+|**Test Filtered**| ***91.0%*** | **89.6%** | **89.6%** | **0.930** |
+|Train + Test Filtered| *93.3%* | 96.6% | 87.6% | 0.934 |
 
-The ROC plot from the AdaBoost results is shown below. It can be seen that model is performing very well. It also shows that the filtering applied reduces the false positive rate as expected, without drastically decreasing the true positive rate.
+The ROC plot from the AdaBoost predictions is shown below. It can be seen that model is performing very well. It also shows that the filtering applied reduces the false positive rate as expected, without drastically decreasing the true positive rate.
 
-<img src="./img/0469716_ROCs.png" alt="ROC" width="500">
+<img src="./output/output_final/0680621_ROCs.png" alt="ROC" width="500">
 
 #### Deployment
 

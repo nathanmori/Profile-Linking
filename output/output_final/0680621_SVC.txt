@@ -2,7 +2,7 @@ ALGORITHM
 SVC
 
 BEST SCORE
-0.882068138593
+0.88494514733
 
 BEST PARAMS
   text_aggregate__drop_missing_bools:   True
@@ -20,20 +20,20 @@ METRICS
   Test Precision:                                 84.1%
   Test Recall:                                    92.8%
   Test AUC:                                       92.3%
-  Test Accuracy (Filtered):                       89.7%
-  Test Precision (Filtered):                      86.6%
-  Test Recall (Filtered):                         90.2%
-  Test AUC (Filtered):                            92.0%
-  Test Accuracy (Filtered + Train):               90.8%
-  Test Precision (Filtered + Train):              90.2%
-  Test Recall (Filtered + Train):                 88.4%
+  Test Accuracy (Filtered):                       90.1%
+  Test Precision (Filtered):                      88.3%
+  Test Recall (Filtered):                         89.0%
+  Test AUC (Filtered):                            92.2%
+  Test Accuracy (Filtered + Train):               92.6%
+  Test Precision (Filtered + Train):              95.5%
+  Test Recall (Filtered + Train):                 86.9%
   Test AUC (Filtered + Train):                    92.8%
 
 
 CONFUSION MATRIX
                  Predicted Positive  Predicted Negative
-Actual Positive                 815                  89
-Actual Negative                 126                1057
+Actual Positive                 805                  99
+Actual Negative                 107                1076
 
 
 CORRELATION MATRIX
@@ -53,4 +53,4 @@ match                            0.753258        0.359231  1.000000
 
 
 GRID SCORES
-mean: 0.88207, std: 0.00719, params: {'text_aggregate__drop_missing_bools': True, 'text_aggregate__cosine_only': True, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'dist_diff__diffs': 'none', 'name_similarity__use': 'first_last', 'text_idf__idf': 'yes', 'dist_diff__keep': 'median'}
+mean: 0.88495, std: 0.00935, params: {'text_aggregate__drop_missing_bools': True, 'text_aggregate__cosine_only': True, 'dist_fill_missing__fill_with': 'median', 'text_aggregate__refill_missing': True, 'dist_diff__diffs': 'none', 'name_similarity__use': 'first_last', 'text_idf__idf': 'yes', 'dist_diff__keep': 'median'}
