@@ -1,26 +1,48 @@
 # Profile Linking
 ## Linking Profiles Across Social Media Sites By User
 
-Author: Nathan Mori <nathanmori@gmail.com>
+Author: [Nathan Mori](www.linkedin.com/in/nathanmori)
+
+Email: <nathanmori@gmail.com>
+
+### Tools
+
+The following tools were used on this project.
+
+- [Amazon Elastic Cloud Compute](https://pages.awscloud.com/clicktochat.html)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Python](https://www.python.org/)
+    - [NumPy](http://www.numpy.org/)
+    - [SciPy](https://www.scipy.org/)
+    - [pandas](http://pandas.pydata.org/)
+    - [scikit-learn](http://scikit-learn.org/)
+    - [XGBoost](https://github.com/dmlc/xgboost)
+    - [Psycopg](http://initd.org/psycopg/)
+    - [matplotlib](http://matplotlib.org/)
+    - [name_tools](https://pypi.python.org/pypi/name_tools)
 
 ### Workflow: CRISP-DM
-The workflow for this project followed the steps of CRISP-DM, as visualized below.
+The workflow for this project followed the steps of CRISP-DM, as visualized below (wikipedia.org).
 
 <img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
 
-(wikipedia.org)
-
 #### Business Understanding
-Talentful seeks to identify ideal candidates to meet client hiring needs. Social media profiles are a great way to gain information on potential recommendations.
+This project was completed on behalf of [Talentful](http://www.talentful.io).
 
-The information available on social media varies from site to site. Identifying which profiles belong to the same user across sites allows us to combine the information available on each and to build complete candidate profiles.
+<img src="./img/Talentful.png" alt="CRISP-DM" width="200">
+
+Talentful is a talent-seeking company whose mission is to identify ideal candidates to meet the hiring needs of clients. Part of their strategy is to utilize data available on social media sites.
+
+The candidates and information available on social media varies from site to site. One of the challenges is that many people share the same name, and there is no direct connection indicating which profile on one site belongs to the same person as a profile on another site. Linking the profiles by user is a critical step to consolidate many tables into a single dataset that has exactly one entry per person.
 
 An obvious step is to pair profiles that have similar first and last names. With a name-similarity filter, many potential matches remain for each profile. The goal of this project is to develop a model that classifies matches and non-matches among the name-similarity pairs with an accuracy of 85% or higher.
 
 #### Data Understanding
-The social media data for this project is from github and meetup user profiles.  The original data is stored in three tables of a postgres database. The first and second contain text vector data from 220,000 github profiles and 500,000 meetup profiles, respectively. The third table contains all of the github-meetup pairs with name similarity - 45,000 potential matches. Among the name-similarity pairs, there are 11,000 distinct github profiles and 15,000 distinct meetup profiles.
+*Note: The data for this project is proprietary property of Talentful and is excluded from this repository due to confidentiality requirements.*
 
-For each name-similarity pair, the following information is available:
+The social media data used for this project is from github and meetup user profiles. The raw data is stored in three tables of a PostgreSQL database. The first and second contain text vector data from 220,000 github profiles and 500,000 meetup profiles, respectively. The third table contains all of the github-meetup pairs with name similarity - 45,000 potential matches. Among the name-similarity pairs, there are 11,000 distinct github profiles and 15,000 distinct meetup profiles.
+
+For each name-similarity pair, the PostgreSQL database contains the following columns:
 - profile_pics_matched
 - github_name
 - meetup_name
@@ -83,10 +105,10 @@ The Unfiltered, Test Filtered, and Train + Test Filtered accuracy scores are lis
 | SVC | 89.3% | 90.1% | 92.6% |
 | RandomForestClassifier | 85.5% | 87.0% | 89.7% |
 | GradientBoostingClassifier | 88.1% | 88.8% | 91.3% |
-| AdaBoostClassifier | 89.6% | 91.0% | 93.3% |
+| **AdaBoostClassifier** | **89.6%** | **91.0%** | **93.3%** |
 | XGBClassifier | 89.3% | 90.8% | 93.1% |
 
-In addition to the accuracies, the following table includes the Precision, Recall, and AUC of the AdaBoost algorithm. Talentful's original goal was an accuracy of 85%, so it is great to see the model exceeding expectations and getting over 90%.
+In addition to the accuracies, the following table includes the Precision, Recall, and AUC of the AdaBoost algorithm. Talentful's original goal was an accuracy of 85%, so it is great to see the model exceeding expectations and getting 91%.
 
 | AdaBoost Performance | Accuracy | Precision | Recall | AUC |
 |---|---|---|---|---|
@@ -100,4 +122,4 @@ The ROC plot from the AdaBoost predictions is shown below. It can be seen that m
 
 #### Deployment
 
-The model's predictive power can now be used to classify the 41,000 unknown name-similarity pairs.
+The model's predictive power can now be deployed to classify the 41,000 unknown name-similarity pairs.
