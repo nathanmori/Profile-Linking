@@ -28,9 +28,8 @@ The workflow for this project followed the steps of CRISP-DM, as visualized belo
 
 #### Business Understanding
 <img src="./img/Talentful.png" alt="CRISP-DM" width="100">
-This project was completed on behalf of [Talentful](http://www.talentful.io).
 
-Talentful is a talent-seeking company whose mission is to identify ideal candidates to meet the hiring needs of their clients. Part of their strategy is to utilize data available on social media sites.
+This project was completed on behalf of [Talentful](http://www.talentful.io). Talentful is a talent-seeking company whose mission is to identify ideal candidates to meet the hiring needs of their clients. Part of their strategy is to utilize data available on social media sites.
 
 The candidates and information available on social media varies from site to site. One of the challenges is that many people share the same name, and there is no direct connection indicating which profile on one site belongs to the same person as a profile on another site. Linking the profiles by user is a critical step to consolidate many tables into a single dataset that has exactly one entry per person.
 
