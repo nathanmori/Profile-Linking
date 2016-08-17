@@ -1,7 +1,7 @@
 # Profile Linking
 ## Linking Profiles Across Social Media Sites By User
 
-Author: [Nathan Mori](www.linkedin.com/in/nathanmori)
+Author: [Nathan Mori](https://www.linkedin.com/in/nathanmori)
 
 Email: <nathanmori@gmail.com>
 
@@ -27,11 +27,9 @@ The workflow for this project followed the steps of CRISP-DM, as visualized belo
 <img src="./img/CRISP-DM_Process_Diagram.png" alt="CRISP-DM" width="500">
 
 #### Business Understanding
-This project was completed on behalf of [Talentful](http://www.talentful.io).
+This project was completed on behalf of [Talentful](http://www.talentful.io). Talentful is a talent-seeking company whose mission is to identify ideal candidates to meet the hiring needs of clients. Part of their strategy is to utilize data available on social media sites.
 
 <img src="./img/Talentful.png" alt="CRISP-DM" width="200">
-
-Talentful is a talent-seeking company whose mission is to identify ideal candidates to meet the hiring needs of clients. Part of their strategy is to utilize data available on social media sites.
 
 The candidates and information available on social media varies from site to site. One of the challenges is that many people share the same name, and there is no direct connection indicating which profile on one site belongs to the same person as a profile on another site. Linking the profiles by user is a critical step to consolidate many tables into a single dataset that has exactly one entry per person.
 
