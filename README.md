@@ -5,11 +5,15 @@ Author: [Nathan Mori](https://www.linkedin.com/in/nathanmori)
 
 Email: <nathanmori@gmail.com>
 
+### Project Summary
+
+This project entailed developing a binary classification model to identify when user profiles from two different social media sites belong to the same individual.
+
 ### Tools
 
 The following tools were used on this project.
 
-- [Amazon Elastic Cloud Compute](https://pages.awscloud.com/clicktochat.html)
+- [Amazon Elastic Cloud Compute](https://aws.amazon.com/ec2/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Python](https://www.python.org/)
     - [NumPy](http://www.numpy.org/)
