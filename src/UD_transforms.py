@@ -29,6 +29,9 @@ def validate(key, val, valids):
     val : any
         Argument passed in for parameter key.
 
+    valids : list
+        List of valid values for key.
+
     Returns
     -------
     None
