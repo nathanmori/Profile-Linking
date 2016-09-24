@@ -35,7 +35,7 @@ The workflow for this project followed the steps of CRISP-DM, as visualized belo
 
 This project was completed on behalf of [Talentful](http://www.talentful.io). Talentful is a talent-seeking company whose mission is to identify ideal candidates to meet the hiring needs of their clients. Part of their strategy is to utilize data available on social media sites.
 
-The candidates and information available on social media varies from site to site. One of the challenges is that many people share the same name, and there is no direct connection indicating which profile on one site belongs to the same person as a profile on another site. Linking the profiles by user is a critical step to consolidate many tables into a single dataset that has exactly one entry per person.
+The candidates and information available on social media varies from site to site. One of the challenges is that many people share the same name, and there is no direct connection indicating which profile on one site belongs to the same person as a profile on another site. Linking the profiles by user is a critical step to consolidate many datasets into a single table that has exactly one entry per person.
 
 An obvious step is to pair profiles that have similar first and last names. With a name-similarity filter, many potential matches remain for each profile. The goal of this project is to develop a model that classifies matches and non-matches among the name-similarity pairs with an accuracy of 85% or higher.
 

@@ -13,3 +13,5 @@ src/_UD_transforms_separate_files/*
 shard*
 /Presentation/
 notes.txt
+*.rtf
+Azure/
