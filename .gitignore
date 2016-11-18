@@ -16,3 +16,4 @@ notes.txt
 *.rtf
 Azure/
 Azure2/
+src/predict.py
